@@ -1,4 +1,4 @@
-package com.i_rosilients.backend.service;
+package com.i_rosilients.backend.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -13,6 +13,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         String urls = env.getProperty("cors.urls");
+
         if (urls != null) {
             CorsRegistration reg = registry.addMapping("/*");
             for (String url : urls.split(",")) {

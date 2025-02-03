@@ -3,10 +3,14 @@ package com.i_rosilients.backend.model;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Column;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 public class Utente {
 
     @Id
@@ -18,16 +22,4 @@ public class Utente {
     
     @Column(nullable = false)
     private boolean attivo = false;
-
-    public void setAttivo(boolean attivo) {
-        this.attivo = attivo;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 }

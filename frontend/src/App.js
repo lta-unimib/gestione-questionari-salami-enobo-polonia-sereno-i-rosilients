@@ -14,14 +14,14 @@ const App = () => {
   const [questionarioNome, setQuestionarioNome] = useState('');
   const [utenteEmail, setUtenteEmail] = useState('');
 
-  // useEffect(() => {
-  //   // Imposta l'elemento app principale per il Modal
-  //   Modal.setAppElement('#root');
-  // }, []);
+  useEffect(() => {
+  // Imposta l'elemento app principale per il Modal
+    Modal.setAppElement('#root');
+  }, []);
 
-  // const toggleModal = () => {
-  //   setIsModalOpen(!isModalOpen);
-  // };
+  const toggleModal = () => {
+    setIsModalOpen(!isModalOpen);
+  };
 
   const handleRegister = () => {
     if (password !== confirmPassword) {
@@ -34,7 +34,7 @@ const App = () => {
       password: password,
     };
 
-    fetch('http://localhost:8080/api/utente/registrazione', {
+    fetch('http://localhost:8080/utente/registrazione', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -46,7 +46,7 @@ const App = () => {
           throw new Error('Errore nella registrazione');
         }
         alert('Registrazione riuscita! Controlla la tua email per la verifica.');
-        // toggleModal();
+        toggleModal();
       })
       .catch(error => {
         console.error('Errore:', error);
@@ -54,13 +54,14 @@ const App = () => {
       });
   };
 
+  /*
   const handleVerifyEmail = () => {
     const verificationData = {
       email: email,
       tokenInserito: verificationCode,
     };
 
-    fetch('http://localhost:8080/api/utente/verifica-email', {
+    fetch('http://localhost:8080/utente/verifica-email', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -78,6 +79,10 @@ const App = () => {
         alert('Codice di verifica non valido o errore nel server.');
       });
   };
+
+  */
+
+  
   const handleCreaQuestionario = () => {
     if (!questionarioNome || !utenteEmail) {
       alert('Compila tutti i campi.');
@@ -91,7 +96,7 @@ const App = () => {
       },
     };
   
-    fetch('http://localhost:8080/api/questionari', {
+    fetch('http://localhost:8080/questionari', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -4,11 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
-
+import com.i_rosilients.backend.model.Utente;
 import com.i_rosilients.backend.service.UtenteService;
 
 @RestController
@@ -20,9 +21,9 @@ public class UtenteController {
     private UtenteService utenteService;
 
     @PostMapping("/registrazione")
-    public String registraUtente(@RequestParam String email, @RequestParam String password) {
+    public String registraUtente(@RequestBody Utente utente) {
         try {
-            utenteService.registraUtente(email, password);
+            utenteService.registraUtente(utente.getEmail(), utente.getPassword());
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
@@ -40,5 +41,5 @@ public class UtenteController {
         }    
         return "Email verificata con successo";
     }
-     */
+        */
 }
