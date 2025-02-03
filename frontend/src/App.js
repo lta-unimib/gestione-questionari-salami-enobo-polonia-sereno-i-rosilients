@@ -14,14 +14,14 @@ const App = () => {
   const [questionarioNome, setQuestionarioNome] = useState('');
   const [utenteEmail, setUtenteEmail] = useState('');
 
-  useEffect(() => {
-    // Imposta l'elemento app principale per il Modal
-    Modal.setAppElement('#root');
-  }, []);
+  // useEffect(() => {
+  //   // Imposta l'elemento app principale per il Modal
+  //   Modal.setAppElement('#root');
+  // }, []);
 
-  const toggleModal = () => {
-    setIsModalOpen(!isModalOpen);
-  };
+  // const toggleModal = () => {
+  //   setIsModalOpen(!isModalOpen);
+  // };
 
   const handleRegister = () => {
     if (password !== confirmPassword) {
@@ -46,7 +46,7 @@ const App = () => {
           throw new Error('Errore nella registrazione');
         }
         alert('Registrazione riuscita! Controlla la tua email per la verifica.');
-        toggleModal();
+        // toggleModal();
       })
       .catch(error => {
         console.error('Errore:', error);

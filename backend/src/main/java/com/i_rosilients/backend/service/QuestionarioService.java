@@ -12,7 +12,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class QuestionarioService {
+public class QuestionarioService {/*
     private final QuestionarioRepository questionarioRepository;
     private final UtenteRepository utenteRepository;
 
@@ -51,5 +51,5 @@ public class QuestionarioService {
                     return dto;
                 })
                 .collect(Collectors.toList());
-    }
+    }*/
 }

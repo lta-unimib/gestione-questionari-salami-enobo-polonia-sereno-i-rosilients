@@ -19,4 +19,15 @@ public class Utente {
     @Column(nullable = false)
     private boolean attivo = false;
 
+    public void setAttivo(boolean attivo) {
+        this.attivo = attivo;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }

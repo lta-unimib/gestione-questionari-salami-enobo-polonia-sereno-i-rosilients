@@ -10,5 +10,5 @@ import com.i_rosilients.backend.model.Utente;
 @Repository
 public interface UtenteRepository extends JpaRepository<Utente, String> {
     
-    Optional<Utente> findByEmail(String email);
+    // Optional<Utente> findByEmail(String email);
 }

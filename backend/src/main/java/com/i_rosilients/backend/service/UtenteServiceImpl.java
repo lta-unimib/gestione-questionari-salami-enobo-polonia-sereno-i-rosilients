@@ -10,7 +10,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.i_rosilients.backend.model.Utente;
 import com.i_rosilients.backend.repository.UtenteRepository;
+import org.springframework.stereotype.Service;
 
+@Service
 public class UtenteServiceImpl implements UtenteService{
 
     @Autowired
@@ -19,33 +21,37 @@ public class UtenteServiceImpl implements UtenteService{
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private EmailService emailService;
+    // @Autowired
+    // private EmailService emailService;
 
-    private final Map<String, String> tokenVerifica = new ConcurrentHashMap<>();//mappa per salvare temporaneamente i token
+    // private final Map<String, String> tokenVerifica = new ConcurrentHashMap<>();//mappa per salvare temporaneamente i token
 
-    private String generaCodiceVerifica() {
-        return String.valueOf(new Random().nextInt(900000) + 100000);
-    }
+    // private String generaCodiceVerifica() {
+    //     return String.valueOf(new Random().nextInt(900000) + 100000);
+    // }
 
     @Override
-    public void registraUtente(String email, String password) {
+    public Utente registraUtente(String email, String password) {
+        /*
         if(utenteRepository.findByEmail(email).isPresent()) {
             throw new IllegalArgumentException("Utente già registrato");
         }
+        */
         Utente nuovoUtente = new Utente();
         nuovoUtente.setEmail(email);
         nuovoUtente.setPassword(passwordEncoder.encode(password));
         nuovoUtente.setAttivo(false);
-        utenteRepository.save(nuovoUtente);
-
+        return utenteRepository.save(nuovoUtente);
+        /*
         String codiceVerifica = generaCodiceVerifica();
 
         tokenVerifica.put(email, codiceVerifica);
 
         emailService.inviaEmail(email, "Conferma registrazione", "Il tuo codice di verifica è: " + codiceVerifica);
+         */
     }
 
+    /*
     @Override
     public void verificaEmail(String email, String tokenInserito) {
         String tokenSalvato = tokenVerifica.get(email);
@@ -65,4 +71,5 @@ public class UtenteServiceImpl implements UtenteService{
             throw new IllegalArgumentException("Codice di verifica non valido");
         }      
     }
+     */
 }
