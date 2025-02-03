@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
+import CreaQuestionario from './CreaQuestionario';
 import './App.css';
 
 const App = () => {
@@ -9,6 +10,9 @@ const App = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState(''); // Per confermare la password
   const [verificationCode, setVerificationCode] = useState(''); // Codice di verifica per email
+  const [isCreatingQuestionario, setIsCreatingQuestionario] = useState(false); // Stato per la creazione del questionario
+  const [questionarioNome, setQuestionarioNome] = useState('');
+  const [utenteEmail, setUtenteEmail] = useState('');
 
   useEffect(() => {
     // Imposta l'elemento app principale per il Modal
@@ -74,6 +78,44 @@ const App = () => {
         alert('Codice di verifica non valido o errore nel server.');
       });
   };
+  const handleCreaQuestionario = () => {
+    if (!questionarioNome || !utenteEmail) {
+      alert('Compila tutti i campi.');
+      return;
+    }
+  
+    const questionarioData = {
+      nome: questionarioNome,
+      utente: {
+        email: utenteEmail,
+      },
+    };
+  
+    fetch('http://localhost:8080/api/questionari', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(questionarioData),
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Errore nella creazione del questionario');
+        }
+        return response.json();
+      })
+      .then(data => {
+        alert('Questionario creato con successo!');
+        setQuestionarioNome(''); // Resetta il nome
+        setUtenteEmail(''); // Resetta l'email
+        setIsCreatingQuestionario(false); // Nascondi il modulo dopo la creazione
+      })
+      .catch(error => {
+        console.error('Errore:', error);
+        alert('Si è verificato un errore durante la creazione del questionario.');
+      });
+  };
+  
 
   const handleSwitchToRegister = () => {
     setIsLogin(false);
@@ -150,6 +192,31 @@ const App = () => {
           </div>
         )}
       </Modal>
+
+
+      {/* Sezione per la Creazione del Questionario */}
+      {!isCreatingQuestionario ? (
+        <div>
+          <button onClick={() => setIsCreatingQuestionario(true)}>Crea Questionario</button>
+        </div>
+      ) : (
+        <div>
+          <input
+            type="text"
+            placeholder="Nome del Questionario"
+            value={questionarioNome}
+            onChange={(e) => setQuestionarioNome(e.target.value)}
+          />
+          <input
+            type="email"
+            placeholder="Email Utente"
+            value={utenteEmail}
+            onChange={(e) => setUtenteEmail(e.target.value)}
+          />
+          <button onClick={handleCreaQuestionario}>Crea</button>
+          <button onClick={() => setIsCreatingQuestionario(false)}>Annulla</button>
+        </div>
+      )}
     </div>
   );
 };
