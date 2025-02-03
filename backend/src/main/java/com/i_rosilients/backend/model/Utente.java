@@ -15,5 +15,8 @@ public class Utente {
 
     @Column(length = 255, nullable = false)
     private String password;
+    
+    @Column(nullable = false)
+    private boolean attivo = false;
 
 }
