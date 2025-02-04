@@ -5,6 +5,8 @@ import com.i_rosilients.backend.model.Questionario;
 import com.i_rosilients.backend.model.Utente;
 import com.i_rosilients.backend.repository.QuestionarioRepository;
 import com.i_rosilients.backend.repository.UtenteRepository;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,44 +14,45 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class QuestionarioService {/*
-    private final QuestionarioRepository questionarioRepository;
-    private final UtenteRepository utenteRepository;
+public class QuestionarioService {
 
-    public QuestionarioService(QuestionarioRepository questionarioRepository, UtenteRepository utenteRepository) {
-        this.questionarioRepository = questionarioRepository;
-        this.utenteRepository = utenteRepository;
-    }
+    @Autowired
+    private QuestionarioRepository questionarioRepository;
 
-    public Questionario creaQuestionario(QuestionarioDTO questionarioDTO) {
-        Optional<Utente> utenteOpt = utenteRepository.findById(questionarioDTO.getEmailUtente());
+    @Autowired
+    private UtenteRepository utenteRepository;
+
+    public void creaQuestionario(QuestionarioDTO questionarioDTO) {
+
+        Optional<Utente> utenteOpt = 
+        utenteRepository.findById(questionarioDTO.getEmailUtente()); // controlla che esista l'utente
 
         if (utenteOpt.isEmpty()) {
             throw new RuntimeException("Utente non trovato con email: " + questionarioDTO.getEmailUtente());
         }
 
-        Questionario questionario = new Questionario();
-        questionario.setNome(questionarioDTO.getNome());
-        questionario.setUtente(utenteOpt.get());
+        Questionario questionario = new Questionario(utenteOpt.get(), questionarioDTO.getNome());
 
-        return questionarioRepository.save(questionario);
+        questionarioRepository.save(questionario);     
     }
 
     public List<QuestionarioDTO> getQuestionariByUtente(String emailUtente) {
         Optional<Utente> utenteOpt = utenteRepository.findById(emailUtente);
-
         if (utenteOpt.isEmpty()) {
             throw new RuntimeException("Utente non trovato con email: " + emailUtente);
         }
 
         return questionarioRepository.findByUtente(utenteOpt.get()).stream()
-                .map(q -> {
-                    QuestionarioDTO dto = new QuestionarioDTO();
-                    dto.setIdQuestionario(q.getIdQuestionario());
-                    dto.setNome(q.getNome());
-                    dto.setEmailUtente(q.getUtente().getEmail());
+                .map(questionario -> {
+
+                    QuestionarioDTO dto = new QuestionarioDTO(
+                        questionario.getIdQuestionario(),
+                        questionario.getNome(),
+                        questionario.getUtente().getEmail()
+                    );
+
                     return dto;
                 })
                 .collect(Collectors.toList());
-    }*/
+    }
 }

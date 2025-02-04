@@ -9,8 +9,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+
+import com.i_rosilients.backend.dto.UtenteDTO;
 import com.i_rosilients.backend.model.Utente;
-import com.i_rosilients.backend.service.UtenteService;
+import com.i_rosilients.backend.service.IUtenteService;
 
 @RestController
 @RequestMapping("/utente")
@@ -18,17 +20,15 @@ import com.i_rosilients.backend.service.UtenteService;
 public class UtenteController {
 
     @Autowired
-    private UtenteService utenteService;
+    private IUtenteService utenteService;
 
     @PostMapping("/registrazione")
-    public String registraUtente(@RequestBody Utente utente) {
+    public void registraUtente(@RequestBody UtenteDTO dto) {
         try {
-            utenteService.registraUtente(utente.getEmail(), utente.getPassword());
+            utenteService.registraUtente(dto);
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
-
-        return "Utente registrato con successo";
     }
 
     /*

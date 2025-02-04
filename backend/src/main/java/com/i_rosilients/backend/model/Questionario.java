@@ -6,10 +6,11 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Column;
 import jakarta.persistence.ManyToOne;
+import lombok.Getter;
 import jakarta.persistence.JoinColumn;
-import lombok.Data;
 
-@Data
+
+@Getter
 @Entity
 public class Questionario {
 
@@ -24,4 +25,8 @@ public class Questionario {
     @Column(length = 255, nullable = false)
     private String nome;
 
+    public Questionario(Utente utente, String nome) {
+        this.utente = utente;
+        this.nome = nome;
+    }
 }
