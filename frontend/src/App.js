@@ -8,12 +8,14 @@ import Navbar from './components/NavbarHome'
 const App = () => {
 
   return (
-    <BrowserRouter>
+    <div className='font-jersey'>
         <Navbar />
-        <Routes>
-            <Route path="/" element={<Home />} />
-        </Routes>
-    </BrowserRouter>
+        <BrowserRouter>
+          <Routes>
+              <Route path="/" element={<Home />} />
+          </Routes>
+        </BrowserRouter>
+    </div>
   );
 };
 
