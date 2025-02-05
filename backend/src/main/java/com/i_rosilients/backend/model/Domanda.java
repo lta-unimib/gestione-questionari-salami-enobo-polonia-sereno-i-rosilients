@@ -27,4 +27,10 @@ public class Domanda {
     @Column(nullable = false)
     private String testoDomanda;
 
+    public Domanda(Utente utente, String argomento, String testoDomanda) {
+        this.utente = utente;
+        this.argomento = argomento;
+        this.testoDomanda = testoDomanda;
+    }
+
 }

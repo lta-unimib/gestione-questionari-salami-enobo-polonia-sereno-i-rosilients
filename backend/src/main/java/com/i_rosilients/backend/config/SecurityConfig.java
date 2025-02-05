@@ -29,7 +29,7 @@ public class SecurityConfig {
                         // Permetti le richieste pre-flight OPTIONS a tutti gli endpoint
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         // Consenti l'accesso agli endpoint pubblici
-                        .requestMatchers("/utente/**", "/api/questionari/**").permitAll()
+                        .requestMatchers("/utente/**", "/api/**").permitAll()
                         // Richiedi autenticazione per tutte le altre richieste
                         .anyRequest().authenticated()
                 );

@@ -49,6 +49,11 @@ public class UtenteService implements IUtenteService{
          
     }
 
+    @Override
+    public void loginUtente(UtenteDTO dto) {
+
+    }
+
     /* 
     @Override
     public void verificaEmail(String email, String tokenInserito) {

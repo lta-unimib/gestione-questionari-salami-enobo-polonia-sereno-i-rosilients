@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-
-const Home = () => {
+const CreaQuestionario = () => {
   const [isCreatingQuestionario, setIsCreatingQuestionario] = useState(false);
   const [questionarioNome, setQuestionarioNome] = useState('');
   const [utenteEmail, setUtenteEmail] = useState('');
@@ -132,4 +131,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default CreaQuestionario;

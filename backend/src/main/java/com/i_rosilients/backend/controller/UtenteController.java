@@ -31,6 +31,15 @@ public class UtenteController {
         }
     }
 
+    @PostMapping("/login")
+    public void loginUtente(@RequestBody UtenteDTO dto) {
+        try {
+            utenteService.registraUtente(dto);
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+    }
+
     /*
     @PostMapping("/verifica-email")
     public String verificaEmail(@RequestParam String email, @RequestParam String tokenInserito) {

@@ -1,0 +1,59 @@
+package com.i_rosilients.backend.service;
+
+import com.i_rosilients.backend.dto.DomandaDTO;
+import com.i_rosilients.backend.model.Domanda;
+import com.i_rosilients.backend.model.Utente;
+import com.i_rosilients.backend.repository.DomandaRepository;
+import com.i_rosilients.backend.repository.UtenteRepository;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+@Service
+public class DomandaService implements IDomandaService {
+
+    @Autowired
+    private DomandaRepository domandaRepository;
+
+    @Autowired
+    private UtenteRepository utenteRepository;
+
+    public void creaDomanda(DomandaDTO domandaDTO) {
+
+        Optional<Utente> utenteOpt =
+                utenteRepository.findById(domandaDTO.getEmailUtente()); // controlla che esista l'utente
+
+        if (utenteOpt.isEmpty()) {
+            throw new RuntimeException("Utente non trovato con email: " + domandaDTO.getEmailUtente());
+        }
+
+        Domanda domanda = new Domanda(utenteOpt.get(), domandaDTO.getArgomento(), domandaDTO.getTestoDomanda());
+
+        domandaRepository.save(domanda);
+    }
+
+    public List<DomandaDTO> getDomandeByUtente(String emailUtente) {
+        Optional<Utente> utenteOpt = utenteRepository.findById(emailUtente);
+        if (utenteOpt.isEmpty()) {
+            throw new RuntimeException("Utente non trovato con email: " + emailUtente);
+        }
+
+        return domandaRepository.findByUtente(utenteOpt.get()).stream()
+                .map(domanda -> {
+
+                    DomandaDTO dto = new DomandaDTO(
+                            domanda.getIdDomanda(),
+                            domanda.getArgomento(),
+                            domanda.getTestoDomanda(),
+                            domanda.getUtente().getEmail()
+                    );
+
+                    return dto;
+                })
+                .collect(Collectors.toList());
+    }
+}
