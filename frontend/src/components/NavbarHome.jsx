@@ -12,15 +12,15 @@ const NavbarHome = () => {
 
   return (
     <nav>
-      <div className="flex justify-between">
-        <div className="ml-16 w-20 h-20">
-          <h1 className="text-3xl">WebSurveys</h1>
+      <div className="flex justify-between my-5">
+        <div className="ml-16">
+          <h1 className="text-3xl text-personal-purple font-semibold">WebSurveys</h1>
         </div>
-        <div className="flex justify-end bg-custom-fixtec py-4 mr-16">
-          <div>
+        <div className="flex justify-end mr-16">
+          <div className='my-auto'>
             <button onClick={() => toggleModal('register')}>Registrazione</button>
           </div>
-          <div className="ml-16 hover:italic">
+          <div className="ml-16 bg-personal-purple text-white px-8 rounded-md py-1">
             <button onClick={() => toggleModal('login')}>Login</button>
           </div>
         </div>

@@ -4,7 +4,14 @@ module.exports = {
     "./src/**/*.{js,jsx,ts,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        'personal-purple': '#3603CD',  // Colore personalizzato
+      },
+      fontFamily: {
+        jersey: ["Jersey 25", "cursive"],  // Aggiungi il font personalizzato
+      },
+    },
   },
   plugins: [],
 }
