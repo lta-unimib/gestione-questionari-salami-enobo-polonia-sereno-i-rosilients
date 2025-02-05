@@ -45,10 +45,17 @@ public class UtenteController {
     } */
 
     @PostMapping(path = "/login")
-    public ResponseEntity<?> loginEmployee(@RequestBody UtenteDTO dto)
+    public ResponseEntity<?> loginUtente(@RequestBody UtenteDTO dto)
     {
         LoginMessage msg = utenteService.loginUtente(dto);
-        return ResponseEntity.ok(msg);
+    
+        // Se il login è riuscito
+        if (msg.getStatus()) {
+            return ResponseEntity.ok(msg);  // Restituisce OK con il messaggio
+        } else {
+            // Se il login è fallito (errore nelle credenziali)
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(msg);  // Restituisce Unauthorized con il messaggio di errore
+        }
     }
 
 
