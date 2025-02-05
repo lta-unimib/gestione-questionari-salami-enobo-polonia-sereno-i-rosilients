@@ -9,6 +9,6 @@ import com.i_rosilients.backend.model.Questionario;
 import com.i_rosilients.backend.model.Utente;
 
 @Repository
-public interface QuestionarioRepository extends JpaRepository<Questionario, String> {
+public interface QuestionarioRepository extends JpaRepository<Questionario, Integer> {
     List<Questionario> findByUtente(Utente utente);
 }
