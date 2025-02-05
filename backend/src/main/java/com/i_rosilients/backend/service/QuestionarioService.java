@@ -14,7 +14,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class QuestionarioService {
+public class QuestionarioService implements IQuestionarioService {
 
     @Autowired
     private QuestionarioRepository questionarioRepository;

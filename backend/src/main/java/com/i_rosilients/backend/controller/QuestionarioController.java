@@ -3,6 +3,7 @@ package com.i_rosilients.backend.controller;
 import com.i_rosilients.backend.dto.QuestionarioDTO;
 import com.i_rosilients.backend.service.IQuestionarioService;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -13,7 +14,9 @@ import java.util.List;
 @RequestMapping("/api/questionari")
 public class QuestionarioController {
 
+    @Autowired
     private IQuestionarioService questionarioService;
+
 
     @PostMapping("/creaQuestionario")
     public void creaQuestionario(@RequestBody QuestionarioDTO questionarioDTO) {

@@ -38,32 +38,46 @@ const Home = () => {
       alert('Compila tutti i campi.');
       return;
     }
-
+  
     const questionarioData = {
       nome: questionarioNome,
-      utente: {
-        email: utenteEmail,
-      },
+      emailUtente: utenteEmail
     };
-
-    fetch('http://localhost:8080/questionari', {
+  
+    console.log(questionarioData);
+  
+    fetch('http://localhost:8080/api/questionari/creaQuestionario', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(questionarioData),
     })
-      .then(response => {
+      .then((response) => {
+        console.log('Response:', response);  // Log per vedere la risposta del server
         if (!response.ok) {
           throw new Error('Errore nella creazione del questionario');
         }
-        return response.json();
+  
+        return response.text().then((text) => {
+          if (text) {
+            try {
+              return JSON.parse(text);  // Prova a fare il parsing se c'è del testo
+            } catch (e) {
+              console.error('Errore durante il parsing JSON:', e);
+              return {};  // Se non è JSON, ritorna un oggetto vuoto
+            }
+          }
+          return {};  // Se non c'è testo, ritorna un oggetto vuoto
+        });
       })
       .then(data => {
-        alert('Questionario creato con successo!');
-        setQuestionarioNome(''); // Resetta il nome
-        setUtenteEmail(''); // Resetta l'email
-        setIsCreatingQuestionario(false); // Nascondi il modulo dopo la creazione
+        if (data) {
+          alert('Questionario creato con successo!');
+          setQuestionarioNome(''); // Resetta il nome
+          setUtenteEmail(''); // Resetta l'email
+          setIsCreatingQuestionario(false); // Nascondi il modulo dopo la creazione
+        }
       })
       .catch(error => {
         console.error('Errore:', error);
