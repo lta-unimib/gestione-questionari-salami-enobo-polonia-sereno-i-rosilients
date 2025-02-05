@@ -5,7 +5,10 @@ import com.i_rosilients.backend.dto.UtenteDTO;
 public interface IUtenteService {
 
     void registraUtente(UtenteDTO dto);
-    void loginUtente(UtenteDTO dto);
+    // void loginUtente(UtenteDTO dto);
+
+    LoginMessage loginUtente(UtenteDTO dto);
+
     // void verificaEmail(String email, String tokenInserito);
 
 }

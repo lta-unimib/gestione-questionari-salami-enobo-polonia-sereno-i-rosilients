@@ -2,6 +2,7 @@ package com.i_rosilients.backend.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,6 +14,8 @@ import org.springframework.web.server.ResponseStatusException;
 import com.i_rosilients.backend.dto.UtenteDTO;
 import com.i_rosilients.backend.model.Utente;
 import com.i_rosilients.backend.service.IUtenteService;
+import com.i_rosilients.backend.service.LoginMessage;
+import com.i_rosilients.backend.service.UtenteService;
 
 @RestController
 @RequestMapping("/utente")
@@ -31,6 +34,7 @@ public class UtenteController {
         }
     }
 
+    /* 
     @PostMapping("/login")
     public void loginUtente(@RequestBody UtenteDTO dto) {
         try {
@@ -38,7 +42,15 @@ public class UtenteController {
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
+    } */
+
+    @PostMapping(path = "/login")
+    public ResponseEntity<?> loginEmployee(@RequestBody UtenteDTO dto)
+    {
+        LoginMessage msg = utenteService.loginUtente(dto);
+        return ResponseEntity.ok(msg);
     }
+
 
     /*
     @PostMapping("/verifica-email")

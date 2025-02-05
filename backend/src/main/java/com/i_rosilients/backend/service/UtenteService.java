@@ -50,8 +50,26 @@ public class UtenteService implements IUtenteService{
     }
 
     @Override
-    public void loginUtente(UtenteDTO dto) {
-
+    public LoginMessage loginUtente(UtenteDTO dto) {
+        String msg = "";
+        Utente utente = utenteRepository.findByEmail(dto.getEmail()).orElse(null);
+        if (utente != null) {
+            String password = dto.getPassword();
+            String encodedPassword = utente.getPassword();
+            Boolean isPwdRight = passwordEncoder.matches(password, encodedPassword);
+            if (isPwdRight) {
+                Optional<Utente>utenteOptional = utenteRepository.findByEmailAndPassword(dto.getEmail(), encodedPassword);
+                if (utenteOptional.isPresent()) {
+                    return new LoginMessage("Login Success", true);
+                } else {
+                    return new LoginMessage("Login Failed", false);
+                }
+            } else {
+                return new LoginMessage("password Not Match", false);
+            }
+        }else {
+            return new LoginMessage("Email not exits", false);
+        }
     }
 
     /* 
