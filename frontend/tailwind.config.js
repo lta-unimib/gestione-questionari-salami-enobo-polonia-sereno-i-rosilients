@@ -1,3 +1,5 @@
+const defaultTheme = require('tailwindcss/defaultTheme');
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
@@ -9,7 +11,7 @@ module.exports = {
         'personal-purple': '#3603CD',  // Colore personalizzato
       },
       fontFamily: {
-        jersey: ["Jersey 25", "cursive"],  // Aggiungi il font personalizzato
+        jersey: ['"Jersey 25"', ...defaultTheme.fontFamily.sans],  // Aggiungi il font personalizzato
       },
     },
   },

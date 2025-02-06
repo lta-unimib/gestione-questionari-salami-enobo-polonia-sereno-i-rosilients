@@ -10,13 +10,13 @@ import NavBarLogged from './components/NavbarLogged';
 const App = () => {
 
   return (
-    <div className='font-jersey'>
-        <Navbar />
-        <BrowserRouter>
+    <div className='font-jersey tracking-widest '>
+      <BrowserRouter>
+          <Navbar />
           <Routes>
               <Route path="/" element={<Home />} />
           </Routes>
-        </BrowserRouter>
+      </BrowserRouter>
     </div>
   );
 };
