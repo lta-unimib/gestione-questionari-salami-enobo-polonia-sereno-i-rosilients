@@ -6,12 +6,13 @@ const Login = ({ toggleModal }) => {
 
   const handleLogin = async (event) => {
     event.preventDefault(); // Evita il comportamento di submit del form
-
+    console.log('Login in corso...');  // Testa se la funzione viene chiamata
+  
     const user = {
       email,
       password,
     };
-
+  
     try {
       const response = await fetch('http://localhost:8080/utente/login', {
         method: 'POST',
@@ -20,23 +21,25 @@ const Login = ({ toggleModal }) => {
         },
         body: JSON.stringify(user),
       });
-
+  
       const data = await response.json();
-
+  
       if (response.status === 401) {
         alert(data.message || 'Credenziali errate');
         return;
       }
-
+  
       if (response.ok) {
         alert(data.message); // Login riuscito
+        console.log('Login avvenuto con successo:', data); // Qui stampiamo il messaggio del backend
         toggleModal(); // Chiude il modal dopo il login
       }
     } catch (error) {
       console.error('Errore:', error);
-      alert('Si Ã¨ verificato un errore durante il login.');
+      alert('Si è verificato un errore durante il login.');
     }
   };
+  
 
   return (
     <div className="bg-white p-6 rounded-lg w-96">

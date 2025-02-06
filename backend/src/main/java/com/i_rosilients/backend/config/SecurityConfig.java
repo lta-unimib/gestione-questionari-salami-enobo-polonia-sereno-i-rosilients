@@ -1,11 +1,10 @@
 package com.i_rosilients.backend.config;
 
-import static org.springframework.security.config.Customizer.withDefaults;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -21,8 +20,6 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // Abilita il supporto CORS con la configurazione globale definita in WebConfig
-                .cors(withDefaults())
                 // Disabilita CSRF (solo per test; in produzione valuta soluzioni alternative)
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorize -> authorize
@@ -32,7 +29,12 @@ public class SecurityConfig {
                         .requestMatchers("/utente/**", "/api/**").permitAll()
                         // Richiedi autenticazione per tutte le altre richieste
                         .anyRequest().authenticated()
-                );
+                )
+                .sessionManagement()
+                    .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // Crea una sessione se necessaria
+                    .maximumSessions(1) // Limita il numero di sessioni per utente
+                    .expiredUrl("/login?expired=true"); // Redirigi a una pagina di login se la sessione scade
+
         return http.build();
     }
 }
