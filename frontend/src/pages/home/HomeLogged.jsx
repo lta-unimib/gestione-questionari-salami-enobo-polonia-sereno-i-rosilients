@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
-
+import CreaQuestionario from '../questionari/CreaQuestionario';
+import CreaDomanda from '../domande/CreaDomanda';
 
 const Home = () => {
 
