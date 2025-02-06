@@ -2,7 +2,7 @@ import React from 'react';
 import Login from '../pages/home/Login';
 import Registration from '../pages/home/Registrazione';
 
-const Modal = ({ toggleModal, formType }) => {
+const Modal = ({ toggleModal, formType, setUser }) => {
   return (
     <div
       className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
@@ -21,7 +21,7 @@ const Modal = ({ toggleModal, formType }) => {
 
         {/* Mostra il form corrispondente */}
         {formType === 'login' ? (
-          <Login toggleModal={toggleModal} />
+          <Login toggleModal={toggleModal} setUser={setUser} />
         ) : (
           <Registration toggleModal={toggleModal} />
         )}

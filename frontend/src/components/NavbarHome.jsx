@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Modal from './Modal'; // Importa il Modal
 
-const NavbarHome = () => {
+const NavbarHome = ({ setUser }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formType, setFormType] = useState(null); // Stato per il tipo di form
 
@@ -27,7 +27,7 @@ const NavbarHome = () => {
       </div>
 
       {/* Modal Popup */}
-      {isModalOpen && <Modal toggleModal={toggleModal} formType={formType} />}
+      {isModalOpen && <Modal toggleModal={toggleModal} formType={formType} setUser={setUser} />}
     </nav>
   );
 };

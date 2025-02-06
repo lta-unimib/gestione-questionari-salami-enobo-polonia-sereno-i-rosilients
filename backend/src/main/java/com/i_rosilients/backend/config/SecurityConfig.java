@@ -20,20 +20,17 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // Disabilita CSRF (solo per test; in produzione valuta soluzioni alternative)
-                .csrf(csrf -> csrf.disable())
+                .csrf(csrf -> csrf.disable()) // Disabilita CSRF (per test; in produzione valuta alternative)
+                .cors(cors -> {}) // Abilita CORS, configura in un altro bean se necessario
                 .authorizeHttpRequests(authorize -> authorize
-                        // Permetti le richieste pre-flight OPTIONS a tutti gli endpoint
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        // Consenti l'accesso agli endpoint pubblici
-                        .requestMatchers("/utente/**", "/api/**").permitAll()
-                        // Richiedi autenticazione per tutte le altre richieste
-                        .anyRequest().authenticated()
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // Permetti richieste pre-flight CORS
+                        .requestMatchers("/utente/login", "/utente/registrazione").permitAll() // Login e registrazione pubblici
+                        .requestMatchers("/utente/info").authenticated() // Proteggi endpoint info
+                        .anyRequest().authenticated() // Proteggi tutte le altre richieste
                 )
-                .sessionManagement()
-                    .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // Crea una sessione se necessaria
-                    .maximumSessions(1) // Limita il numero di sessioni per utente
-                    .expiredUrl("/login?expired=true"); // Redirigi a una pagina di login se la sessione scade
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // Usa sessione se necessario
+                );
 
         return http.build();
     }

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const Login = ({ toggleModal }) => {
+const Login = ({ toggleModal, setUser }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -19,6 +19,7 @@ const Login = ({ toggleModal }) => {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: "include", 
         body: JSON.stringify(user),
       });
   
@@ -32,6 +33,12 @@ const Login = ({ toggleModal }) => {
       if (response.ok) {
         alert(data.message); // Login riuscito
         console.log('Login avvenuto con successo:', data); // Qui stampiamo il messaggio del backend
+
+        if (setUser) {
+          setUser(user); // 🔥 Aggiorna lo stato globale
+        } else {
+          console.error("Errore: setUser non è definito!");
+        }
         toggleModal(); // Chiude il modal dopo il login
       }
     } catch (error) {

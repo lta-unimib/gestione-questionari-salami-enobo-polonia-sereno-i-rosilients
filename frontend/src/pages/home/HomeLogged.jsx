@@ -44,16 +44,6 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Gestione questionario compilato per utente non registrato */}
-      <div className='ml-16 mt-72'>
-        <h2 className="text-2xl">
-          Gestione questionari compilati
-        </h2>
-        <div className="flex mt-5">
-          <input type="text" placeholder='Inserisci un codice univoco' className='bg-personal-purple bg-opacity-20 text-black px-16' />
-          <button className='bg-personal-purple text-white py-2 px-4'>Invia</button>
-        </div>
-      </div>
     </div>
   );
 };
