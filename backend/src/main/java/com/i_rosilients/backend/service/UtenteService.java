@@ -33,20 +33,18 @@ public class UtenteService implements IUtenteService{
 
     @Override
     public void registraUtente(UtenteDTO dto) {
-
-        Utente nuovoUtente = new Utente(dto.getEmail(), passwordEncoder.encode(dto.getPassword()), dto.isAttivo());
-        if(utenteRepository.findByEmail(nuovoUtente.getEmail()).isPresent()) {
+        if (utenteRepository.findByEmail(dto.getEmail()).isPresent()) {
             throw new IllegalArgumentException("Utente già registrato");
         }
-        
+        Utente nuovoUtente = new Utente(dto.getEmail(), passwordEncoder.encode(dto.getPassword()), false);
         utenteRepository.save(nuovoUtente);
-        
-        // String codiceVerifica = generaCodiceVerifica();
 
-        // tokenVerifica.put(nuovoUtente.getEmail(), codiceVerifica);
+        // Generazione codice OTP
+        String codiceVerifica = generaCodiceVerifica();
 
-        // emailService.inviaEmail(email, "Conferma registrazione", "Il tuo codice di verifica è: " + codiceVerifica);
-         
+        tokenVerifica.put(nuovoUtente.getEmail(), codiceVerifica);
+
+        emailService.inviaEmail(nuovoUtente.getEmail(), "Conferma la tua registrazione", "Il tuo codice di verifica è: " + codiceVerifica);
     }
 
     @Override
@@ -72,7 +70,6 @@ public class UtenteService implements IUtenteService{
         }
     }
 
-    /* 
     @Override
     public void verificaEmail(String email, String tokenInserito) {
         String tokenSalvato = tokenVerifica.get(email);
@@ -92,6 +89,5 @@ public class UtenteService implements IUtenteService{
             throw new IllegalArgumentException("Codice di verifica non valido");
         }      
     }
-        */
      
 }

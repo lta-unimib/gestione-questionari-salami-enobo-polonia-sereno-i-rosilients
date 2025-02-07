@@ -37,48 +37,38 @@ public class UtenteController {
         }
     }
 
-    /* 
-    @PostMapping("/login")
-    public void loginUtente(@RequestBody UtenteDTO dto) {
-        try {
-            utenteService.registraUtente(dto);
-        } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+    @PostMapping(path = "/login")
+    public ResponseEntity<?> loginUtente(@RequestBody UtenteDTO dto, HttpServletRequest request) {
+        LoginMessage msg = utenteService.loginUtente(dto);
+
+        // Se il login è riuscito
+        if (msg.getStatus()) {
+            // Memorizza l'utente nella sessione
+            request.getSession().setAttribute("utente", dto); // Memorizza i dettagli dell'utente nella sessione
+            return ResponseEntity.ok(msg);  // Restituisce OK con il messaggio
+        } else {
+            // Se il login è fallito (errore nelle credenziali)
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(msg);  // Restituisce Unauthorized con il messaggio di errore
         }
-    } */
-@PostMapping(path = "/login")
-public ResponseEntity<?> loginUtente(@RequestBody UtenteDTO dto, HttpServletRequest request) {
-    LoginMessage msg = utenteService.loginUtente(dto);
-    
-    // Se il login è riuscito
-    if (msg.getStatus()) {
-        // Memorizza l'utente nella sessione
-        request.getSession().setAttribute("utente", dto); // Memorizza i dettagli dell'utente nella sessione
-        return ResponseEntity.ok(msg);  // Restituisce OK con il messaggio
-    } else {
-        // Se il login è fallito (errore nelle credenziali)
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(msg);  // Restituisce Unauthorized con il messaggio di errore
     }
-}
 
-@PostMapping(path = "/logout")
-public ResponseEntity<?> logout(HttpServletRequest request) {
-    // Invalidare la sessione
-    request.getSession().invalidate();
-    return ResponseEntity.ok("Logout effettuato con successo.");
-}
-
-@GetMapping("/info")
-public ResponseEntity<?> getUserInfo(HttpServletRequest request) {
-    UtenteDTO utente = (UtenteDTO) request.getSession().getAttribute("utente");
-    if (utente != null) {
-        return ResponseEntity.ok(utente);
+    @PostMapping(path = "/logout")
+    public ResponseEntity<?> logout(HttpServletRequest request) {
+        // Invalidare la sessione
+        request.getSession().invalidate();
+        return ResponseEntity.ok("Logout effettuato con successo.");
     }
-    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Utente non autenticato");
-}
+
+    @GetMapping("/info")
+    public ResponseEntity<?> getUserInfo(HttpServletRequest request) {
+        UtenteDTO utente = (UtenteDTO) request.getSession().getAttribute("utente");
+        if (utente != null) {
+            return ResponseEntity.ok(utente);
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Utente non autenticato");
+    }
 
 
-    /*
     @PostMapping("/verifica-email")
     public String verificaEmail(@RequestParam String email, @RequestParam String tokenInserito) {
         try {
@@ -88,5 +78,4 @@ public ResponseEntity<?> getUserInfo(HttpServletRequest request) {
         }    
         return "Email verificata con successo";
     }
-        */
 }

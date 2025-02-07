@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 // import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @AllArgsConstructor
@@ -21,7 +22,9 @@ public class Utente {
     @Getter
     @Column(length = 255, nullable = false)
     private String password;
-    
+
+    @Getter
+    @Setter
     @Column(nullable = false)
     private boolean attivo = false;
 }
