@@ -31,11 +31,11 @@ const Login = ({ toggleModal, setUser }) => {
       }
   
       if (response.ok) {
-        alert(data.message); // Login riuscito
-        console.log('Login avvenuto con successo:', data); // Qui stampiamo il messaggio del backend
+        alert(data.message); 
+        console.log('Login avvenuto con successo:', data); 
 
         if (setUser) {
-          setUser(user); // 🔥 Aggiorna lo stato globale
+          setUser(user); 
         } else {
           console.error("Errore: setUser non è definito!");
         }

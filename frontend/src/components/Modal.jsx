@@ -1,7 +1,7 @@
 import React from 'react';
 import Login from '../pages/home/Login';
 import Registration from '../pages/home/Registrazione';
-import Verify from '../pages/home/Verify'; // 🔥 Importa Verify
+import Verify from '../pages/home/Verify'; 
 
 const Modal = ({ toggleModal, formType, setUser }) => {
   return (

@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import Modal from './Modal'; // Importa il Modal
+import Modal from './Modal'; 
 
 const NavbarHome = ({ setUser }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [formType, setFormType] = useState(null); // Stato per il tipo di form
+  const [formType, setFormType] = useState(null); 
 
   const toggleModal = (type = null) => {
-    setIsModalOpen(type !== null); // Se type è null, chiudi il modal
+    setIsModalOpen(type !== null); 
     setFormType(type);
   };
 

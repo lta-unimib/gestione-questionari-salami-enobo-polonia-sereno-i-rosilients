@@ -28,7 +28,7 @@ const Registration = ({ toggleModal }) => {
           throw new Error('Errore nella registrazione');
         }
         alert('Registrazione riuscita! Controlla la tua email per la verifica.');
-        toggleModal('verify'); // 🔥 Passa a Verify invece di chiudere il modal
+        toggleModal('verify'); 
       })
       .catch((error) => {
         console.error('Errore:', error);
