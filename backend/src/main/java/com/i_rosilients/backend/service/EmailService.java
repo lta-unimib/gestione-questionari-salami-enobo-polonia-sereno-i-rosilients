@@ -1,21 +1,25 @@
 package com.i_rosilients.backend.service;
 
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 @Service
 public class EmailService {
-
     @Autowired
-    private JavaMailSender mailSender;
+    private JavaMailSender emailSender;
 
-    public void inviaEmail(String destinatario, String oggetto, String testo) {
-        SimpleMailMessage email = new SimpleMailMessage();
-        email.setTo(destinatario);
-        email.setSubject(oggetto);
-        email.setText(testo);
-        mailSender.send(email);
-    }   
+    public void sendVerificationEmail(String to, String subject, String text) throws MessagingException {
+        MimeMessage message = emailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true);
+
+        helper.setTo(to);
+        helper.setSubject(subject);
+        helper.setText(text, true);
+
+        emailSender.send(message);
+    }
 }

@@ -25,7 +25,7 @@ public class DomandaService implements IDomandaService {
     public void creaDomanda(DomandaDTO domandaDTO) {
 
         Optional<Utente> utenteOpt =
-                utenteRepository.findById(domandaDTO.getEmailUtente()); // controlla che esista l'utente
+                utenteRepository.findByEmail(domandaDTO.getEmailUtente()); // controlla che esista l'utente
 
         if (utenteOpt.isEmpty()) {
             throw new RuntimeException("Utente non trovato con email: " + domandaDTO.getEmailUtente());
@@ -37,7 +37,7 @@ public class DomandaService implements IDomandaService {
     }
 
     public List<DomandaDTO> getDomandeByUtente(String emailUtente) {
-        Optional<Utente> utenteOpt = utenteRepository.findById(emailUtente);
+        Optional<Utente> utenteOpt = utenteRepository.findByEmail(emailUtente);
         if (utenteOpt.isEmpty()) {
             throw new RuntimeException("Utente non trovato con email: " + emailUtente);
         }
