@@ -4,6 +4,7 @@ import com.i_rosilients.backend.dto.UtenteDTO;
 import com.i_rosilients.backend.dto.VerificaUtenteDTO;
 import com.i_rosilients.backend.model.Utente;
 import com.i_rosilients.backend.response.LoginResponse;
+import com.i_rosilients.backend.response.VerificationResponse;
 import com.i_rosilients.backend.service.AuthenticationService;
 import com.i_rosilients.backend.service.JwtService;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +27,6 @@ public class AuthenticationController {
         Utente registeredUtente = authenticationService.signup(registerUtenteDto);
         return ResponseEntity.ok(registeredUtente);
     }
-
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> authenticate(@RequestBody UtenteDTO loginUtenteDto){
         Utente authenticatedUtente = authenticationService.authenticate(loginUtenteDto);
@@ -39,11 +39,14 @@ public class AuthenticationController {
     public ResponseEntity<?> verifyUtente(@RequestBody VerificaUtenteDTO verifyUtenteDto) {
         try {
             authenticationService.verifyUtente(verifyUtenteDto);
-            return ResponseEntity.ok("Account verified successfully");
+            VerificationResponse responseMessage = new VerificationResponse("Account verified successfully");
+            return ResponseEntity.ok(responseMessage);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            VerificationResponse responseMessage = new VerificationResponse(e.getMessage());
+            return ResponseEntity.badRequest().body(responseMessage);
         }
     }
+    
 
     @PostMapping("/resend")
     public ResponseEntity<?> resendVerificationCode(@RequestParam String email) {

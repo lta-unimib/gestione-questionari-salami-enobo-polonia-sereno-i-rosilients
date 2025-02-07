@@ -10,6 +10,10 @@ const NavbarHome = ({ setUser }) => {
     setFormType(type);
   };
 
+  const handleRegistrationSuccess = () => {
+    toggleModal("verify"); 
+  };
+
   return (
     <nav>
       <div className="flex justify-between my-5">
@@ -27,7 +31,14 @@ const NavbarHome = ({ setUser }) => {
       </div>
 
       {/* Modal Popup */}
-      {isModalOpen && <Modal toggleModal={toggleModal} formType={formType} setUser={setUser} />}
+      {isModalOpen && (
+        <Modal
+          toggleModal={toggleModal}
+          formType={formType}
+          setUser={setUser}
+          onRegistrationSuccess={handleRegistrationSuccess} 
+        />
+      )}
     </nav>
   );
 };
