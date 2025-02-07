@@ -7,6 +7,11 @@ import com.i_rosilients.backend.response.LoginResponse;
 import com.i_rosilients.backend.response.VerificationResponse;
 import com.i_rosilients.backend.service.AuthenticationService;
 import com.i_rosilients.backend.service.JwtService;
+
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,6 +39,12 @@ public class AuthenticationController {
         LoginResponse loginResponse = new LoginResponse(jwtToken, jwtService.getExpirationTime());
         return ResponseEntity.ok(loginResponse);
     }
+
+    @PostMapping("/auth/logout")
+    public ResponseEntity<String> logout() {
+        return ResponseEntity.ok("Logout effettuato con successo");
+    }
+
 
     @PostMapping("/verify")
     public ResponseEntity<?> verifyUtente(@RequestBody VerificaUtenteDTO verifyUtenteDto) {

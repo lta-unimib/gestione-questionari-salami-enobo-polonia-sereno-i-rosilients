@@ -6,7 +6,7 @@ const Login = ({ toggleModal, setUser }) => {
 
   const handleLogin = async (event) => {
     event.preventDefault(); // Evita il comportamento di submit del form
-    console.log('Login in corso...');  // Testa se la funzione viene chiamata
+    console.log('Login in corso...');
   
     const user = {
       email,
@@ -19,7 +19,7 @@ const Login = ({ toggleModal, setUser }) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        credentials: "include", 
+        credentials: 'include', // Se usi cookie, altrimenti rimuovi
         body: JSON.stringify(user),
       });
   
@@ -32,10 +32,13 @@ const Login = ({ toggleModal, setUser }) => {
   
       if (response.ok) {
         alert(data.message); 
-        console.log('Login avvenuto con successo:', data); 
-
+        console.log('Login avvenuto con successo:', data);
+  
+        // Salva il token nel sessionStorage
+        sessionStorage.setItem('jwt', data.jwtToken); // Salvataggio token
+  
         if (setUser) {
-          setUser(user); 
+          setUser(user);
         } else {
           console.error("Errore: setUser non è definito!");
         }
