@@ -27,6 +27,7 @@ const Registration = ({ toggleModal }) => {
       body: JSON.stringify(newUser),
     })
       .then((response) => {
+        console.log(response);
         if (!response.ok) {
           throw new Error('Errore nella registrazione');
         }

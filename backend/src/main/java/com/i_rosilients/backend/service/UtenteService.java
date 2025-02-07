@@ -42,6 +42,8 @@ public class UtenteService implements IUtenteService{
         // Generazione codice OTP
         String codiceVerifica = generaCodiceVerifica();
 
+        System.out.print(codiceVerifica);
+
         tokenVerifica.put(nuovoUtente.getEmail(), codiceVerifica);
 
         emailService.inviaEmail(nuovoUtente.getEmail(), "Conferma la tua registrazione", "Il tuo codice di verifica è: " + codiceVerifica);

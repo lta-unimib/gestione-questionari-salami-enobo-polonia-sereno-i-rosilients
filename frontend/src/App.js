@@ -30,7 +30,7 @@ const App = () => {
           {user && (
             <>
               <Route path="/questionari" element={<Questionari />} />
-              <Route path="/domande" element={<Domande />} /> 
+              <Route path="/domande" element={<Domande />} />
             </>
           )}
         </Routes>
