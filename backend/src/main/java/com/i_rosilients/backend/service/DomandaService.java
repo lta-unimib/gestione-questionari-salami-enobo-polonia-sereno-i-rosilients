@@ -31,6 +31,7 @@ public class DomandaService implements IDomandaService {
             throw new RuntimeException("Utente non trovato con email: " + domandaDTO.getEmailUtente());
         }
 
+
         Domanda domanda = new Domanda(utenteOpt.get(), domandaDTO.getArgomento(), domandaDTO.getTestoDomanda());
 
         domandaRepository.save(domanda);

@@ -15,16 +15,18 @@ const CreaDomanda = ({ user }) => {
   
     const domandaData = {
       argomento: argomentoDomanda,
-      testoDomanda,
+      testoDomanda: testoDomanda,
       emailUtente: user.email
     };
   
     console.log(domandaData);
+    const token = sessionStorage.getItem("jwt"); 
   
     fetch('http://localhost:8080/api/domande/creaDomanda', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
       },
       body: JSON.stringify(domandaData),
     })
@@ -47,6 +49,7 @@ const CreaDomanda = ({ user }) => {
         });
       })
       .then(data => {
+        console.log('Dati ricevuti dal server:', data);  // Log della risposta
         if (data) {
           alert('Domanda creata con successo!');
           setArgomentoDomanda(''); // Resetta l'argomento della domanda

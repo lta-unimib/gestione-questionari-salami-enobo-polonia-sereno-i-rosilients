@@ -35,7 +35,7 @@ const Login = ({ toggleModal, setUser }) => {
         console.log('Login avvenuto con successo:', data);
   
         // Salva il token nel sessionStorage
-        sessionStorage.setItem('jwt', data.jwtToken); // Salvataggio token
+        sessionStorage.setItem('jwt', data.token); // Salvataggio token
   
         if (setUser) {
           setUser(user);

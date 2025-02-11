@@ -15,13 +15,13 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig{
+public class SecurityConfig {
     private final AuthenticationProvider authenticationProvider;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     public SecurityConfig(
             JwtAuthenticationFilter jwtAuthenticationFilter,
-            AuthenticationProvider authenticationProvider //ignore Bean warning we will get to that
+            AuthenticationProvider authenticationProvider
     ) {
         this.authenticationProvider = authenticationProvider;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
@@ -30,29 +30,42 @@ public class SecurityConfig{
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Abilita CORS
+                .csrf(csrf -> csrf.disable()) // Disabilita CSRF se non necessario
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/auth/**").permitAll() // Permetti endpoint di autenticazione
+                        .requestMatchers("/api/domande/creaDomanda").authenticated() // Permetti endpoint di api
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authenticationProvider(authenticationProvider)
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.setStatus(401);
+                            response.getWriter().write("Unauthorized");
+                        })
+                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            response.setStatus(403);
+                            response.getWriter().write("Forbidden");
+                        })
+                );
 
         return http.build();
     }
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:3000"));  // URL del tuo frontend React
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
+        configuration.setAllowedOrigins(List.of("http://localhost:3000"));  // URL del frontend React
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Assicurati di includere OPTIONS
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
-    
+        configuration.setAllowCredentials(true); // Permetti credenziali (importante se usi JWT)
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
-    
 }
