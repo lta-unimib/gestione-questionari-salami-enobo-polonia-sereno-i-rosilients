@@ -1,8 +1,14 @@
 import React from 'react'
 
-const Questionari = () => {
+import CreaQuestionario from './CreaQuestionario'
+
+const Questionari = ({ setUser }) => {
   return (
-    <div>Questionari</div>
+    <div>
+      <h1 className="text-4xl">Questionari</h1>
+      <CreaQuestionario setUser={setUser}/>
+
+    </div>
   )
 }
 

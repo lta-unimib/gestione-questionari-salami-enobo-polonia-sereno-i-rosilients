@@ -7,8 +7,6 @@ const Home = () => {
 
   return (
     <div className="p-4">
-      {/* <CreaQuestionario />
-      <CreaDomanda /> */}
       <div className="flex justify-center mt-16">
         <div className="flex flex-col gap-4">
           <h1 className='text-5xl font-semibold text-personal-purple text-center'>WebSurveys</h1>
@@ -17,7 +15,7 @@ const Home = () => {
       </div>
 
       {/* Gestione questionario compilato per utente non registrato */}
-      <div className='ml-16 mt-72'>
+      <div className='mx-16 mt-72'>
         <h2 className="text-2xl">
           Gestione questionari compilati
         </h2>

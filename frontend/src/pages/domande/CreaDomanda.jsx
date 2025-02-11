@@ -1,22 +1,22 @@
 import React, { useState } from 'react';
 
-const CreaDomanda = () => {
+const CreaDomanda = ({ user }) => {
   const [isCreatingDomanda, setIsCreatingDomanda] = useState(false);
   const [argomentoDomanda, setArgomentoDomanda] = useState('');
   const [testoDomanda, setTestoDomanda] = useState('');
-  const [utenteEmail, setUtenteEmail] = useState('');
 
 
   const handleCreaDomanda = () => {
-    if (!argomentoDomanda || !testoDomanda || !utenteEmail) {
+    if (!argomentoDomanda || !testoDomanda) {
       alert('Compila tutti i campi.');
       return;
     }
+
   
     const domandaData = {
       argomento: argomentoDomanda,
       testoDomanda,
-      emailUtente: utenteEmail
+      emailUtente: user.email
     };
   
     console.log(domandaData);
@@ -51,7 +51,6 @@ const CreaDomanda = () => {
           alert('Domanda creata con successo!');
           setArgomentoDomanda(''); // Resetta l'argomento della domanda
           setTestoDomanda(''); // Resetta il testo della domanda
-          setUtenteEmail(''); // Resetta l'email
           setIsCreatingDomanda(false); // Nascondi il modulo dopo la creazione
         }
       })
@@ -89,13 +88,6 @@ const CreaDomanda = () => {
           onChange={(e) => setTestoDomanda(e.target.value)}
           className="w-full p-3 mb-4 border border-gray-300 rounded-lg"
         />
-          <input
-            type="email"
-            placeholder="Email Utente"
-            value={utenteEmail}
-            onChange={(e) => setUtenteEmail(e.target.value)}
-            className="w-full p-3 mb-4 border border-gray-300 rounded-lg"
-          />
           <button
             onClick={handleCreaDomanda}
             className="bg-blue-500 text-white py-2 px-6 rounded-lg hover:bg-blue-700 transition"

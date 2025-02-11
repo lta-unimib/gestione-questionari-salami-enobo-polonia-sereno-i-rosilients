@@ -19,6 +19,7 @@ const App = () => {
       .then(response => response.ok ? response.json() : Promise.reject())
       .then(data => setUser(data))
       .catch(() => setUser(null));
+
   }, []);
 
   return (
@@ -29,8 +30,8 @@ const App = () => {
           <Route path="/" element={user ? <HomeLogged/> : <Home />} />
           {user && (
             <>
-              <Route path="/questionari" element={<Questionari />} />
-              <Route path="/domande" element={<Domande />} /> 
+              <Route path="/questionari" element={<Questionari user={user} />} />
+              <Route path="/domande" element={<Domande user={user} />} /> 
             </>
           )}
         </Routes>
