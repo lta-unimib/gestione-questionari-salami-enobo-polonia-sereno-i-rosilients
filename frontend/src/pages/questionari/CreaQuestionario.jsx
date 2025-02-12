@@ -49,7 +49,7 @@ const CreaQuestionario = ({ user, setNewQuestionario }) => {
           alert('Questionario creato con successo!');
           setQuestionarioNome(''); // Resetta il nome
           setIsCreatingQuestionario(false); // Nascondi il modulo dopo la creazione
-          setNewQuestionario(true);
+          //setNewQuestionario(true);
         }
       })
       .catch(error => {

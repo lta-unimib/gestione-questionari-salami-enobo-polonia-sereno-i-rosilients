@@ -11,4 +11,5 @@ import com.i_rosilients.backend.model.Utente;
 @Repository
 public interface DomandaRepository extends JpaRepository<Domanda, Integer> {
     List<Domanda> findByUtente(Utente utente);
+    List<Domanda> findAll();
 }

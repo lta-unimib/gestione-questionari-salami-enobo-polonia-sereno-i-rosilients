@@ -54,7 +54,7 @@ const CreaDomanda = ({ user, setNewDomanda }) => {
           setArgomentoDomanda(''); // Resetta l'argomento della domanda
           setTestoDomanda(''); // Resetta il testo della domanda
           setIsCreatingDomanda(false); // Nascondi il modulo dopo la creazione
-          setNewDomanda(true);
+          //setNewDomanda(true);
         }
       })
       .catch(error => {

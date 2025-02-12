@@ -11,11 +11,10 @@ const Domande = ({ user }) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [domandaIdToDelete, setDomandaIdToDelete] = useState(null);
   const [domandaToEdit, setDomandaToEdit] = useState(null);
-  
-  // Stato per i campi di input nella modifica
   const [editedArgomento, setEditedArgomento] = useState('');
   const [editedTesto, setEditedTesto] = useState('');
-
+  const [filtro, setFiltro] = useState("tue");
+  const [searchTerm, setSearchTerm] = useState("");
   const token = sessionStorage.getItem("jwt");
 
   ReactModal.setAppElement('#root');
@@ -23,7 +22,11 @@ const Domande = ({ user }) => {
   useEffect(() => {
     if (!user || !user.email) return;
 
-    fetch(`http://localhost:8080/api/domande/${user.email}`, {
+    let url = filtro === "tue" 
+      ? `http://localhost:8080/api/domande/${user.email}`
+      : `http://localhost:8080/api/domande/tutteLeDomande`;
+
+    fetch(url, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -37,6 +40,7 @@ const Domande = ({ user }) => {
       return response.json();
     })
     .then(data => {
+      console.log("Risposta dal backend:", data);
       setDomande(data);
     })
     .catch(error => {
@@ -44,7 +48,7 @@ const Domande = ({ user }) => {
     });
 
     setUpdateDomande(false);
-  }, [user, updateDomande]);
+  }, [user, filtro, updateDomande]);
 
   const openDeleteModal = (id) => {
     setDomandaIdToDelete(id);
@@ -120,23 +124,49 @@ const Domande = ({ user }) => {
     });
   };
 
+  const domandeFiltrate = domande.filter(d => 
+    d.argomento.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+
   return (
     <div className='mx-24'>
       <h1 className="text-4xl">Domande</h1>
-      <h2 className="mt-8 text-2xl">Le tue domande</h2>
-      {domande.length > 0 ? (
+      <div className="flex justify-between items-center mt-4">
+        <select value={filtro} onChange={(e) => setFiltro(e.target.value)} className="border rounded-lg p-2">
+          <option value="tue">Le tue domande</option>
+          <option value="tutte">Tutte le domande</option>
+        </select>
+        <input 
+          type="text"
+          placeholder="Cerca per argomento..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="border rounded-lg p-2"
+        />
+      </div>
+      {domandeFiltrate.length > 0 ? (
         <ul>
-          {domande.map(d => (
+          {domandeFiltrate.map(d => (
             <li key={d.idDomanda} className="border p-4 my-2 rounded-lg shadow-lg flex justify-between">
-              <div className="header">
-                <h3 className="text-xl font-semibold my-auto">{d.argomento}</h3>
+              <div>
+                <h3 className="text-xl font-semibold">{d.argomento}</h3>
                 <p>{d.testoDomanda}</p>
+                {filtro === "tutte" && <p className="text-gray-500 text-sm">Autore: {d.emailUtente}</p>}
               </div>
               <div className="edit flex gap-4">
-                <button className="text-gray-500 hover:text-gray-700" onClick={() => openEditModal(d)}>
+                <button 
+                  className={`text-gray-500 hover:text-gray-700 ${d.emailUtente !== user.email ? "opacity-50 cursor-not-allowed" : ""}`} 
+                  onClick={() => openEditModal(d)}
+                  disabled={d.emailUtente !== user.email}
+                >
                   <PencilSquareIcon className="h-6 w-6" />
                 </button>
-                <button className="text-red-600 hover:text-red-800" onClick={() => openDeleteModal(d.idDomanda)}>
+                <button 
+                  className={`text-red-600 hover:text-red-800 ${d.emailUtente !== user.email ? "opacity-50 cursor-not-allowed" : ""}`} 
+                  onClick={() => openDeleteModal(d.idDomanda)}
+                  disabled={d.emailUtente !== user.email}
+                >
                   <TrashIcon className="h-6 w-6" />
                 </button>
               </div>

@@ -9,5 +9,6 @@ public interface IDomandaService {
     void deleteDomanda(int idDomanda);
     void updateDomanda(int idDomanda, DomandaDTO domandaDTO);
     List<DomandaDTO> getDomandeByUtente(String emailUtente);
+    List<DomandaDTO> getTutteLeDomande();//per ottenere tutte le domande
 
 }

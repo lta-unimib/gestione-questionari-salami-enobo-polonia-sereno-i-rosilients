@@ -49,4 +49,11 @@ public class DomandaController {
     public List<DomandaDTO> getDomandeByUtente(@PathVariable String emailUtente) {
         return domandaService.getDomandeByUtente(emailUtente);
     }
+
+
+    //per ottenere tutte le domande
+    @GetMapping("/tutteLeDomande")
+    public List<DomandaDTO> getTutteLeDomande() {
+        return domandaService.getTutteLeDomande();
+    }
 }

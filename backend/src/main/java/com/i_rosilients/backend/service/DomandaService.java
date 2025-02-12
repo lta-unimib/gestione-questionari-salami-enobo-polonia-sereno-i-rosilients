@@ -59,6 +59,22 @@ public class DomandaService implements IDomandaService {
     }
 
 
+    //per ottenere tutte le domande
+    @Override
+    public List<DomandaDTO> getTutteLeDomande() {
+        List<Domanda> domande = domandaRepository.findAll();  // Recupera tutte le domande dal DB
+        return domande.stream()
+            .map(domanda -> new DomandaDTO(
+                domanda.getIdDomanda(),
+                domanda.getArgomento(),
+                domanda.getTestoDomanda(),
+                domanda.getUtente().getEmail()
+                ))
+            .collect(Collectors.toList());
+    }
+
+
+
     public List<DomandaDTO> getDomandeByUtente(String emailUtente) {
         Optional<Utente> utenteOpt = utenteRepository.findByEmail(emailUtente);
         if (utenteOpt.isEmpty()) {
