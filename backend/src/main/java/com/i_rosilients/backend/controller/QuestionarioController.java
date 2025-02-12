@@ -36,6 +36,15 @@ public class QuestionarioController {
         }
     }
 
+    @PutMapping("/updateQuestionario/{idQuestionario}")
+    public void updateQuestionario(@PathVariable int idQuestionario, @RequestBody QuestionarioDTO questionarioDTO) {
+        try {
+            questionarioService.updateQuestionario(idQuestionario, questionarioDTO);
+        } catch (RuntimeException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+    }
+
     @GetMapping("/{emailUtente}")
     public List<QuestionarioDTO> getQuestionariByUtente(@PathVariable String emailUtente) {
         return questionarioService.getQuestionariByUtente(emailUtente);

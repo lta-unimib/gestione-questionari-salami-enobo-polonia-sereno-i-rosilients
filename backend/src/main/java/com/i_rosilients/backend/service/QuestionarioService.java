@@ -45,6 +45,17 @@ public class QuestionarioService implements IQuestionarioService {
         }
     }
 
+    public void updateQuestionario(int idQuestionario, QuestionarioDTO questionarioDTO) {
+        Optional<Questionario> questionarioOpt = questionarioRepository.findById(idQuestionario);
+        if (questionarioOpt.isPresent()) {
+            Questionario questionario = questionarioOpt.get();
+            questionario.setNome(questionarioDTO.getNome());
+            questionarioRepository.save(questionario);
+        } else {
+            throw new RuntimeException("Questionario non trovato con ID: " + idQuestionario);
+        }
+    }
+
 
     public List<QuestionarioDTO> getQuestionariByUtente(String emailUtente) {
         System.out.println("Ricevuta richiesta per email: " + emailUtente);

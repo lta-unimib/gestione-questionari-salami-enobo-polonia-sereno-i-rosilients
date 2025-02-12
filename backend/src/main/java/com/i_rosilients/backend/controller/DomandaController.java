@@ -36,6 +36,15 @@ public class DomandaController {
         }
     }
 
+    @PutMapping("/updateDomanda/{idDomanda}")
+    public void updateDomanda(@PathVariable int idDomanda, @RequestBody DomandaDTO domandaDTO) {
+        try {
+            domandaService.updateDomanda(idDomanda, domandaDTO);
+        } catch (RuntimeException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+    }
+
     @GetMapping("/{emailUtente}")
     public List<DomandaDTO> getDomandeByUtente(@PathVariable String emailUtente) {
         return domandaService.getDomandeByUtente(emailUtente);
