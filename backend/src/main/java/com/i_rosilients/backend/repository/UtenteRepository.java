@@ -7,7 +7,7 @@ import com.i_rosilients.backend.model.Utente;
 import java.util.Optional;
 
 @Repository
-public interface UtenteRepository extends CrudRepository<Utente, Long> {
+public interface UtenteRepository extends CrudRepository<Utente, String> {
     Optional<Utente> findByEmail(String email);
     Optional<Utente> findByVerificationCode(String verificationCode);
 }
