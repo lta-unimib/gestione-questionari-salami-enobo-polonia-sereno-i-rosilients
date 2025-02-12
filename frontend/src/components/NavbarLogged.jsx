@@ -1,7 +1,9 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { Link, Navigate} from 'react-router-dom';
 
 const NavbarLogged = ({ setUser }) => {
+    const navigate = useNavigate();
 
     const handleLogout = async () => {
         try {
@@ -20,6 +22,7 @@ const NavbarLogged = ({ setUser }) => {
           console.error('Errore durante il logout:', error);
           alert('Si è verificato un errore durante il logout.');
         }
+        navigate('/');
       };
       
       
