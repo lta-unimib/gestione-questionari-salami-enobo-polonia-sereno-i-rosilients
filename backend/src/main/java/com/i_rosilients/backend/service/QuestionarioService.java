@@ -35,24 +35,33 @@ public class QuestionarioService implements IQuestionarioService {
 
         questionarioRepository.save(questionario);     
     }
+    
+    public void deleteQuestionario(int idQuestionario) {
+        Optional<Questionario> questionarioOpt = questionarioRepository.findById(idQuestionario);
+        if (questionarioOpt.isPresent()) {
+            questionarioRepository.delete(questionarioOpt.get());
+        } else {
+            throw new RuntimeException("Questionario non trovato con id: " + idQuestionario);
+        }
+    }
+
 
     public List<QuestionarioDTO> getQuestionariByUtente(String emailUtente) {
+        System.out.println("Ricevuta richiesta per email: " + emailUtente);
+
         Optional<Utente> utenteOpt = utenteRepository.findByEmail(emailUtente);
         if (utenteOpt.isEmpty()) {
             throw new RuntimeException("Utente non trovato con email: " + emailUtente);
         }
 
-        return questionarioRepository.findByUtente(utenteOpt.get()).stream()
-                .map(questionario -> {
-
-                    QuestionarioDTO dto = new QuestionarioDTO(
-                        questionario.getIdQuestionario(),
-                        questionario.getNome(),
-                        questionario.getUtente().getEmail()
-                    );
-
-                    return dto;
-                })
+        List<Questionario> questionari = questionarioRepository.findByUtente(utenteOpt.get());
+        System.out.println("Questionari trovati: " + questionari.size());  // Aggiungi questo log
+        return questionari.stream()
+                .map(questionario -> new QuestionarioDTO(
+                    questionario.getIdQuestionario(),
+                    questionario.getNome(),
+                    questionario.getUtente().getEmail()
+                ))
                 .collect(Collectors.toList());
     }
 }

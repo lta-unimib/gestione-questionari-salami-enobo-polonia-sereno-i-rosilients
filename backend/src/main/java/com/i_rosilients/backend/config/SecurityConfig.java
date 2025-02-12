@@ -34,7 +34,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable()) // Disabilita CSRF se non necessario
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/auth/**").permitAll() // Permetti endpoint di autenticazione
-                        .requestMatchers("/api/domande/creaDomanda").authenticated() // Permetti endpoint di api
+                        .requestMatchers("/api/").authenticated() // Permetti endpoint di api
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

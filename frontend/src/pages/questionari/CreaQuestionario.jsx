@@ -1,27 +1,28 @@
 import React, { useState, useEffect } from 'react';
 
-const CreaQuestionario = () => {
+const CreaQuestionario = ({ user, setNewQuestionario }) => {
   const [isCreatingQuestionario, setIsCreatingQuestionario] = useState(false);
   const [questionarioNome, setQuestionarioNome] = useState('');
-  const [utenteEmail, setUtenteEmail] = useState('');
 
   const handleCreaQuestionario = () => {
-    if (!questionarioNome || !utenteEmail) {
+    if (!questionarioNome) {
       alert('Compila tutti i campi.');
       return;
     }
   
     const questionarioData = {
       nome: questionarioNome,
-      emailUtente: utenteEmail
+      emailUtente: user.email
     };
   
     console.log(questionarioData);
+    const token = sessionStorage.getItem("jwt"); 
   
     fetch('http://localhost:8080/api/questionari/creaQuestionario', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
       },
       body: JSON.stringify(questionarioData),
     })
@@ -47,8 +48,8 @@ const CreaQuestionario = () => {
         if (data) {
           alert('Questionario creato con successo!');
           setQuestionarioNome(''); // Resetta il nome
-          setUtenteEmail(''); // Resetta l'email
           setIsCreatingQuestionario(false); // Nascondi il modulo dopo la creazione
+          setNewQuestionario(true);
         }
       })
       .catch(error => {
@@ -58,7 +59,7 @@ const CreaQuestionario = () => {
   };
 
   return (
-    <div className="p-4">
+    <div className="mt-8">
       {/* Sezione per la Creazione del Questionario */}
       {!isCreatingQuestionario ? (
         <div>
@@ -76,13 +77,6 @@ const CreaQuestionario = () => {
             placeholder="Nome del Questionario"
             value={questionarioNome}
             onChange={(e) => setQuestionarioNome(e.target.value)}
-            className="w-full p-3 mb-4 border border-gray-300 rounded-lg"
-          />
-          <input
-            type="email"
-            placeholder="Email Utente"
-            value={utenteEmail}
-            onChange={(e) => setUtenteEmail(e.target.value)}
             className="w-full p-3 mb-4 border border-gray-300 rounded-lg"
           />
           <button

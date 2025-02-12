@@ -36,6 +36,15 @@ public class DomandaService implements IDomandaService {
 
         domandaRepository.save(domanda);
     }
+    
+    public void deleteDomanda(int idDomanda) {
+        Optional<Domanda> domandaOpt = domandaRepository.findById(idDomanda);
+        if (domandaOpt.isPresent()) {
+            domandaRepository.delete(domandaOpt.get());
+        } else {
+            throw new RuntimeException("Domanda non trovata con id: " + idDomanda);
+        }
+    }
 
     public List<DomandaDTO> getDomandeByUtente(String emailUtente) {
         Optional<Utente> utenteOpt = utenteRepository.findByEmail(emailUtente);

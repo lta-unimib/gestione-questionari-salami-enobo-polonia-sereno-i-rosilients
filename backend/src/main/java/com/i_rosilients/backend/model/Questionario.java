@@ -7,11 +7,13 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Column;
 import jakarta.persistence.ManyToOne;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import jakarta.persistence.JoinColumn;
 
 
 @Getter
 @Entity
+@NoArgsConstructor
 public class Questionario {
 
     @Id

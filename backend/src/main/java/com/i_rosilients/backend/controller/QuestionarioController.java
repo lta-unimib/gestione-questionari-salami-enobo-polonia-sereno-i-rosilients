@@ -27,6 +27,15 @@ public class QuestionarioController {
         }
     }
 
+    @DeleteMapping("/deleteQuestionario/{idQuestionario}")
+    public void deleteQuestionario(@PathVariable int idQuestionario) {
+        try {
+            questionarioService.deleteQuestionario(idQuestionario);
+        } catch (RuntimeException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+    }
+
     @GetMapping("/{emailUtente}")
     public List<QuestionarioDTO> getQuestionariByUtente(@PathVariable String emailUtente) {
         return questionarioService.getQuestionariByUtente(emailUtente);

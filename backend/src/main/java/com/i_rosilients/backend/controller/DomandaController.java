@@ -27,6 +27,15 @@ public class DomandaController {
         }
     }
 
+    @DeleteMapping("/deleteDomanda/{idDomanda}")
+    public void deleteQuestionario(@PathVariable int idDomanda) {
+        try {
+            domandaService.deleteDomanda(idDomanda);
+        } catch (RuntimeException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+    }
+
     @GetMapping("/{emailUtente}")
     public List<DomandaDTO> getDomandeByUtente(@PathVariable String emailUtente) {
         return domandaService.getDomandeByUtente(emailUtente);

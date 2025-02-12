@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const CreaDomanda = ({ user }) => {
+const CreaDomanda = ({ user, setNewDomanda }) => {
   const [isCreatingDomanda, setIsCreatingDomanda] = useState(false);
   const [argomentoDomanda, setArgomentoDomanda] = useState('');
   const [testoDomanda, setTestoDomanda] = useState('');
@@ -49,12 +49,12 @@ const CreaDomanda = ({ user }) => {
         });
       })
       .then(data => {
-        console.log('Dati ricevuti dal server:', data);  // Log della risposta
         if (data) {
           alert('Domanda creata con successo!');
           setArgomentoDomanda(''); // Resetta l'argomento della domanda
           setTestoDomanda(''); // Resetta il testo della domanda
           setIsCreatingDomanda(false); // Nascondi il modulo dopo la creazione
+          setNewDomanda(true);
         }
       })
       .catch(error => {
@@ -64,8 +64,8 @@ const CreaDomanda = ({ user }) => {
   };
 
   return (
-    <div className="p-4">
-      {/* Sezione per la Creazione del Questionario */}
+    <div className="mt-8">
+      {/* Sezione per la Creazione della Domanda */}
       {!isCreatingDomanda ? (
         <div>
           <button

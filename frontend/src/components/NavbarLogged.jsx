@@ -31,19 +31,19 @@ const NavbarLogged = ({ setUser }) => {
                 <Link className='text-3xl text-personal-purple font-semibold' to='/'>WebSurveys</Link>
             </div>
             <div className="flex justify-end mr-16">
-                <div>
+                <div className='my-auto'>
                     <Link className='ml-72 hover:italic mr-10' to='/domande'>Domande</Link>
                 </div>
-                <div>
+                <div className='my-auto'>
                     <Link className=' hover:italic mr-10' to='/questionari'>Questionari</Link>
                 </div>
                 <div className="ml-64">
-                <button 
-            onClick={handleLogout} 
-            className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-700"
-          >
-            Logout
-          </button>
+                  <button 
+                    onClick={handleLogout} 
+                    className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-700"
+                  >
+                    Logout
+                  </button>
                 </div>
             </div>
         </div>
