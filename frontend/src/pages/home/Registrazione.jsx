@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const Registration = ({ toggleModal }) => {
+const Registration = ({ toggleModal, onRegistrationSuccess}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -18,17 +18,13 @@ const Registration = ({ toggleModal }) => {
 
     fetch('http://localhost:8080/auth/signup', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newUser),
     })
       .then((response) => {
-        if (!response.ok) {
-          throw new Error('Errore nella registrazione');
-        }
+        if (!response.ok) throw new Error('Errore nella registrazione');
         alert('Registrazione riuscita! Controlla la tua email per la verifica.');
-        toggleModal('verify'); 
+        onRegistrationSuccess(email); // Passa l'email al modal di verifica
       })
       .catch((error) => {
         console.error('Errore:', error);
