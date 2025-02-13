@@ -1,10 +1,12 @@
 package com.i_rosilients.backend.controller;
 
 import com.i_rosilients.backend.dto.QuestionarioDTO;
+import com.i_rosilients.backend.model.Questionario;
 import com.i_rosilients.backend.service.IQuestionarioService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -48,5 +50,11 @@ public class QuestionarioController {
     @GetMapping("/{emailUtente}")
     public List<QuestionarioDTO> getQuestionariByUtente(@PathVariable String emailUtente) {
         return questionarioService.getQuestionariByUtente(emailUtente);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<Questionario>> searchQuestionari(@RequestParam String nome) {
+    List<Questionario> questionari = questionarioService.searchQuestionariWithQuestions(nome);
+    return ResponseEntity.ok(questionari);
     }
 }

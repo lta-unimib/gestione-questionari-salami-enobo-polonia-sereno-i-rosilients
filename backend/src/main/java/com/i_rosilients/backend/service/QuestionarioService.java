@@ -25,7 +25,7 @@ public class QuestionarioService implements IQuestionarioService {
     public void creaQuestionario(QuestionarioDTO questionarioDTO) {
 
         Optional<Utente> utenteOpt = 
-        utenteRepository.findByEmail(questionarioDTO.getEmailUtente()); // controlla che esista l'utente
+        utenteRepository.findByEmail(questionarioDTO.getEmailUtente());
 
         if (utenteOpt.isEmpty()) {
             throw new RuntimeException("Utente non trovato con email: " + questionarioDTO.getEmailUtente());
@@ -74,5 +74,9 @@ public class QuestionarioService implements IQuestionarioService {
                     questionario.getUtente().getEmail()
                 ))
                 .collect(Collectors.toList());
+    }
+    
+    public List<Questionario> searchQuestionariWithQuestions(String nome) {
+        return questionarioRepository.findQuestionariWithQuestions(nome);
     }
 }
