@@ -12,8 +12,10 @@ import com.i_rosilients.backend.model.Utente;
 
 @Repository
 public interface QuestionarioRepository extends JpaRepository<Questionario, Integer> {
+
     List<Questionario> findByUtente(Utente utente);
-    
-    @Query("SELECT q FROM Questionario q WHERE q.nome LIKE %:nome% AND EXISTS (SELECT dq FROM DomandaQuestionario dq WHERE dq.questionario.id = q.id)")
+
+    // Aggiunta di una JOIN con Utente per includere l'utente che ha creato il questionario
+    @Query("SELECT q FROM Questionario q JOIN FETCH q.utente WHERE q.nome LIKE %:nome% AND EXISTS (SELECT dq FROM DomandaQuestionario dq WHERE dq.questionario.id = q.id)")
     List<Questionario> findQuestionariWithQuestions(@Param("nome") String nome);
 }

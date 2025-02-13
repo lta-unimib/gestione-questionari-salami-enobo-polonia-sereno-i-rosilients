@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const Home = () => {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
 
   const handleSearch = async () => {
-    if (!query.trim()) return; // Evita chiamate vuote
+    if (!query.trim()) return;
 
     try {
       const response = await fetch(`http://localhost:8080/api/questionari/search?nome=${query}`, {
@@ -53,23 +54,12 @@ const Home = () => {
           <ul>
             {results.map((questionario) => (
               <li key={questionario.idQuestionario} className="bg-gray-100 p-4 rounded-lg mb-2">
-                {questionario.nome}
+                <Link to={`/questionari/${questionario.idQuestionario}`} className="text-blue-500 hover:underline">
+                  {questionario.nome}
+                </Link>
               </li>
             ))}
           </ul>
-        </div>
-      </div>
-
-      {/* Gestione questionario compilato */}
-      <div className='mx-16 mt-72'>
-        <h2 className="text-2xl ">Gestione questionari compilati</h2>
-        <div className="flex mt-5">
-          <input
-            type="text"
-            placeholder='Inserisci un codice univoco'
-            className='bg-personal-purple bg-opacity-20 text-black px-16'
-          />
-          <button className='bg-personal-purple text-white py-2 px-4'>Invia</button>
         </div>
       </div>
     </div>
