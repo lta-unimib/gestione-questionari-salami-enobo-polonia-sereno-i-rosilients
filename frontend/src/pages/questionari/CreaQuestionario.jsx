@@ -1,8 +1,19 @@
 import React, { useState, useEffect } from 'react';
 
-const CreaQuestionario = ({ user, setNewQuestionario }) => {
+const CreaQuestionario = ({ user, setUpdateQuestionari }) => {
   const [isCreatingQuestionario, setIsCreatingQuestionario] = useState(false);
   const [questionarioNome, setQuestionarioNome] = useState('');
+  const [domande, setDomande] = useState([]);
+  const [domandeSelezionate, setDomandeSelezionate] = useState([]);
+
+  useEffect(() => {
+    fetch(`http://localhost:8080/api/domande/${user.email}`, {
+      headers: { Authorization: `Bearer ${sessionStorage.getItem("jwt")}` },
+    })
+      .then((res) => res.json())
+      .then((data) => setDomande(data))
+      .catch((error) => console.error("Errore nel recupero domande:", error));
+  }, []);
 
   const handleCreaQuestionario = () => {
     if (!questionarioNome) {
@@ -12,17 +23,17 @@ const CreaQuestionario = ({ user, setNewQuestionario }) => {
   
     const questionarioData = {
       nome: questionarioNome,
-      emailUtente: user.email
+      emailUtente: user.email,
+      idDomande: domandeSelezionate.map(Number), // Converti in numeri
     };
   
     console.log(questionarioData);
-    const token = sessionStorage.getItem("jwt"); 
   
     fetch('http://localhost:8080/api/questionari/creaQuestionario', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
+        'Authorization': `Bearer ${sessionStorage.getItem("jwt")}`,
       },
       body: JSON.stringify(questionarioData),
     })
@@ -48,8 +59,9 @@ const CreaQuestionario = ({ user, setNewQuestionario }) => {
         if (data) {
           alert('Questionario creato con successo!');
           setQuestionarioNome(''); // Resetta il nome
+          setDomandeSelezionate([]);
           setIsCreatingQuestionario(false); // Nascondi il modulo dopo la creazione
-          //setNewQuestionario(true);
+          setUpdateQuestionari(true);
         }
       })
       .catch(error => {
@@ -79,6 +91,21 @@ const CreaQuestionario = ({ user, setNewQuestionario }) => {
             onChange={(e) => setQuestionarioNome(e.target.value)}
             className="w-full p-3 mb-4 border border-gray-300 rounded-lg"
           />
+          <select
+            multiple
+            value={domandeSelezionate}
+            onChange={(e) => {
+              const selectedValues = Array.from(e.target.selectedOptions, (option) => option.value);
+              setDomandeSelezionate(selectedValues);
+            }}
+            className="w-full p-2 border"
+          >
+            {domande.map((d) => (
+              <option key={d.idDomanda} value={d.idDomanda}>
+                {d.testoDomanda}
+              </option>
+            ))}
+          </select>
           <button
             onClick={handleCreaQuestionario}
             className="bg-blue-500 text-white py-2 px-6 rounded-lg hover:bg-blue-700 transition"
