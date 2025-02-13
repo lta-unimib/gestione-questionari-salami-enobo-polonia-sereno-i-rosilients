@@ -5,7 +5,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.JoinColumn;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,6 +34,13 @@ public class Domanda {
 
     @Column(nullable = false)
     private String testoDomanda;
+
+    
+    @OneToMany(mappedBy = "domanda", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Opzione> opzioni = new ArrayList<>();
+    
+    @OneToMany(mappedBy = "domanda", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<DomandaQuestionario> domandeQuestionario = new ArrayList<>();
 
     public Domanda(Utente utente, String argomento, String testoDomanda) {
         this.utente = utente;

@@ -8,14 +8,11 @@ import com.i_rosilients.backend.response.VerificationResponse;
 import com.i_rosilients.backend.service.AuthenticationService;
 import com.i_rosilients.backend.service.JwtService;
 
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.servlet.http.HttpServletRequest;
 
 @RequestMapping("/auth")
 @RestController
