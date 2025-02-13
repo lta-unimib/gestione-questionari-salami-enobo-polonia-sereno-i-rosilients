@@ -2,14 +2,17 @@ package com.i_rosilients.backend.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -38,6 +41,12 @@ public class Utente implements UserDetails{
     private LocalDateTime verificationCodeExpiresAt;
     private boolean enabled;
 
+    @OneToMany(mappedBy = "utente", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Domanda> domande = new ArrayList<>();
+
+    @OneToMany(mappedBy = "utente", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Questionario> questionari = new ArrayList<>();
+
 
      //constructor for creating an unverified user
      public Utente(String email, String password) {
@@ -48,8 +57,6 @@ public class Utente implements UserDetails{
  public Collection<? extends GrantedAuthority> getAuthorities() {
      return List.of();
   }
-
- //TODO: add proper boolean checks
 
  public boolean isAccountNonExpired() {
      return true;

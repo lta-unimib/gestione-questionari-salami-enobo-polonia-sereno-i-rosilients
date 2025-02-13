@@ -5,6 +5,8 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
+
 import java.security.Key;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -85,4 +87,25 @@ public class JwtService {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
+
+    // Nuovo metodo per estrarre il token dalla richiesta HTTP
+    public String extractToken(HttpServletRequest request) {
+        // Ottieni l'header "Authorization"
+        String authorizationHeader = request.getHeader("Authorization");
+
+        // Verifica che l'header sia presente e che inizi con "Bearer "
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            // Estrai il token rimuovendo il prefisso "Bearer "
+            return authorizationHeader.substring(7);  // Rimuove "Bearer "
+        }
+
+        // Se il token non è presente o è mal formattato, restituisci null
+        return null;
+    }
+
+    public boolean isTokenValid(String token, String username) {
+        final String tokenUsername = extractUsername(token);
+        return (tokenUsername.equals(username)) && !isTokenExpired(token);
+    }
+
 }

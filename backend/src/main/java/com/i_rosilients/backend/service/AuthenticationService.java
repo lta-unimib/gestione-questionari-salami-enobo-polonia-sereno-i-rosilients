@@ -1,6 +1,9 @@
 package com.i_rosilients.backend.service;
 
 import jakarta.mail.MessagingException;
+import jakarta.transaction.Transactional;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -8,16 +11,30 @@ import org.springframework.stereotype.Service;
 
 import com.i_rosilients.backend.dto.UtenteDTO;
 import com.i_rosilients.backend.dto.VerificaUtenteDTO;
+import com.i_rosilients.backend.model.Domanda;
+import com.i_rosilients.backend.model.Questionario;
 import com.i_rosilients.backend.model.Utente;
+import com.i_rosilients.backend.repository.DomandaRepository;
+import com.i_rosilients.backend.repository.QuestionarioRepository;
 import com.i_rosilients.backend.repository.UtenteRepository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
 @Service
 public class AuthenticationService {
+    
+    @Autowired
     private final UtenteRepository userRepository;
+
+    @Autowired
+    private DomandaRepository domandaRepository;
+
+    @Autowired
+    private QuestionarioRepository questionarioRepository;
+    
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final EmailService emailService;
@@ -124,4 +141,37 @@ public class AuthenticationService {
         int code = random.nextInt(900000) + 100000;
         return String.valueOf(code);
     }
+
+    // Metodo per trovare un utente tramite email
+    public Utente findUtenteByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Utente non trovato con email: " + email));  
+    }
+
+    @Transactional
+    public void removeUserFromRelatedEntities(Utente utente) {
+    // Rimuovi l'utente dalle domande
+    List<Domanda> domande = domandaRepository.findByUtente(utente);
+    for (Domanda domanda : domande) {
+        domanda.setUtente(null);  // Rimuove il riferimento all'utente
+        domandaRepository.save(domanda);  // Salva la modifica
+    }
+
+    // Rimuovi l'utente dai questionari
+    List<Questionario> questionari = questionarioRepository.findByUtente(utente);
+    for (Questionario questionario : questionari) {
+        questionario.setUtente(null);  // Rimuove il riferimento all'utente
+        questionarioRepository.save(questionario);  // Salva la modifica
+    }
+}
+
+    // Metodo per eliminare l'utente
+    public void deleteProfile(Utente utente) {
+        // Elimina prima le domande e i questionari associati
+        domandaRepository.deleteAllByUtente(utente);
+        questionarioRepository.deleteAllByUtente(utente);
+
+        // Ora elimina l'utente
+        userRepository.delete(utente);
+    }
+
 }
