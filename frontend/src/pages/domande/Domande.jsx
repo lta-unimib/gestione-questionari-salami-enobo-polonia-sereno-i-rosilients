@@ -13,12 +13,14 @@ const Domande = ({ user }) => {
   const [domandaToEdit, setDomandaToEdit] = useState(null);
   const [editedArgomento, setEditedArgomento] = useState('');
   const [editedTesto, setEditedTesto] = useState('');
+  const [editedOpzioni, setEditedOpzioni] = useState([]);
   const [filtro, setFiltro] = useState("tue");
   const [searchTerm, setSearchTerm] = useState("");
   const token = sessionStorage.getItem("jwt");
 
   ReactModal.setAppElement('#root');
 
+  // get di tutte le domande personali e globali
   useEffect(() => {
     if (!user || !user.email) return;
 
@@ -50,6 +52,7 @@ const Domande = ({ user }) => {
     setUpdateDomande(false);
   }, [user, filtro, updateDomande]);
 
+  // gesione Popup per eliminare la domanda
   const openDeleteModal = (id) => {
     setDomandaIdToDelete(id);
     setIsDeleteModalOpen(true);
@@ -60,6 +63,7 @@ const Domande = ({ user }) => {
     setDomandaIdToDelete(null);
   };
 
+  // richiesta per eliminare la domanda
   const handleDeleteDomanda = () => {
     fetch(`http://localhost:8080/api/domande/deleteDomanda/${domandaIdToDelete}`, {
       method: 'DELETE',
@@ -81,10 +85,12 @@ const Domande = ({ user }) => {
     });
   };
 
+  // gestione Popup per modificare la domanda
   const openEditModal = (domanda) => {
     setDomandaToEdit(domanda);
     setEditedArgomento(domanda.argomento);
     setEditedTesto(domanda.testoDomanda);
+    setEditedOpzioni(domanda.opzioni || [""]); // Se non ci sono opzioni, inizializza con un array vuoto
     setIsEditModalOpen(true);
   };
 
@@ -93,21 +99,39 @@ const Domande = ({ user }) => {
     setDomandaToEdit(null);
   };
 
+  const handleAddOpzione = () => {
+    setEditedOpzioni([...editedOpzioni, ""]); // Aggiungi una nuova opzione vuota
+  };
+  
+  const handleRemoveOpzione = (index) => {
+    const newOpzioni = [...editedOpzioni];
+    newOpzioni.splice(index, 1); // Rimuovi l'opzione alla posizione specificata
+    setEditedOpzioni(newOpzioni);
+  };
+
   const handleEditDomanda = () => {
     if (!domandaToEdit) return;
-
+  
+    // Crea l'oggetto di aggiornamento della domanda
     const updatedDomanda = {
       argomento: editedArgomento,
       testoDomanda: editedTesto,
     };
+  
+    // Se ci sono opzioni, includile nell'aggiornamento
+    if (editedOpzioni && editedOpzioni.length > 0) {
+      updatedDomanda.opzioni = editedOpzioni;
+    }
 
+    console.log(updatedDomanda);
+  
     fetch(`http://localhost:8080/api/domande/updateDomanda/${domandaToEdit.idDomanda}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
+        'Authorization': `Bearer ${token}`,
       },
-      body: JSON.stringify(updatedDomanda)
+      body: JSON.stringify(updatedDomanda),
     })
     .then(response => {
       if (!response.ok) {
@@ -128,7 +152,6 @@ const Domande = ({ user }) => {
     d.argomento.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-
   return (
     <div className='mx-24'>
       <h1 className="text-4xl">Domande</h1>
@@ -145,6 +168,7 @@ const Domande = ({ user }) => {
           className="border rounded-lg p-2"
         />
       </div>
+      
       {domandeFiltrate.length > 0 ? (
         <ul>
           {domandeFiltrate.map(d => (
@@ -152,7 +176,13 @@ const Domande = ({ user }) => {
               <div>
                 <h3 className="text-xl font-semibold">{d.argomento}</h3>
                 <p>{d.testoDomanda}</p>
-                {filtro === "tutte" && <p className="text-gray-500 text-sm">Autore: {d.emailUtente}</p>}
+                {d.opzioni && d.opzioni.length > 0 && (
+                  <ul className="mt-2">
+                    {d.opzioni.map((opzione, index) => (
+                      <li key={index} className="ml-4 list-disc">{opzione}</li>
+                    ))}
+                  </ul>
+                )}
               </div>
               <div className="edit flex gap-4">
                 <button 
@@ -162,6 +192,7 @@ const Domande = ({ user }) => {
                 >
                   <PencilSquareIcon className="h-6 w-6" />
                 </button>
+                
                 <button 
                   className={`text-red-600 hover:text-red-800 ${d.emailUtente !== user.email ? "opacity-50 cursor-not-allowed" : ""}`} 
                   onClick={() => openDeleteModal(d.idDomanda)}
@@ -176,6 +207,7 @@ const Domande = ({ user }) => {
       ) : (
         <p className="text-gray-500 mt-4">Nessuna domanda trovata.</p>
       )}
+
       <CreaDomanda user={user} setUpdateDomande={setUpdateDomande} />
 
       {/* Modal per eliminazione domanda */}
@@ -226,12 +258,47 @@ const Domande = ({ user }) => {
             onChange={(e) => setEditedTesto(e.target.value)} 
             placeholder="Testo della domanda"
           />
+
+          {/* Se ci sono opzioni, permetti di modificarle */}
+          {editedOpzioni.length > 0 && (
+            <div>
+              <h3 className="mt-4 text-lg font-semibold">Opzioni</h3>
+              {editedOpzioni.map((opzione, index) => (
+                <div key={index} className="flex items-center gap-2">
+                  <input 
+                    type="text"
+                    className="border rounded-lg p-2 w-full my-2"
+                    value={opzione}
+                    onChange={(e) => {
+                      const newOpzioni = [...editedOpzioni];
+                      newOpzioni[index] = e.target.value;
+                      setEditedOpzioni(newOpzioni);
+                    }}
+                    placeholder={`Opzione ${index + 1}`}
+                  />
+                  <button 
+                    onClick={() => handleRemoveOpzione(index)}
+                    className="text-red-500 hover:text-red-700"
+                  >
+                    ❌
+                  </button>
+                </div>
+              ))}
+              <button 
+                onClick={handleAddOpzione} 
+                className="bg-green-500 text-white px-4 py-2 rounded-lg mt-4"
+              >
+                Aggiungi opzione
+              </button>
+            </div>
+          )}
+          <br />
           <button onClick={handleEditDomanda} className="bg-blue-500 text-white px-6 py-2 rounded-lg mr-4 hover:bg-blue-600 transition">Salva</button>
           <button onClick={closeEditModal} className="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition">Annulla</button>
         </div>
       </ReactModal>
     </div>
   );
-}
+};
 
 export default Domande;

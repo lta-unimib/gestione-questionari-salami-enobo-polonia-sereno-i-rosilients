@@ -2,8 +2,10 @@ package com.i_rosilients.backend.service;
 
 import com.i_rosilients.backend.dto.DomandaDTO;
 import com.i_rosilients.backend.model.Domanda;
+import com.i_rosilients.backend.model.Opzione;
 import com.i_rosilients.backend.model.Utente;
 import com.i_rosilients.backend.repository.DomandaRepository;
+import com.i_rosilients.backend.repository.OpzioneRepository;
 import com.i_rosilients.backend.repository.UtenteRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,9 @@ public class DomandaService implements IDomandaService {
     @Autowired
     private UtenteRepository utenteRepository;
 
+    @Autowired
+    private OpzioneRepository opzioneRepository;
+
     public void creaDomanda(DomandaDTO domandaDTO) {
 
         Optional<Utente> utenteOpt =
@@ -31,10 +36,19 @@ public class DomandaService implements IDomandaService {
             throw new RuntimeException("Utente non trovato con email: " + domandaDTO.getEmailUtente());
         }
 
-
+        // Creazione domanda
         Domanda domanda = new Domanda(utenteOpt.get(), domandaDTO.getArgomento(), domandaDTO.getTestoDomanda());
-
         domandaRepository.save(domanda);
+
+        // Salvataggio delle opzioni se presenti
+        if (domandaDTO.getOpzioni() != null && !domandaDTO.getOpzioni().isEmpty()) {
+            for (String testoOpzione : domandaDTO.getOpzioni()) {
+                Opzione opzione = new Opzione();
+                opzione.setTestoOpzione(testoOpzione);
+                opzione.setDomanda(domanda); // Colleghiamo l'opzione alla domanda
+                opzioneRepository.save(opzione);
+            }
+        }
     }
     
     public void deleteDomanda(int idDomanda) {
@@ -53,6 +67,32 @@ public class DomandaService implements IDomandaService {
             domanda.setArgomento(domandaDTO.getArgomento());
             domanda.setTestoDomanda(domandaDTO.getTestoDomanda());
             domandaRepository.save(domanda);
+    
+            // Se sono state passate delle nuove opzioni, aggiorniamo le opzioni
+            if (domandaDTO.getOpzioni() != null) {
+                // Recupera tutte le opzioni esistenti per la domanda
+                List<Opzione> opzioniEsistenti = opzioneRepository.findByDomanda(domanda);
+    
+                // Rimuovi opzioni che non sono più presenti
+                for (Opzione opzione : opzioniEsistenti) {
+                    if (!domandaDTO.getOpzioni().contains(opzione.getTestoOpzione())) {
+                        opzioneRepository.delete(opzione);
+                    }
+                }
+    
+                // Aggiungi le nuove opzioni che non esistono già
+                for (String testoOpzione : domandaDTO.getOpzioni()) {
+                    boolean opzioneEsistente = opzioniEsistenti.stream()
+                            .anyMatch(opzione -> opzione.getTestoOpzione().equals(testoOpzione));
+                    
+                    if (!opzioneEsistente) {
+                        Opzione opzione = new Opzione();
+                        opzione.setTestoOpzione(testoOpzione);
+                        opzione.setDomanda(domanda);
+                        opzioneRepository.save(opzione);
+                    }
+                }
+            }
         } else {
             throw new RuntimeException("Domanda non trovata con ID: " + idDomanda);
         }
@@ -68,8 +108,11 @@ public class DomandaService implements IDomandaService {
                 domanda.getIdDomanda(),
                 domanda.getArgomento(),
                 domanda.getTestoDomanda(),
-                domanda.getUtente().getEmail()
-                ))
+                domanda.getUtente().getEmail(),
+                opzioneRepository.findByDomanda(domanda).stream()
+                    .map(Opzione::getTestoOpzione)
+                    .collect(Collectors.toList()) // Se non ci sono opzioni, restituisce una lista vuota
+            ))
             .collect(Collectors.toList());
     }
 
@@ -82,17 +125,16 @@ public class DomandaService implements IDomandaService {
         }
 
         return domandaRepository.findByUtente(utenteOpt.get()).stream()
-                .map(domanda -> {
-
-                    DomandaDTO dto = new DomandaDTO(
-                            domanda.getIdDomanda(),
-                            domanda.getArgomento(),
-                            domanda.getTestoDomanda(),
-                            domanda.getUtente().getEmail()
-                    );
-
-                    return dto;
-                })
-                .collect(Collectors.toList());
+            .map(domanda -> new DomandaDTO(
+                domanda.getIdDomanda(),
+                domanda.getArgomento(),
+                domanda.getTestoDomanda(),
+                domanda.getUtente().getEmail(),
+                opzioneRepository.findByDomanda(domanda).stream()
+                    .map(Opzione::getTestoOpzione)
+                    .collect(Collectors.toList()) // Se non ci sono opzioni, restituisce una lista vuota
+            ))
+            .collect(Collectors.toList());
     }
+    
 }

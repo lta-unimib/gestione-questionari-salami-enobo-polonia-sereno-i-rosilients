@@ -28,7 +28,7 @@ public class DomandaController {
     }
 
     @DeleteMapping("/deleteDomanda/{idDomanda}")
-    public void deleteQuestionario(@PathVariable int idDomanda) {
+    public void deleteDomanda(@PathVariable int idDomanda) {
         try {
             domandaService.deleteDomanda(idDomanda);
         } catch (RuntimeException e) {
