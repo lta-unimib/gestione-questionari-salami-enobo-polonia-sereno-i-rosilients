@@ -86,8 +86,6 @@ public class AuthenticationService {
             }
             if (user.getVerificationCode().equals(input.getVerificationCode())) {
                 user.setEnabled(true);
-                user.setVerificationCode(null);
-                user.setVerificationCodeExpiresAt(null);
                 userRepository.save(user);
             } else {
                 throw new RuntimeException("Invalid verification code");

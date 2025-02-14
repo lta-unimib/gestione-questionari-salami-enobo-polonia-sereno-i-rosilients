@@ -106,6 +106,7 @@ public class AuthenticationController {
     @PostMapping("/verify")
     public ResponseEntity<?> verifyUtente(@RequestBody VerificaUtenteDTO verifyUtenteDto) {
         try {
+            authenticationService.verifyUtente(verifyUtenteDto);
             VerificationResponse responseMessage = new VerificationResponse("Account verified successfully");
             return ResponseEntity.ok(responseMessage);
         } catch (RuntimeException e) {
