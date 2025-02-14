@@ -44,7 +44,7 @@ const CreaDomanda = ({ user, setUpdateDomande }) => {
     }
 
     console.log(domandaData);
-    const token = sessionStorage.getItem("jwt");
+    const token = localStorage.getItem("jwt");
 
     fetch('http://localhost:8080/api/domande/creaDomanda', {
       method: 'POST',

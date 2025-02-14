@@ -16,7 +16,7 @@ const Domande = ({ user }) => {
   const [editedOpzioni, setEditedOpzioni] = useState([]);
   const [filtro, setFiltro] = useState("tue");
   const [searchTerm, setSearchTerm] = useState("");
-  const token = sessionStorage.getItem("jwt");
+  const token = localStorage.getItem("jwt");
 
   ReactModal.setAppElement('#root');
 

@@ -8,7 +8,7 @@ const CreaQuestionario = ({ user, setUpdateQuestionari }) => {
 
   useEffect(() => {
     fetch(`http://localhost:8080/api/domande/${user.email}`, {
-      headers: { Authorization: `Bearer ${sessionStorage.getItem("jwt")}` },
+      headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
     })
       .then((res) => res.json())
       .then((data) => setDomande(data))
@@ -33,7 +33,7 @@ const CreaQuestionario = ({ user, setUpdateQuestionari }) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${sessionStorage.getItem("jwt")}`,
+        'Authorization': `Bearer ${localStorage.getItem("jwt")}`,
       },
       body: JSON.stringify(questionarioData),
     })

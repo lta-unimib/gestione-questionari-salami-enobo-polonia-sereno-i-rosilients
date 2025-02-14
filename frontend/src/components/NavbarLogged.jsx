@@ -16,8 +16,9 @@ const NavbarLogged = ({ setUser }) => {
                 method: 'POST',
                 credentials: 'include',
             });
-
-            sessionStorage.removeItem('jwt');
+            localStorage.removeItem('jwt');
+            // Rimuovi il cookie del refresh token
+            document.cookie = 'refreshToken=; path=/auth/refresh; max-age=0; Secure; HttpOnly';   
             setUser(null);
             navigate('/');
         } catch (error) {
@@ -25,6 +26,7 @@ const NavbarLogged = ({ setUser }) => {
             alert('Si è verificato un errore durante il logout.');
         }
     };
+    
 
     const handleDeleteProfile = async () => {
         const confirmDelete = window.confirm("Sei sicuro di voler eliminare il tuo profilo? Questa azione è irreversibile!");
@@ -32,7 +34,7 @@ const NavbarLogged = ({ setUser }) => {
         if (!confirmDelete) return;
 
         try {
-            const token = sessionStorage.getItem('jwt');
+            const token = localStorage.getItem('jwt');
             const response = await fetch('http://localhost:8080/auth/deleteProfile', {
                 method: 'DELETE',
                 headers: {
@@ -43,7 +45,7 @@ const NavbarLogged = ({ setUser }) => {
 
             if (response.ok) {
                 alert("Profilo eliminato con successo.");
-                sessionStorage.removeItem('jwt');
+                localStorage.removeItem('jwt');
                 setUser(null);
                 navigate('/');
             } else {

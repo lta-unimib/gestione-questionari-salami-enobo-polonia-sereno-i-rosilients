@@ -7,7 +7,7 @@ import CreaQuestionario from './CreaQuestionario';
 const Questionari = ({ user }) => {
   const [questionari, setQuestionari] = useState([]);
   const [updateQuestionari, setUpdateQuestionari] = useState(false);
-  const token = sessionStorage.getItem('jwt');
+  const token = localStorage.getItem('jwt');
   ReactModal.setAppElement('#root');
 
   useEffect(() => {

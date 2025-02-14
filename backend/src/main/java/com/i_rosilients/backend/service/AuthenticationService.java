@@ -147,30 +147,8 @@ public class AuthenticationService {
         return userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Utente non trovato con email: " + email));  
     }
 
-    @Transactional
-    public void removeUserFromRelatedEntities(Utente utente) {
-    // Rimuovi l'utente dalle domande
-    List<Domanda> domande = domandaRepository.findByUtente(utente);
-    for (Domanda domanda : domande) {
-        domanda.setUtente(null);  // Rimuove il riferimento all'utente
-        domandaRepository.save(domanda);  // Salva la modifica
-    }
 
-    // Rimuovi l'utente dai questionari
-    List<Questionario> questionari = questionarioRepository.findByUtente(utente);
-    for (Questionario questionario : questionari) {
-        questionario.setUtente(null);  // Rimuove il riferimento all'utente
-        questionarioRepository.save(questionario);  // Salva la modifica
-    }
-}
-
-    // Metodo per eliminare l'utente
     public void deleteProfile(Utente utente) {
-        // Elimina prima le domande e i questionari associati
-        domandaRepository.deleteAllByUtente(utente);
-        questionarioRepository.deleteAllByUtente(utente);
-
-        // Ora elimina l'utente
         userRepository.delete(utente);
     }
 
