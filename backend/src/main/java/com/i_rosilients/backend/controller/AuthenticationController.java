@@ -104,20 +104,18 @@ public class AuthenticationController {
 
 
     @PostMapping("/verify")
-    public ResponseEntity<?> verifyUtente(@RequestBody VerificaUtenteDTO verifyUtenteDto) {
+    public ResponseEntity<String> verifyUtente(@RequestBody VerificaUtenteDTO verifyUtenteDto) {
         try {
             authenticationService.verifyUtente(verifyUtenteDto);
-            VerificationResponse responseMessage = new VerificationResponse("Account verified successfully");
-            return ResponseEntity.ok(responseMessage);
+            return ResponseEntity.ok("Account verified successfully");
         } catch (RuntimeException e) {
-            VerificationResponse responseMessage = new VerificationResponse(e.getMessage());
-            return ResponseEntity.badRequest().body(responseMessage);
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
     
 
     @PostMapping("/resend")
-    public ResponseEntity<?> resendVerificationCode(@RequestParam String email) {
+    public ResponseEntity<String> resendVerificationCode(@RequestParam String email) {
         try {
             authenticationService.resendVerificationCode(email);
             return ResponseEntity.ok("Verification code sent");

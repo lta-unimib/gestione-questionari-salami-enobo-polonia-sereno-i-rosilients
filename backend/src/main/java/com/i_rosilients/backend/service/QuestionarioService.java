@@ -1,7 +1,6 @@
 package com.i_rosilients.backend.service;
 
 import com.i_rosilients.backend.dto.QuestionarioDTO;
-import com.i_rosilients.backend.model.Domanda;
 import com.i_rosilients.backend.model.DomandaQuestionario;
 import com.i_rosilients.backend.model.Questionario;
 import com.i_rosilients.backend.model.Utente;
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @Service

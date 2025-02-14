@@ -54,30 +54,31 @@ public class Utente implements UserDetails{
         this.password = password;
     }
 
- public Collection<? extends GrantedAuthority> getAuthorities() {
-     return List.of();
-  }
+     public Collection<? extends GrantedAuthority> getAuthorities() {
+         return List.of();
+      }
 
- public boolean isAccountNonExpired() {
-     return true;
- }
+     @Override
+     public boolean isAccountNonExpired() { return true; }
 
- public boolean isAccountNonLocked() {
-     return true;
- }
+     @Override
+     public boolean isAccountNonLocked() {
+         return true;
+     }
 
- public boolean isCredentialsNonExpired() {
-     return true;
- }
+     @Override
+     public boolean isCredentialsNonExpired() {
+         return true;
+     }
 
- 
- public boolean isEnabled() {
-     return enabled;
- }
+     @Override
+     public boolean isEnabled() {
+         return enabled;
+     }
 
-@Override
-public String getUsername() {
-    return this.email;
-}
+    @Override
+    public String getUsername() {
+        return this.email;
+    }
 
 }
