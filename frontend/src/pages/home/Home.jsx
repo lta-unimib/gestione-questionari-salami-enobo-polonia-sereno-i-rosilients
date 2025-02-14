@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { EyeIcon } from '@heroicons/react/24/solid'; 
+import React, { useState } from 'react';
+import { EyeIcon } from '@heroicons/react/24/solid';
+import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
+  const navigate = useNavigate();
 
   const handleSearch = async () => {
     if (!query.trim()) return;
@@ -44,7 +46,7 @@ const Home = () => {
             className='bg-personal-purple bg-opacity-20 text-black py-2 px-52 rounded-lg'
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            onKeyDown={handleKeyDown} // Gestisce l'evento per Invio
+            onKeyDown={handleKeyDown}
           />
           <button
             onClick={handleSearch}
@@ -77,7 +79,7 @@ const Home = () => {
                         onClick={() => console.log(`Visualizza ${questionario.idQuestionario}`)}
                       />
                       <button
-                        onClick={() => console.log(`Compila ${questionario.idQuestionario}`)}
+                        onClick={() => navigate(`/questionari/compilaQuestionario/${questionario.idQuestionario}`)}
                         className="bg-white text-personal-purple border-2 border-personal-purple py-1 px-3 rounded-lg hover:bg-personal-purple hover:text-white transition-all"
                       >
                         Compila
@@ -90,22 +92,8 @@ const Home = () => {
           </ul>
         </div>
       </div>
-  
-      {/* Gestione questionario compilato */}
-      <div className='mx-16 mt-72'>
-        <h2 className="text-2xl ">Gestione questionari compilati</h2>
-        <div className="flex mt-5">
-          <input
-            type="text"
-            placeholder='Inserisci un codice univoco'
-            className='bg-personal-purple bg-opacity-20 text-black px-16'
-          />
-          <button className='bg-personal-purple text-white py-2 px-4'>Invia</button>
-        </div>
-      </div>
     </div>
   );
-  
 };
 
 export default Home;

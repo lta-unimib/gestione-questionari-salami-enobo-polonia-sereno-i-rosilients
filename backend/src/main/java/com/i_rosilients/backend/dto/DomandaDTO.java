@@ -23,4 +23,6 @@ public class DomandaDTO {
         this.emailUtente = emailUtente;
         this.opzioni = opzioni;
     }
+
+
 }

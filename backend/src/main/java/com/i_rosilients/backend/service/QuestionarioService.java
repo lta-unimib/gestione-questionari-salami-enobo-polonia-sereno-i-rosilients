@@ -1,8 +1,11 @@
 package com.i_rosilients.backend.service;
 
+import com.i_rosilients.backend.dto.DomandaDTO;
 import com.i_rosilients.backend.dto.QuestionarioDTO;
+import com.i_rosilients.backend.model.Domanda;
 import com.i_rosilients.backend.model.DomandaQuestionario;
 import com.i_rosilients.backend.model.Questionario;
+import com.i_rosilients.backend.model.Risposta;
 import com.i_rosilients.backend.model.Utente;
 import com.i_rosilients.backend.repository.QuestionarioRepository;
 import com.i_rosilients.backend.repository.DomandaQuestionarioRepository;
@@ -124,4 +127,30 @@ public class QuestionarioService implements IQuestionarioService {
     public List<Questionario> searchQuestionariWithQuestions(String nome) {
         return questionarioRepository.findQuestionariWithQuestions(nome);
     }
+
+public List<DomandaDTO> getDomandeByQuestionario(int idQuestionario) {
+    Optional<Questionario> questionarioOpt = questionarioRepository.findById(idQuestionario);
+    if (questionarioOpt.isEmpty()) {
+        throw new RuntimeException("Questionario non trovato con ID: " + idQuestionario);
+    }
+
+    List<DomandaDTO> domande = domandaQuestionarioRepository.findByQuestionario(questionarioOpt.get())
+            .stream()
+            .map(dq -> {
+                Domanda domanda = dq.getDomanda();
+                return new DomandaDTO(
+                    domanda.getIdDomanda(),
+                    domanda.getArgomento(),
+                    domanda.getTestoDomanda(),
+                    domanda.getUtente().getEmail(),
+                    domanda.getOpzioni().stream().map(opzione -> opzione.getTestoOpzione()).collect(Collectors.toList())
+                );
+            })
+            .collect(Collectors.toList());
+   
+
+    return domande;
+}
+
+
 }

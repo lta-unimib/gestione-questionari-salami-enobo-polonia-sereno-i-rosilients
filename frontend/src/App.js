@@ -49,7 +49,7 @@ const App = () => {
           {user && (
             <>
               <Route path="/questionari" element={<Questionari user={user} />} />
-              <Route path="/questionari/:id" element={<CompilaQuestionario user={user} />} />
+              <Route path="/questionari/compilaQuestionario/:id" element={<CompilaQuestionario user={user} />} />
               <Route path="/domande" element={<Domande user={user} />} />
             </>
           )}

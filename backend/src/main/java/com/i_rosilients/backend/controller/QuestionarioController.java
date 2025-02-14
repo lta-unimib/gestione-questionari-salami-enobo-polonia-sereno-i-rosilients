@@ -1,5 +1,6 @@
 package com.i_rosilients.backend.controller;
 
+import com.i_rosilients.backend.dto.DomandaDTO;
 import com.i_rosilients.backend.dto.QuestionarioDTO;
 import com.i_rosilients.backend.model.Questionario;
 import com.i_rosilients.backend.service.IQuestionarioService;
@@ -57,4 +58,11 @@ public class QuestionarioController {
     List<Questionario> questionari = questionarioService.searchQuestionariWithQuestions(nome);
     return ResponseEntity.ok(questionari);
     }
+
+@GetMapping("/{id}/domande")
+public ResponseEntity<List<DomandaDTO>> getDomande(@PathVariable int id) {
+    List<DomandaDTO> domande = questionarioService.getDomandeByQuestionario(id);
+    return ResponseEntity.ok(domande);
+}
+
 }
