@@ -80,7 +80,7 @@ const Home = () => {
                       />
                       <button
                         onClick={() => navigate(`/questionari/compilaQuestionario/${questionario.idQuestionario}`)}
-                        className="bg-white text-personal-purple border-2 border-personal-purple py-1 px-3 rounded-lg hover:bg-personal-purple hover:text-white transition-all"
+                        className="bg-white text-personal-purple border-2 border-personal-purple py-1 px-3 rounded-lg hover:bg-personal-purple hover:text-white transition duration-200"
                       >
                         Compila
                       </button>
@@ -90,6 +90,18 @@ const Home = () => {
               );
             })}
           </ul>
+        </div>
+      </div>
+       {/* Gestione questionario compilato */}
+       <div className='mx-16 mt-72'>
+        <h2 className="text-2xl ">Gestione questionari compilati</h2>
+        <div className="flex mt-5">
+          <input
+            type="text"
+            placeholder='Inserisci un codice univoco'
+            className='bg-personal-purple bg-opacity-20 text-black px-16'
+          />
+          <button className='bg-personal-purple text-white py-2 px-4'>Invia</button>
         </div>
       </div>
     </div>

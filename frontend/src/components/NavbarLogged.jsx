@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
+import {UserIcon} from '@heroicons/react/24/solid'
 
 const NavbarLogged = ({ setUser }) => {
     const navigate = useNavigate();
@@ -73,12 +74,12 @@ const NavbarLogged = ({ setUser }) => {
                     
                     {/* Gestione Profilo Dropdown */}
                     <div className="relative ml-64">
-                        <button 
-                            onClick={toggleDropdown} 
-                            className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700"
-                        >
-                            Gestione Profilo
-                        </button>
+                    <button 
+        onClick={toggleDropdown} 
+        className="p-2 rounded-full border-2 border-personal-purple bg-white text-personal-purple hover:bg-personal-purple hover:text-white transition duration-300"
+    >
+        <UserIcon className="h-6 w-6" />
+    </button>
 
                         {isDropdownOpen && (
                             <div className="absolute right-0 mt-2 w-48 bg-white border rounded shadow-lg">
