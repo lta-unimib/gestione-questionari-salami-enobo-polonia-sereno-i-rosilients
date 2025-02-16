@@ -12,13 +12,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: 17
-          distribution: 'zulu' 
+          distribution: 'zulu'
 
       - name: Cache SonarQube packages
         uses: actions/cache@v4
@@ -34,23 +34,49 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
-      - name: Set environment variables from .env
+      # Debug: List files in the backend directory
+      - name: List files in backend directory
+        run: |
+          ls -al backend
+
+      # Debug: Display contents of .env file
+      - name: Display .env file contents
+        run: |
+          cat backend/.env
+
+      # Debug: Check permissions for .env file
+      - name: Adjust permissions for .env file
+        run: |
+          chmod 644 backend/.env
+
+      # Debug: Display current environment variables before loading .env
+      - name: Debug current environment variables before loading .env
+        run: |
+          echo "Current DB_HOST=$DB_HOST"
+          echo "Current DB_USERNAME=$DB_USERNAME"
+          echo "Current DB_PASSWORD=$DB_PASSWORD"
+          echo "Current JWT_SECRET_KEY=$JWT_SECRET_KEY"
+          echo "Current SUPPORT_EMAIL=$SUPPORT_EMAIL"
+          echo "Current APP_PASSWORD=$APP_PASSWORD"
+
+      # Load environment variables from .env
+      - name: Load environment variables from .env
         run: |
           set -o allexport
           source backend/.env
           set +o allexport
-        shell: /usr/bin/bash -e {0}
+          echo "DB_HOST=$DB_HOST"
+          echo "DB_USERNAME=$DB_USERNAME"
+          echo "DB_PASSWORD=$DB_PASSWORD"
+          echo "JWT_SECRET_KEY=$JWT_SECRET_KEY"
+          echo "SUPPORT_EMAIL=$SUPPORT_EMAIL"
+          echo "APP_PASSWORD=$APP_PASSWORD"
 
-      - name: Set SONAR_TOKEN from secrets
-        run: echo "SONAR_TOKEN=${{ secrets.SONAR_TOKEN }}" >> $GITHUB_ENV
-
-
-      - name: Build and analyze with Maven
+      - name: Build and analyze
+        working-directory: ./backend
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          DB_HOST: ${{ env.DB_HOST }}
-          DB_PORT: ${{ env.DB_PORT }}
-          DB_NAME: ${{ env.DB_NAME }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
+          DB_HOST: ${{ env.DB_HOST }}             
           DB_USERNAME: ${{ env.DB_USERNAME }}
           DB_PASSWORD: ${{ env.DB_PASSWORD }}
           JWT_SECRET_KEY: ${{ env.JWT_SECRET_KEY }}
