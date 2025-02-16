@@ -37,7 +37,7 @@ jobs:
       - name: Load environment variables from .env
         run: |
           set -o allexport
-          source .env
+          source ./backend/src/.env
           set +o allexport
 
       - name: Debug environment variables
