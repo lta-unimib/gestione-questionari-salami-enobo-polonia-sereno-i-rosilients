@@ -6,6 +6,7 @@ const CompilaQuestionario = () => {
   const { id } = useParams(); // Ottiene l'ID del questionario dalla route
   const [questionario, setQuestionario] = useState([]);
   const [risposte, setRisposte] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false); // Stato per il caricamento
 
   useEffect(() => {
     const fetchQuestionario = async () => {
@@ -20,6 +21,7 @@ const CompilaQuestionario = () => {
         setQuestionario(data); // Imposta direttamente l'array di domande
       } catch (error) {
         console.error("Errore nel recupero del questionario:", error);
+        alert("Errore nel caricamento del questionario. Riprova più tardi.");
       }
     };
 
@@ -35,9 +37,78 @@ const CompilaQuestionario = () => {
     });
   };
 
-  const handleSubmit = () => {
-    console.log("Risposte inviate:", risposte); // Log per visualizzare le risposte al momento dell'invio
-    // Qui puoi fare una chiamata API per salvare le risposte
+  const creaNuovaCompilazione = async (idQuestionario) => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/risposte/creaCompilazione?idQuestionario=${idQuestionario}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || 'Errore nella creazione della compilazione');
+      }
+
+      return data.idCompilazione; // Restituisci l'ID della nuova compilazione
+    } catch (error) {
+      console.error('Errore nella creazione della compilazione:', error);
+      throw error;
+    }
+  };
+
+  const handleSubmit = async () => {
+    // Finestra di conferma prima dell'invio
+    const confermaInvio = window.confirm("Sei sicuro di voler inviare le risposte?");
+    if (!confermaInvio) {
+      return; // Interrompi l'invio se l'utente annulla
+    }
+
+    try {
+      setIsSubmitting(true); // Attiva l'indicatore di caricamento
+
+      // Verifica che tutte le domande siano state risposte
+      const domandeNonRisposte = questionario.filter(
+        (domanda) => !risposte.hasOwnProperty(domanda.idDomanda)
+      );
+
+      if (domandeNonRisposte.length > 0) {
+        throw new Error('Per favore, rispondi a tutte le domande prima di inviare.');
+      }
+
+      const idCompilazione = await creaNuovaCompilazione(id); // Crea una nuova compilazione
+
+      const risposteArray = Object.keys(risposte).map((idDomanda) => {
+        return {
+          idCompilazione: idCompilazione,
+          idDomanda: parseInt(idDomanda),
+          testoRisposta: risposte[idDomanda],
+        };
+      });
+
+      for (const risposta of risposteArray) {
+        const response = await fetch('http://localhost:8080/api/risposte/salvaRisposta', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(risposta),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Errore nell\'invio della risposta');
+        }
+      }
+
+      alert('Tutte le risposte inviate con successo');
+    } catch (error) {
+      console.error('Errore nell\'invio delle risposte:', error);
+      alert('Errore nell\'invio delle risposte: ' + error.message);
+    } finally {
+      setIsSubmitting(false); // Disattiva l'indicatore di caricamento
+    }
   };
 
   if (questionario.length === 0) {
@@ -48,12 +119,12 @@ const CompilaQuestionario = () => {
   return (
     <div className="p-8">
       <h1 className="text-2xl font-bold">Compila il questionario</h1>
-  
+
       <form className="mt-6 space-y-6">
         {questionario.map((domanda) => (
           <div key={domanda.idDomanda} className="p-4 border rounded-lg">
             <p className="font-semibold">{domanda.testoDomanda}</p>
-  
+
             {/* Visualizzazione immagine se presente */}
             {domanda.imagePath && (
               <div className="mt-4">
@@ -64,7 +135,7 @@ const CompilaQuestionario = () => {
                 />
               </div>
             )}
-  
+
             <div className="mt-2 space-y-2">
               {domanda.opzioni?.length > 0 ? (
                 domanda.opzioni.map((opzione, index) => (
@@ -92,13 +163,19 @@ const CompilaQuestionario = () => {
           type="button"
           onClick={handleSubmit}
           className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600"
+          disabled={isSubmitting} // Disabilita il pulsante durante l'invio
         >
-          Invia Risposte
+          {isSubmitting ? (
+            <>
+              <span className="animate-spin mr-2">&#9696;</span> Invio in corso...
+            </>
+          ) : (
+            'Invia Risposte'
+          )}
         </button>
       </form>
     </div>
   );
-  
 };
 
 export default CompilaQuestionario;

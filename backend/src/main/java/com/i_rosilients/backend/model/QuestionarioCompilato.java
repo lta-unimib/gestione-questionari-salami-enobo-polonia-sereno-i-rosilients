@@ -6,6 +6,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.JoinColumn;
+
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import lombok.Data;
 
@@ -29,5 +32,5 @@ public class QuestionarioCompilato {
     private String utenteAnonimo;
 
     @Column(nullable = false)
-    private String dataCompilazione;
+    private LocalDateTime dataCompilazione;
 }

@@ -37,6 +37,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/questionari/search").permitAll() 
                         .requestMatchers("/api/questionari/{id}/domande").permitAll() 
                         .requestMatchers("/api/domande/uploads/**").permitAll()  
+                        .requestMatchers("/api/risposte/**").permitAll()  
                         .requestMatchers("/api/**").authenticated() // Permetti endpoint di api
                         .anyRequest().authenticated()
                 )
