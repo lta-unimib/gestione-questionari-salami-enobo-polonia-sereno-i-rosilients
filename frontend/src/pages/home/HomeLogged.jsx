@@ -64,8 +64,7 @@ const HomeLogged = () => {
         <div className="w-full max-w-3xl">
           <ul>
             {results.map((questionario) => {
-              const email = questionario.utente?.email || "";
-              const nomeCreatore = email.includes("@") ? email.split("@")[0] : "Sconosciuto";
+              const nomeCreatore = questionario.emailUtente ? questionario.emailUtente.split("@")[0] : "Sconosciuto";
 
               return (
                 <li key={questionario.idQuestionario} className="bg-gray-100 p-4 rounded-lg mb-2">
