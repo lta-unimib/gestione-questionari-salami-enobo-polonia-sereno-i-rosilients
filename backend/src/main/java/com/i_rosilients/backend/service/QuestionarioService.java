@@ -2,6 +2,7 @@ package com.i_rosilients.backend.service;
 
 import com.i_rosilients.backend.dto.DomandaDTO;
 import com.i_rosilients.backend.dto.QuestionarioDTO;
+import com.i_rosilients.backend.model.Domanda;
 import com.i_rosilients.backend.model.DomandaQuestionario;
 import com.i_rosilients.backend.model.Questionario;
 import com.i_rosilients.backend.model.Risposta;
@@ -145,6 +146,8 @@ public List<DomandaDTO> getDomandeByQuestionario(int idQuestionario) {
                     domanda.getArgomento(),
                     domanda.getTestoDomanda(),
                     domanda.getUtente().getEmail(),
+                    domanda.getImmaginePath(),
+                    false,
                     domanda.getOpzioni().stream().map(opzione -> opzione.getTestoOpzione()).collect(Collectors.toList())
                 );
             })

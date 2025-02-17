@@ -19,7 +19,7 @@ class TestDomandaDTO {
         opzioni.add("opzione1");
         opzioni.add("opzione2");
         opzioni.add("opzione3");
-        this.domanda = new DomandaDTO("provaArg", "provaTxt", "prova@mail", opzioni);
+        this.domanda = new DomandaDTO("provaArg", "provaTxt", "prova@mail", "api/domande/uploads/image.png", opzioni);
     }
 
     @Test
