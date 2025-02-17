@@ -72,6 +72,19 @@ jobs:
           echo "SUPPORT_EMAIL=$SUPPORT_EMAIL"
           echo "APP_PASSWORD=$APP_PASSWORD"
 
+      # Start Docker container for MySQL
+      - name: Start MySQL Docker container
+        run: |
+          docker run -d --name sonar-mysql -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=websurveys -e MYSQL_USER=sonar -e MYSQL_PASSWORD=sonar -p 3306:3306 mysql:8.0
+          sleep 10  # Wait for MySQL to start
+
+      # Override database configuration for SonarQube analysis
+      - name: Override database configuration for SonarQube
+        run: |
+          echo "DB_HOST=localhost" >> $GITHUB_ENV
+          echo "DB_USERNAME=sonar" >> $GITHUB_ENV
+          echo "DB_PASSWORD=sonar" >> $GITHUB_ENV
+
       - name: Build and analyze
         working-directory: ./backend
         env:
@@ -83,3 +96,9 @@ jobs:
           SUPPORT_EMAIL: ${{ env.SUPPORT_EMAIL }}
           APP_PASSWORD: ${{ env.APP_PASSWORD }}
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=lta-unimib_gestione-questionari-salami-enobo-polonia-sereno-i-rosilients
+
+      # Clean up Docker container
+      - name: Stop and remove MySQL Docker container
+        run: |
+          docker stop sonar-mysql
+          docker rm sonar-mysql
