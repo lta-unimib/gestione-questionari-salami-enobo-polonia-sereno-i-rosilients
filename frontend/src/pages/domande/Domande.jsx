@@ -13,12 +13,43 @@ const Domande = ({ user }) => {
   const [domandaToEdit, setDomandaToEdit] = useState(null);
   const [editedArgomento, setEditedArgomento] = useState('');
   const [editedTesto, setEditedTesto] = useState('');
+  const [removeImage, setRemoveImage] = useState(false);
   const [editedOpzioni, setEditedOpzioni] = useState([]);
   const [filtro, setFiltro] = useState("tue");
   const [searchTerm, setSearchTerm] = useState("");
   const token = localStorage.getItem("jwt");
+  const [images, setImages] = useState({}); 
 
   ReactModal.setAppElement('#root');
+
+  const fetchImage = async (fileName) => {
+    console.log(fileName);
+    try {
+      const response = await fetch(`http://localhost:8080${fileName}`, {
+        method: 'GET',
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
+  
+      if (!response.ok) {
+        throw new Error("Errore nel caricamento dell'immagine");
+      }
+  
+      const contentType = response.headers.get("Content-Type");
+      console.log("Tipo di contenuto dell'immagine:", contentType);
+  
+      if (!contentType || !contentType.startsWith("image/")) {
+        throw new Error("Il file restituito non è un'immagine");
+      }
+  
+      const blob = await response.blob();
+      return URL.createObjectURL(blob);
+    } catch (error) {
+      console.error("Errore nel caricamento dell'immagine:", error);
+      return null;
+    }
+  };
 
   // get di tutte le domande personali e globali
   useEffect(() => {
@@ -44,6 +75,27 @@ const Domande = ({ user }) => {
     .then(data => {
       console.log("Risposta dal backend:", data);
       setDomande(data);
+      
+
+      // Carica le immagini per ogni domanda
+      
+      const loadImages = async () => {
+        const imageEntries = await Promise.all(
+          data.map(async (d) => {
+            if (d.imagePath) {
+              const imageUrl = await fetchImage(d.imagePath);
+              return [d.idDomanda, imageUrl];
+            }
+            return null;
+          })
+        );
+
+        // Filtra i valori nulli e crea l'oggetto mappa
+        const imageMap = Object.fromEntries(imageEntries.filter(Boolean));
+        setImages(imageMap);
+      };
+
+      loadImages();
     })
     .catch(error => {
       console.error('Errore:', error);
@@ -116,6 +168,7 @@ const Domande = ({ user }) => {
     const updatedDomanda = {
       argomento: editedArgomento,
       testoDomanda: editedTesto,
+      removeImage: removeImage
     };
   
     // Se ci sono opzioni, includile nell'aggiornamento
@@ -176,6 +229,9 @@ const Domande = ({ user }) => {
               <div>
                 <h3 className="text-xl font-semibold">{d.argomento}</h3>
                 <p>{d.testoDomanda}</p>
+                {d.imagePath && images[d.idDomanda] && (
+                  <img src={images[d.idDomanda]} alt="Domanda" className=" " />
+                )}
                 {d.opzioni && d.opzioni.length > 0 && (
                   <ul className="mt-2">
                     {d.opzioni.map((opzione, index) => (
@@ -259,6 +315,18 @@ const Domande = ({ user }) => {
             placeholder="Testo della domanda"
           />
 
+          {domandaToEdit?.imagePath && (
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="removeImage"
+                checked={removeImage}
+                onChange={() => setRemoveImage(!removeImage)}
+              />
+              <label htmlFor="removeImage">Rimuovi immagine</label>
+            </div>
+          )}
+          
           {/* Se ci sono opzioni, permetti di modificarle */}
           {editedOpzioni.length > 0 && (
             <div>

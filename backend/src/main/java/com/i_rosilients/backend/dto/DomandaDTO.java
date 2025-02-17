@@ -1,5 +1,6 @@
 package com.i_rosilients.backend.dto;
 
+import java.io.File;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
@@ -14,14 +15,19 @@ public class DomandaDTO {
     private String argomento;
     private String testoDomanda;
     private String emailUtente;
+    private String imagePath;
+    private boolean removeImage;
     private List<String> opzioni;
 
-    // costruttore per la fetch di tutti i questionari
-    public DomandaDTO(String argomento, String testoDomanda, String emailUtente, List<String> opzioni) {
+    public DomandaDTO(String argomento, String testoDomanda, String emailUtente, String rawImagePath, List<String> opzioni) {
         this.argomento = argomento;
         this.testoDomanda = testoDomanda;
         this.emailUtente = emailUtente;
+        this.imagePath = (rawImagePath != null && !rawImagePath.isEmpty()) 
+                     ? "/api/domande/uploads/" + new File(rawImagePath).getName() 
+                     : null;
         this.opzioni = opzioni;
+        this.removeImage = false;
     }
 
 

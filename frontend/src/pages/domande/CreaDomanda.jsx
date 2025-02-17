@@ -4,6 +4,7 @@ const CreaDomanda = ({ user, setUpdateDomande }) => {
   const [isCreatingDomanda, setIsCreatingDomanda] = useState(false);
   const [argomentoDomanda, setArgomentoDomanda] = useState('');
   const [testoDomanda, setTestoDomanda] = useState('');
+  const [immagineFile, setImmagineFile] = useState(null);
   const [opzioni, setOpzioni] = useState([]); // Inizialmente senza opzioni
 
 
@@ -25,58 +26,71 @@ const CreaDomanda = ({ user, setUpdateDomande }) => {
     setOpzioni(nuoveOpzioni);
   };
 
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImmagineFile(file); // Salva direttamente il file
+    }
+  };
+
   const handleCreaDomanda = () => {
     if (!argomentoDomanda || !testoDomanda) {
-      alert('Compila tutti i campi.');
-      return;
+        alert('Compila tutti i campi.');
+        return;
     }
 
-    // Creazione del payload per la richiesta API
-    const domandaData = {
-      argomento: argomentoDomanda,
-      testoDomanda: testoDomanda,
-      emailUtente: user.email,
-    };
-    
+    const formData = new FormData();
+    formData.append('argomento', argomentoDomanda);
+    formData.append('testoDomanda', testoDomanda);
+    formData.append('emailUtente', user.email);
+
+    if (immagineFile) {
+        formData.append('imageFile', immagineFile);
+    }
+
     // Aggiungiamo "opzioni" solo se ci sono opzioni valide
     if (opzioni.length > 0) {
-      domandaData.opzioni = opzioni.filter(opzione => opzione.trim() !== '');
+        formData.append('opzioni', JSON.stringify(opzioni));
+    }
+    for (let pair of formData.entries()) {
+      console.log(pair[0] + ':', pair[1]);
     }
 
-    console.log(domandaData);
+    // console.log(domandaData);
     const token = localStorage.getItem("jwt");
 
     fetch('http://localhost:8080/api/domande/creaDomanda', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify(domandaData),
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+        },
+        body: formData,
     })
-      .then((response) => {
+    .then((response) => {
         if (!response.ok) {
-          throw new Error('Errore nella creazione della domanda');
+            throw new Error('Errore nella creazione della domanda');
         }
-        return response.text(); // Usa .text() per evitare l'errore
-      })
-      .then((data) => {
+        return response.text();
+    })
+    .then((data) => {
         if (data) {
-          console.log("Risposta dal server:", data);
+            console.log("Risposta dal server:", data);
         }
         alert('Domanda creata con successo!');
         setArgomentoDomanda('');
         setTestoDomanda('');
-        setOpzioni(['']); // Reset delle opzioni
+        setImmagineFile(null);
+        setOpzioni([]);
         setIsCreatingDomanda(false);
-        setUpdateDomande(true);
-      })
-      .catch((error) => {
+        setUpdateDomande(true)
+    })
+    .catch((error) => {
         console.error('Errore:', error);
         alert('Si è verificato un errore durante la creazione della domanda.');
-      });
-    
-  };
+    });
+};
+
+  
 
   return (
     <div className="mt-8">
@@ -102,6 +116,12 @@ const CreaDomanda = ({ user, setUpdateDomande }) => {
             value={testoDomanda}
             onChange={(e) => setTestoDomanda(e.target.value)}
             className="w-full p-3 mb-4 border border-gray-300 rounded-lg"
+          />
+          <input 
+            type="file" 
+            accept="image/*"
+            onChange={handleImageUpload} 
+            className="w-full p-2 border border-gray-300 rounded-lg mb-4"
           />
 
           {/* Sezione Opzioni */}

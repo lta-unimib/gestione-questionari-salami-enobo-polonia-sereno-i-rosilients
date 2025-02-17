@@ -8,12 +8,24 @@ import com.i_rosilients.backend.repository.DomandaRepository;
 import com.i_rosilients.backend.repository.OpzioneRepository;
 import com.i_rosilients.backend.repository.UtenteRepository;
 
+import jakarta.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
 
 @Service
 public class DomandaService implements IDomandaService {
@@ -27,34 +39,42 @@ public class DomandaService implements IDomandaService {
     @Autowired
     private OpzioneRepository opzioneRepository;
 
-    public void creaDomanda(DomandaDTO domandaDTO) {
-
-        Optional<Utente> utenteOpt =
-                utenteRepository.findByEmail(domandaDTO.getEmailUtente()); // controlla che esista l'utente
-
+    public void creaDomanda(DomandaDTO domandaDTO) throws IOException {
+        Optional<Utente> utenteOpt = utenteRepository.findByEmail(domandaDTO.getEmailUtente());
         if (utenteOpt.isEmpty()) {
             throw new RuntimeException("Utente non trovato con email: " + domandaDTO.getEmailUtente());
         }
 
-        // Creazione domanda
-        Domanda domanda = new Domanda(utenteOpt.get(), domandaDTO.getArgomento(), domandaDTO.getTestoDomanda());
+    
+        Domanda domanda = new Domanda(utenteOpt.get(), domandaDTO.getArgomento(), domandaDTO.getTestoDomanda(), domandaDTO.getImagePath());
         domandaRepository.save(domanda);
-
-        // Salvataggio delle opzioni se presenti
+    
         if (domandaDTO.getOpzioni() != null && !domandaDTO.getOpzioni().isEmpty()) {
             for (String testoOpzione : domandaDTO.getOpzioni()) {
                 Opzione opzione = new Opzione();
                 opzione.setTestoOpzione(testoOpzione);
-                opzione.setDomanda(domanda); // Colleghiamo l'opzione alla domanda
+                opzione.setDomanda(domanda);
                 opzioneRepository.save(opzione);
             }
         }
     }
     
+    
+    @Transactional
     public void deleteDomanda(int idDomanda) {
         Optional<Domanda> domandaOpt = domandaRepository.findById(idDomanda);
         if (domandaOpt.isPresent()) {
-            domandaRepository.delete(domandaOpt.get());
+            Domanda domanda = domandaOpt.get();
+            
+            if (domanda.getImmaginePath() != null && !domanda.getImmaginePath().isEmpty()) {
+                Path imagePath = Paths.get("uploads", new File(domanda.getImmaginePath()).getName());
+                try {
+                    Files.deleteIfExists(imagePath); // Elimina il file fisico se esiste
+                } catch (IOException e) {
+                    throw new RuntimeException("Errore durante la rimozione dell'immagine", e);
+                }
+            }
+            domandaRepository.delete(domanda);
         } else {
             throw new RuntimeException("Domanda non trovata con id: " + idDomanda);
         }
@@ -66,6 +86,18 @@ public class DomandaService implements IDomandaService {
             Domanda domanda = domandaOpt.get();
             domanda.setArgomento(domandaDTO.getArgomento());
             domanda.setTestoDomanda(domandaDTO.getTestoDomanda());
+
+            // 👉 Controlliamo se l'utente ha richiesto la rimozione dell'immagine
+            if (domandaDTO.isRemoveImage() && domanda.getImmaginePath() != null) {
+                Path imagePath = Paths.get("uploads", new File(domanda.getImmaginePath()).getName());
+                try {
+                    Files.deleteIfExists(imagePath); // Elimina il file fisico
+                    domanda.setImmaginePath(null); // Rimuove il riferimento nel database
+                } catch (IOException e) {
+                    throw new RuntimeException("Errore durante la rimozione dell'immagine", e);
+                }
+            }
+        
             domandaRepository.save(domanda);
     
             // Se sono state passate delle nuove opzioni, aggiorniamo le opzioni
@@ -103,16 +135,24 @@ public class DomandaService implements IDomandaService {
     @Override
     public List<DomandaDTO> getTutteLeDomande() {
         List<Domanda> domande = domandaRepository.findAll();  // Recupera tutte le domande dal DB
+        
+        // Crea la lista di DomandaDTO
         return domande.stream()
-            .map(domanda -> new DomandaDTO(
-                domanda.getIdDomanda(),
-                domanda.getArgomento(),
-                domanda.getTestoDomanda(),
-                domanda.getUtente().getEmail(),
-                opzioneRepository.findByDomanda(domanda).stream()
-                    .map(Opzione::getTestoOpzione)
-                    .collect(Collectors.toList()) // Se non ci sono opzioni, restituisce una lista vuota
-            ))
+            .map(domanda -> {
+
+                // Creazione del DomandaDTO
+                return new DomandaDTO(
+                    domanda.getIdDomanda(),
+                    domanda.getArgomento(),
+                    domanda.getTestoDomanda(),
+                    domanda.getUtente().getEmail(),
+                    domanda.getImmaginePath(),  // Immagine convertita in file
+                    false,
+                    opzioneRepository.findByDomanda(domanda).stream()
+                        .map(Opzione::getTestoOpzione)
+                        .collect(Collectors.toList())  // Se non ci sono opzioni, restituisce una lista vuota
+                );
+            })
             .collect(Collectors.toList());
     }
 
@@ -120,21 +160,27 @@ public class DomandaService implements IDomandaService {
 
     public List<DomandaDTO> getDomandeByUtente(String emailUtente) {
         Optional<Utente> utenteOpt = utenteRepository.findByEmail(emailUtente);
-        if (utenteOpt.isEmpty()) {
-            throw new RuntimeException("Utente non trovato con email: " + emailUtente);
-        }
+        List<Domanda> domande = domandaRepository.findByUtente(utenteOpt.get());  // Recupera tutte le domande dal DB
+        
+        // Crea la lista di DomandaDTO
+        return domande.stream()
+            .map(domanda -> {
 
-        return domandaRepository.findByUtente(utenteOpt.get()).stream()
-            .map(domanda -> new DomandaDTO(
-                domanda.getIdDomanda(),
-                domanda.getArgomento(),
-                domanda.getTestoDomanda(),
-                domanda.getUtente().getEmail(),
-                opzioneRepository.findByDomanda(domanda).stream()
-                    .map(Opzione::getTestoOpzione)
-                    .collect(Collectors.toList()) // Se non ci sono opzioni, restituisce una lista vuota
-            ))
+                // Creazione del DomandaDTO
+                return new DomandaDTO(
+                    domanda.getIdDomanda(),
+                    domanda.getArgomento(),
+                    domanda.getTestoDomanda(),
+                    domanda.getUtente().getEmail(),
+                    domanda.getImmaginePath(),  // Immagine convertita in file
+                    false,
+                    opzioneRepository.findByDomanda(domanda).stream()
+                        .map(Opzione::getTestoOpzione)
+                        .collect(Collectors.toList())  // Se non ci sono opzioni, restituisce una lista vuota
+                );
+            })
             .collect(Collectors.toList());
     }
+
     
 }

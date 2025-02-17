@@ -2,7 +2,6 @@ package com.i_rosilients.backend.service;
 
 import com.i_rosilients.backend.dto.DomandaDTO;
 import com.i_rosilients.backend.dto.QuestionarioDTO;
-import com.i_rosilients.backend.model.Domanda;
 import com.i_rosilients.backend.model.DomandaQuestionario;
 import com.i_rosilients.backend.model.Questionario;
 import com.i_rosilients.backend.model.Risposta;
@@ -11,6 +10,8 @@ import com.i_rosilients.backend.repository.QuestionarioRepository;
 import com.i_rosilients.backend.repository.DomandaQuestionarioRepository;
 import com.i_rosilients.backend.repository.DomandaRepository;
 import com.i_rosilients.backend.repository.UtenteRepository;
+
+import jakarta.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -57,6 +58,7 @@ public class QuestionarioService implements IQuestionarioService {
         }
     }
     
+    @Transactional
     public void deleteQuestionario(int idQuestionario) {
         Optional<Questionario> questionarioOpt = questionarioRepository.findById(idQuestionario);
         if (questionarioOpt.isPresent()) {

@@ -146,7 +146,6 @@ public class AuthenticationController {
         }
         
         try {
-        
             
             // Elimina il profilo dell'utente
             authenticationService.deleteProfile(utente);

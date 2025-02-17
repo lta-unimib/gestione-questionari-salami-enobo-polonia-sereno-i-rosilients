@@ -11,15 +11,10 @@ import org.springframework.stereotype.Service;
 
 import com.i_rosilients.backend.dto.UtenteDTO;
 import com.i_rosilients.backend.dto.VerificaUtenteDTO;
-import com.i_rosilients.backend.model.Domanda;
-import com.i_rosilients.backend.model.Questionario;
 import com.i_rosilients.backend.model.Utente;
-import com.i_rosilients.backend.repository.DomandaRepository;
-import com.i_rosilients.backend.repository.QuestionarioRepository;
 import com.i_rosilients.backend.repository.UtenteRepository;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
@@ -28,12 +23,6 @@ public class AuthenticationService {
     
     @Autowired
     private final UtenteRepository userRepository;
-
-    @Autowired
-    private DomandaRepository domandaRepository;
-
-    @Autowired
-    private QuestionarioRepository questionarioRepository;
     
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
@@ -145,7 +134,7 @@ public class AuthenticationService {
         return userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Utente non trovato con email: " + email));  
     }
 
-
+    @Transactional
     public void deleteProfile(Utente utente) {
         userRepository.delete(utente);
     }

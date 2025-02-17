@@ -26,7 +26,7 @@ public class Domanda {
     private int idDomanda;
 
     @ManyToOne
-    @JoinColumn(name = "email_utente", referencedColumnName = "email", nullable = true)
+    @JoinColumn(name = "email_utente", referencedColumnName = "email")
     private Utente utente;
 
     @Column(nullable = false)
@@ -35,6 +35,10 @@ public class Domanda {
     @Column(nullable = false)
     private String testoDomanda;
 
+    @Column(name = "immagine_path")
+    private String immaginePath;
+
+
     
     @OneToMany(mappedBy = "domanda", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Opzione> opzioni = new ArrayList<>();
@@ -42,10 +46,11 @@ public class Domanda {
     @OneToMany(mappedBy = "domanda", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<DomandaQuestionario> domandeQuestionario = new ArrayList<>();
 
-    public Domanda(Utente utente, String argomento, String testoDomanda) {
+    public Domanda(Utente utente, String argomento, String testoDomanda, String immaginePath) {
         this.utente = utente;
         this.argomento = argomento;
         this.testoDomanda = testoDomanda;
+        this.immaginePath = immaginePath;
     }
 
 }
