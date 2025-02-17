@@ -16,19 +16,17 @@ const CreaQuestionario = ({ user, setUpdateQuestionari }) => {
   }, []);
 
   const handleCreaQuestionario = () => {
-    if (!questionarioNome) {
-      alert('Compila tutti i campi.');
+    if (!questionarioNome || domandeSelezionate.length === 0) {
+      alert('Compila tutti i campi e seleziona almeno una domanda.');
       return;
     }
-  
+
     const questionarioData = {
       nome: questionarioNome,
       emailUtente: user.email,
-      idDomande: domandeSelezionate.map(Number), // Converti in numeri
+      idDomande: domandeSelezionate.map(Number),
     };
-  
-    console.log(questionarioData);
-  
+
     fetch('http://localhost:8080/api/questionari/creaQuestionario', {
       method: 'POST',
       headers: {
@@ -37,32 +35,22 @@ const CreaQuestionario = ({ user, setUpdateQuestionari }) => {
       },
       body: JSON.stringify(questionarioData),
     })
-      .then((response) => {
-        console.log('Response:', response);  // Log per vedere la risposta del server
+      .then(async (response) => {
         if (!response.ok) {
-          throw new Error('Errore nella creazione del questionario');
+          const errorText = await response.text();
+          throw new Error(`Errore nella creazione del questionario: ${errorText || response.status}`);
         }
-  
-        return response.text().then((text) => {
-          if (text) {
-            try {
-              return JSON.parse(text);  // Prova a fare il parsing se c'è del testo
-            } catch (e) {
-              console.error('Errore durante il parsing JSON:', e);
-              return {};  // Se non è JSON, ritorna un oggetto vuoto
-            }
-          }
-          return {};  // Se non c'è testo, ritorna un oggetto vuoto
-        });
+
+        const text = await response.text();
+        if (!text) return {};
+        return JSON.parse(text);
       })
-      .then(data => {
-        if (data) {
-          alert('Questionario creato con successo!');
-          setQuestionarioNome(''); // Resetta il nome
-          setDomandeSelezionate([]);
-          setIsCreatingQuestionario(false); // Nascondi il modulo dopo la creazione
-          setUpdateQuestionari(true);
-        }
+      .then(() => {
+        alert('Questionario creato con successo!');
+        setQuestionarioNome('');
+        setDomandeSelezionate([]);
+        setIsCreatingQuestionario(false);
+        setUpdateQuestionari(true);
       })
       .catch(error => {
         console.error('Errore:', error);
@@ -72,18 +60,15 @@ const CreaQuestionario = ({ user, setUpdateQuestionari }) => {
 
   return (
     <div className="mt-8">
-      {/* Sezione per la Creazione del Questionario */}
       {!isCreatingQuestionario ? (
-        <div>
-          <button
-            onClick={() => setIsCreatingQuestionario(true)}
-            className="bg-green-500 text-white py-2 px-6 rounded-lg hover:bg-green-700 transition"
-          >
-            Crea Questionario
-          </button>
-        </div>
+        <button
+          onClick={() => setIsCreatingQuestionario(true)}
+          className="bg-green-500 text-white py-2 px-6 rounded-lg hover:bg-green-700 transition"
+        >
+          Crea Questionario
+        </button>
       ) : (
-        <div>
+        <div className="p-6 bg-white rounded-lg shadow-lg">
           <input
             type="text"
             placeholder="Nome del Questionario"
@@ -91,33 +76,61 @@ const CreaQuestionario = ({ user, setUpdateQuestionari }) => {
             onChange={(e) => setQuestionarioNome(e.target.value)}
             className="w-full p-3 mb-4 border border-gray-300 rounded-lg"
           />
-          <select
-            multiple
-            value={domandeSelezionate}
-            onChange={(e) => {
-              const selectedValues = Array.from(e.target.selectedOptions, (option) => option.value);
-              setDomandeSelezionate(selectedValues);
-            }}
-            className="w-full p-2 border"
-          >
-            {domande.map((d) => (
-              <option key={d.idDomanda} value={d.idDomanda}>
-                {d.testoDomanda}
-              </option>
-            ))}
-          </select>
-          <button
-            onClick={handleCreaQuestionario}
-            className="bg-blue-500 text-white py-2 px-6 rounded-lg hover:bg-blue-700 transition"
-          >
-            Crea
-          </button>
-          <button
-            onClick={() => setIsCreatingQuestionario(false)}
-            className="bg-red-500 text-white py-2 px-6 rounded-lg hover:bg-red-700 transition ml-4"
-          >
-            Annulla
-          </button>
+
+          {/* Sezione selezione domande migliorata */}
+          <div className="mb-4">
+            <h3 className="text-lg font-semibold mb-2">Seleziona le domande:</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {domande.length > 0 ? (
+                domande.map((d) => (
+                  <label
+                    key={d.idDomanda}
+                    htmlFor={`domanda-${d.idDomanda}`}
+                    className={`flex items-center p-4 border rounded-lg cursor-pointer transition ${
+                      domandeSelezionate.includes(d.idDomanda.toString())
+                        ? 'bg-blue-100 border-blue-500'
+                        : 'hover:bg-gray-100 border-gray-300'
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      id={`domanda-${d.idDomanda}`}
+                      value={d.idDomanda}
+                      checked={domandeSelezionate.includes(d.idDomanda.toString())}
+                      onChange={(e) => {
+                        const selectedId = e.target.value;
+                        setDomandeSelezionate((prev) =>
+                          prev.includes(selectedId)
+                            ? prev.filter((id) => id !== selectedId)
+                            : [...prev, selectedId]
+                        );
+                      }}
+                      className="mr-3"
+                    />
+                    <span className="text-gray-700">{d.testoDomanda}</span>
+                  </label>
+                ))
+              ) : (
+                <p className="text-gray-500">Nessuna domanda disponibile.</p>
+              )}
+            </div>
+          </div>
+
+          {/* Bottoni */}
+          <div className="flex justify-end mt-4">
+            <button
+              onClick={handleCreaQuestionario}
+              className="bg-blue-500 text-white py-2 px-6 rounded-lg hover:bg-blue-700 transition mr-2"
+            >
+              Crea
+            </button>
+            <button
+              onClick={() => setIsCreatingQuestionario(false)}
+              className="bg-red-500 text-white py-2 px-6 rounded-lg hover:bg-red-700 transition"
+            >
+              Annulla
+            </button>
+          </div>
         </div>
       )}
     </div>
