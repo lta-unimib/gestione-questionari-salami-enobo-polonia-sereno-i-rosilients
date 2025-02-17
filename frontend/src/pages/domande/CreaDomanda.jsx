@@ -6,6 +6,7 @@ const CreaDomanda = ({ user, setUpdateDomande }) => {
   const [testoDomanda, setTestoDomanda] = useState('');
   const [immagineFile, setImmagineFile] = useState(null);
   const [opzioni, setOpzioni] = useState([]); // Inizialmente senza opzioni
+  const [userEmail, setUserEmail] = useState(localStorage.getItem("userEmail"));
 
 
   // Funzione per aggiungere una nuova opzione
@@ -42,7 +43,7 @@ const CreaDomanda = ({ user, setUpdateDomande }) => {
     const formData = new FormData();
     formData.append('argomento', argomentoDomanda);
     formData.append('testoDomanda', testoDomanda);
-    formData.append('emailUtente', user.email);
+    formData.append('emailUtente', userEmail);
 
     if (immagineFile) {
         formData.append('imageFile', immagineFile);

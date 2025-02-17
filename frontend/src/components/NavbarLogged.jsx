@@ -18,6 +18,7 @@ const NavbarLogged = ({ setUser }) => {
                 credentials: 'include',
             });
             localStorage.removeItem('jwt');
+            localStorage.removeItem('userEmail');
             // Rimuovi il cookie del refresh token
             document.cookie = 'refreshToken=; path=/auth/refresh; max-age=0; Secure; HttpOnly';   
             setUser(null);

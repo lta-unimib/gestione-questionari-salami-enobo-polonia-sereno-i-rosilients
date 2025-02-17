@@ -8,12 +8,13 @@ const Questionari = ({ user }) => {
   const [questionari, setQuestionari] = useState([]);
   const [updateQuestionari, setUpdateQuestionari] = useState(false);
   const token = localStorage.getItem('jwt');
+  const [userEmail, setUserEmail] = useState(localStorage.getItem("userEmail"));
   ReactModal.setAppElement('#root');
 
   useEffect(() => {
-    if (!user || !user.email) return;
+    if (!user || !userEmail) return;
 
-    fetch(`http://localhost:8080/api/questionari/${user.email}`, {
+    fetch(`http://localhost:8080/api/questionari/${userEmail}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

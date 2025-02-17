@@ -41,6 +41,7 @@ const Login = ({ toggleModal, setUser }) => {
       if (response.ok) {
         alert(data.message || 'Login avvenuto con successo');
         localStorage.setItem('jwt', data.token); 
+        localStorage.setItem("userEmail", user.email);
   
         if (setUser) {
           setUser(user);

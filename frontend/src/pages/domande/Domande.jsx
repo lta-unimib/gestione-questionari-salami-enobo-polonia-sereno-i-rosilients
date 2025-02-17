@@ -19,6 +19,8 @@ const Domande = ({ user }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const token = localStorage.getItem("jwt");
   const [images, setImages] = useState({}); 
+  const [userEmail, setUserEmail] = useState(localStorage.getItem("userEmail"));
+
 
   ReactModal.setAppElement('#root');
 
@@ -53,10 +55,10 @@ const Domande = ({ user }) => {
 
   // get di tutte le domande personali e globali
   useEffect(() => {
-    if (!user || !user.email) return;
+    if (!user || !userEmail) return;
 
     let url = filtro === "tue" 
-      ? `http://localhost:8080/api/domande/${user.email}`
+      ? `http://localhost:8080/api/domande/${userEmail}`
       : `http://localhost:8080/api/domande/tutteLeDomande`;
 
     fetch(url, {
@@ -242,17 +244,17 @@ const Domande = ({ user }) => {
               </div>
               <div className="edit flex gap-4">
                 <button 
-                  className={`text-gray-500 hover:text-gray-700 ${d.emailUtente !== user.email ? "opacity-50 cursor-not-allowed" : ""}`} 
+                  className={`text-gray-500 hover:text-gray-700 ${d.emailUtente !== userEmail ? "opacity-50 cursor-not-allowed" : ""}`} 
                   onClick={() => openEditModal(d)}
-                  disabled={d.emailUtente !== user.email}
+                  disabled={d.emailUtente !== userEmail}
                 >
                   <PencilSquareIcon className="h-6 w-6" />
                 </button>
                 
                 <button 
-                  className={`text-red-600 hover:text-red-800 ${d.emailUtente !== user.email ? "opacity-50 cursor-not-allowed" : ""}`} 
+                  className={`text-red-600 hover:text-red-800 ${d.emailUtente !== userEmail ? "opacity-50 cursor-not-allowed" : ""}`} 
                   onClick={() => openDeleteModal(d.idDomanda)}
-                  disabled={d.emailUtente !== user.email}
+                  disabled={d.emailUtente !== userEmail}
                 >
                   <TrashIcon className="h-6 w-6" />
                 </button>

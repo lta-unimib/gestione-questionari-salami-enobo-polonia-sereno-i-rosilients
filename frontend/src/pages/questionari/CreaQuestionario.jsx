@@ -5,9 +5,10 @@ const CreaQuestionario = ({ user, setUpdateQuestionari }) => {
   const [questionarioNome, setQuestionarioNome] = useState('');
   const [domande, setDomande] = useState([]);
   const [domandeSelezionate, setDomandeSelezionate] = useState([]);
+  const [userEmail, setUserEmail] = useState(localStorage.getItem("userEmail"));
 
   useEffect(() => {
-    fetch(`http://localhost:8080/api/domande/${user.email}`, {
+    fetch(`http://localhost:8080/api/domande/${userEmail}`, {
       headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
     })
       .then((res) => res.json())
@@ -23,7 +24,7 @@ const CreaQuestionario = ({ user, setUpdateQuestionari }) => {
 
     const questionarioData = {
       nome: questionarioNome,
-      emailUtente: user.email,
+      emailUtente: userEmail,
       idDomande: domandeSelezionate.map(Number),
     };
 
