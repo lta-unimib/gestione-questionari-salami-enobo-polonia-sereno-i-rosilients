@@ -129,7 +129,14 @@ public class QuestionarioService implements IQuestionarioService {
     
     @Override
     public List<QuestionarioDTO> searchQuestionariWithQuestions(String nome) {
-        return questionarioRepository.searchQuestionariWithQuestions(nome);
+        List<QuestionarioDTO> questionari = questionarioRepository.searchQuestionariWithQuestions(nome);
+        
+        for (QuestionarioDTO questionario : questionari) {
+            List<Integer> domandeIds = domandaRepository.findDomandeIdsByQuestionarioId(questionario.getIdQuestionario());
+            questionario.setIdDomande(domandeIds);
+        }
+    
+        return questionari;
     }
 
 public List<DomandaDTO> getDomandeByQuestionario(int idQuestionario) {
