@@ -21,4 +21,9 @@ public class QuestionarioDTO {
         this.emailUtente = emailUtente;
         this.idDomande = idDomande;
     }
+
+    public QuestionarioDTO(String nome, String emailUtente) {
+        this.nome = nome;
+        this.emailUtente = emailUtente;
+    }
 }

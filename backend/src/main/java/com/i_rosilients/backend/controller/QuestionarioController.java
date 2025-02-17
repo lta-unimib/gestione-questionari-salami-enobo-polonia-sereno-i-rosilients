@@ -54,9 +54,9 @@ public class QuestionarioController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<Questionario>> searchQuestionari(@RequestParam String nome) {
-    List<Questionario> questionari = questionarioService.searchQuestionariWithQuestions(nome);
-    return ResponseEntity.ok(questionari);
+    public ResponseEntity<List<QuestionarioDTO>> searchQuestionari(@RequestParam String nome) {
+        List<QuestionarioDTO> questionari = questionarioService.searchQuestionariWithQuestions(nome);
+        return ResponseEntity.ok(questionari);
     }
 
 @GetMapping("/{id}/domande")

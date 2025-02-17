@@ -127,8 +127,9 @@ public class QuestionarioService implements IQuestionarioService {
             .collect(Collectors.toList());
     }
     
-    public List<Questionario> searchQuestionariWithQuestions(String nome) {
-        return questionarioRepository.findQuestionariWithQuestions(nome);
+    @Override
+    public List<QuestionarioDTO> searchQuestionariWithQuestions(String nome) {
+        return questionarioRepository.searchQuestionariWithQuestions(nome);
     }
 
 public List<DomandaDTO> getDomandeByQuestionario(int idQuestionario) {
