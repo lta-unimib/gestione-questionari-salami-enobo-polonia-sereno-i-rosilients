@@ -35,6 +35,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/auth/**").permitAll() // Permetti endpoint di autenticazione
                         .requestMatchers("/api/questionari/search").permitAll() 
+                        .requestMatchers("/api/questionari/{id}/domande").permitAll() 
+                        .requestMatchers("/api/domande/uploads/**").permitAll()  
                         .requestMatchers("/api/**").authenticated() // Permetti endpoint di api
                         .anyRequest().authenticated()
                 )
