@@ -6,7 +6,6 @@ const VisualizzaQuestionario = () => {
   console.log('ID del questionario:', id);
   const [questionario, setQuestionario] = useState(null);
   const [domande, setDomande] = useState([]);
-  const token = localStorage.getItem('jwt');
 
   useEffect(() => {
     // Fetch dettagli questionario (titolo e creatore)
@@ -14,7 +13,6 @@ const VisualizzaQuestionario = () => {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
       },
     })
       .then((res) => {
@@ -35,7 +33,6 @@ const VisualizzaQuestionario = () => {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
       },
     })
       .then((res) => {
@@ -50,7 +47,7 @@ const VisualizzaQuestionario = () => {
         setDomande(data);
       })
       .catch((err) => console.error('Errore nel recupero delle domande:', err));
-  }, [id, token]);
+  }, [id]);
 
   return (
     <div className="max-w-3xl mx-auto mt-8 p-6 bg-white shadow-lg rounded-lg">
