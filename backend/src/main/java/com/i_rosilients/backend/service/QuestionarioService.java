@@ -161,31 +161,46 @@ public void deleteQuestionario(int idQuestionario) {
         return questionari;
     }
 
-public List<DomandaDTO> getDomandeByQuestionario(int idQuestionario) {
-    Optional<Questionario> questionarioOpt = questionarioRepository.findById(idQuestionario);
-    if (questionarioOpt.isEmpty()) {
-        throw new RuntimeException("Questionario non trovato con ID: " + idQuestionario);
+    @Override
+    public List<DomandaDTO> getDomandeByQuestionario(int idQuestionario) {
+        Optional<Questionario> questionarioOpt = questionarioRepository.findById(idQuestionario);
+        if (questionarioOpt.isEmpty()) {
+            throw new RuntimeException("Questionario non trovato con ID: " + idQuestionario);
+        }
+
+        List<DomandaDTO> domande = domandaQuestionarioRepository.findByQuestionario(questionarioOpt.get())
+                .stream()
+                .map(dq -> {
+                    Domanda domanda = dq.getDomanda();
+                    return new DomandaDTO(
+                        domanda.getIdDomanda(),
+                        domanda.getArgomento(),
+                        domanda.getTestoDomanda(),
+                        domanda.getUtente().getEmail(),
+                        domanda.getImmaginePath(),
+                        false,
+                        domanda.getOpzioni().stream().map(opzione -> opzione.getTestoOpzione()).collect(Collectors.toList())
+                    );
+                })
+                .collect(Collectors.toList());
+    
+
+        return domande;
     }
 
-    List<DomandaDTO> domande = domandaQuestionarioRepository.findByQuestionario(questionarioOpt.get())
-            .stream()
-            .map(dq -> {
-                Domanda domanda = dq.getDomanda();
-                return new DomandaDTO(
-                    domanda.getIdDomanda(),
-                    domanda.getArgomento(),
-                    domanda.getTestoDomanda(),
-                    domanda.getUtente().getEmail(),
-                    domanda.getImmaginePath(),
-                    false,
-                    domanda.getOpzioni().stream().map(opzione -> opzione.getTestoOpzione()).collect(Collectors.toList())
-                );
-            })
-            .collect(Collectors.toList());
-   
+    @Override
+    public QuestionarioDTO getQuestionario(int idQuestionario) {
+        Optional<Questionario> questionarioOpt = questionarioRepository.findById(idQuestionario);
+        if (questionarioOpt.isEmpty()) {
+            throw new RuntimeException("Questionario non trovato con ID: " + idQuestionario);
+        }
 
-    return domande;
-}
-
+        Questionario questionario = questionarioOpt.get();
+        return new QuestionarioDTO(
+            questionario.getIdQuestionario(),
+            questionario.getNome(),
+            questionario.getUtente().getEmail()
+        );
+    }
 
 }

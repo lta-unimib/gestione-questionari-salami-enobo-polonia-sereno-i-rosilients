@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import Modal from './Modal'; 
 
 const NavbarHome = ({ setUser }) => {
@@ -18,7 +19,7 @@ const NavbarHome = ({ setUser }) => {
     <nav>
       <div className="flex justify-between my-5">
         <div className="ml-16">
-          <h1 className="text-3xl text-personal-purple font-semibold">WebSurveys</h1>
+          <Link className='text-3xl text-personal-purple font-semibold' to='/'>WebSurveys</Link>
         </div>
         <div className="flex justify-end mr-16">
           <div className='my-auto'>

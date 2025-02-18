@@ -12,4 +12,5 @@ public interface IQuestionarioService {
     List<QuestionarioDTO> getQuestionariByUtente(String emailUtente);
     public List<QuestionarioDTO> searchQuestionariWithQuestions(String nome);
     public List<DomandaDTO> getDomandeByQuestionario(int idQuestionario);
+    public QuestionarioDTO getQuestionario(int idQuestionario);
 }

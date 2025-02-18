@@ -1,13 +1,14 @@
-import React, { useState, useEffect } from 'react';
-
+import React, { useState } from 'react';
 import { EyeIcon } from '@heroicons/react/24/solid';
+import { useNavigate } from 'react-router-dom';
 
 const HomeLogged = () => {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
+  const navigate = useNavigate(); // Aggiungi navigate qui
 
   const handleSearch = async () => {
-    if (!query.trim()) return; 
+    if (!query.trim()) return;
 
     try {
       const response = await fetch(`http://localhost:8080/api/questionari/search?nome=${query}`, {
@@ -75,9 +76,10 @@ const HomeLogged = () => {
                     </div>
 
                     <div className="flex items-center gap-4">
+                      {/* Aggiungi la navigazione per il click sull'occhio */}
                       <EyeIcon
                         className="w-5 h-5 text-gray-700 cursor-pointer hover:text-gray-800"
-                        onClick={() => console.log(`Visualizza ${questionario.idQuestionario}`)}
+                        onClick={() => navigate(`/questionari/${questionario.idQuestionario}`)} // Usa navigate per la visualizzazione
                       />
                       <button
                         onClick={() => console.log(`Compila ${questionario.idQuestionario}`)}

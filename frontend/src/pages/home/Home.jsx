@@ -73,9 +73,12 @@ const Home = () => {
                     </div>
   
                     <div className="flex items-center gap-4">
+                      {/* Navigazione verso la pagina VisualizzaQuestionario quando si clicca sull'occhio */}
                       <EyeIcon
                         className="w-5 h-5 text-gray-700 cursor-pointer hover:text-gray-800"
-                        onClick={() => console.log(`Visualizza ${questionario.idQuestionario}`)}
+                        onClick={() => {
+                          console.log('Naviga verso il questionario:', questionario.idQuestionario);
+                          navigate(`/questionari/${questionario.idQuestionario}`)}}
                       />
                       <button
                         onClick={() => navigate(`/questionari/compilaQuestionario/${questionario.idQuestionario}`)}
@@ -91,6 +94,7 @@ const Home = () => {
           </ul>
         </div>
       </div>
+      
        {/* Gestione questionario compilato */}
        <div className='mx-16 mt-72'>
         <h2 className="text-2xl ">Gestione questionari compilati</h2>
