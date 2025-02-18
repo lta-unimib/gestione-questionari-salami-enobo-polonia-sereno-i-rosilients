@@ -16,6 +16,7 @@ const Questionari = ({ user }) => {
   const [editedNome, setEditedNome] = useState('');
   const [domande, setDomande] = useState([]); 
   const [domandeAssociate, setDomandeAssociate] = useState([]);
+  const [tutteLeDomande, setTutteLeDomande] = useState([]);
   ReactModal.setAppElement('#root');
 
   useEffect(() => {
@@ -55,6 +56,22 @@ const Questionari = ({ user }) => {
 
   //useEffect per recuperare le domande associate al questionario da modificare
   useEffect(() => {
+    fetch('http://localhost:8080/api/domande/tutteLeDomande', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setTutteLeDomande(data);  // Salva tutte le domande disponibili nel db
+      })
+      .catch((error) => console.error('Errore nel recupero delle domande:', error));
+  }, [token]);
+
+  // Recupera le domande associate al questionario da modificare
+  useEffect(() => {
     if (isEditModalOpen && questionarioToEdit) {
       fetch(`http://localhost:8080/api/domande/domandeByQuestionario/${questionarioToEdit.idQuestionario}`, {
         method: 'GET',
@@ -65,9 +82,8 @@ const Questionari = ({ user }) => {
       })
         .then((response) => response.json())
         .then((data) => {
-          console.log(data);
-          setDomande(data);
-          setDomandeAssociate(data.map((d) => d.idDomanda.toString()));
+          setDomande(data);  // Salva le domande associate al questionario
+          setDomandeAssociate(data.map((d) => d.idDomanda.toString()));  // Imposta gli ID delle domande già associate
         })
         .catch((error) => console.error('Errore:', error));
     }
@@ -110,38 +126,36 @@ const Questionari = ({ user }) => {
 
   // Modifica questionario
   const handleEditQuestionario = () => {
-  if (!questionarioToEdit) return;
+    if (!questionarioToEdit) return;
 
-  const updatedQuestionario = {
-    ...questionarioToEdit,
-    nome: editedNome,
-    idDomande: domandeAssociate.map(Number),
-  };
+    const updatedQuestionario = {
+      ...questionarioToEdit,
+      nome: editedNome,
+      idDomande: domandeAssociate.map(Number),
+    };
 
-  console.log('Body JSON inviato al backend:', JSON.stringify(updatedQuestionario));
-  
-  fetch(`http://localhost:8080/api/questionari/updateQuestionario/${questionarioToEdit.idQuestionario}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(updatedQuestionario),
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Errore nell'aggiornamento del questionario");
-      }
-      setQuestionari((prevState) => prevState.map((q) => (q.idQuestionario === updatedQuestionario.idQuestionario ? updatedQuestionario : q)));
-      setUpdateQuestionari(true);
-      closeEditModal();
-      alert('Questionario modificato con successo! ✅');
+    fetch(`http://localhost:8080/api/questionari/updateQuestionario/${questionarioToEdit.idQuestionario}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(updatedQuestionario),
     })
-    .catch((error) => {
-      console.error('Errore:', error);
-      alert('Si è verificato un errore durante la modifica. ❌');
-    });
-};
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Errore nell'aggiornamento del questionario");
+        }
+        setQuestionari((prevState) => prevState.map((q) => (q.idQuestionario === updatedQuestionario.idQuestionario ? updatedQuestionario : q)));
+        setUpdateQuestionari(true);
+        closeEditModal();
+        alert('Questionario modificato con successo! ✅');
+      })
+      .catch((error) => {
+        console.error('Errore:', error);
+        alert('Si è verificato un errore durante la modifica. ❌');
+      });
+  };
 
   return (
     <div className='mx-24'>
@@ -187,8 +201,8 @@ const Questionari = ({ user }) => {
     <div className="mb-4">
       <h3 className="text-lg font-semibold mb-2">Seleziona le domande:</h3>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {domande.length > 0 ? (
-          domande.map((d) => (
+        {tutteLeDomande.length > 0 ? (
+          tutteLeDomande.map((d) => (
             <label
               key={d.idDomanda}
               htmlFor={`domanda-${d.idDomanda}`}
