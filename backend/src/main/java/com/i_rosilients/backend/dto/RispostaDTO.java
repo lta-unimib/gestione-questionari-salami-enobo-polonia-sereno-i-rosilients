@@ -1,10 +1,12 @@
 package com.i_rosilients.backend.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter
-@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
 public class RispostaDTO {
     private int idCompilazione; // ID del QuestionarioCompilato
     private int idDomanda; // ID della Domanda

@@ -2,7 +2,6 @@ package com.i_rosilients.backend.controller;
 
 import com.i_rosilients.backend.dto.DomandaDTO;
 import com.i_rosilients.backend.dto.QuestionarioDTO;
-import com.i_rosilients.backend.model.Questionario;
 import com.i_rosilients.backend.service.IQuestionarioService;
 
 import org.springframework.beans.factory.annotation.Autowired;

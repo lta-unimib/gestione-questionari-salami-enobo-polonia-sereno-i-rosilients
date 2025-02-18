@@ -5,14 +5,10 @@ import com.i_rosilients.backend.dto.QuestionarioDTO;
 import com.i_rosilients.backend.model.Domanda;
 import com.i_rosilients.backend.model.DomandaQuestionario;
 import com.i_rosilients.backend.model.Questionario;
-import com.i_rosilients.backend.model.QuestionarioCompilato;
-import com.i_rosilients.backend.model.Risposta;
 import com.i_rosilients.backend.model.Utente;
 import com.i_rosilients.backend.repository.QuestionarioRepository;
-import com.i_rosilients.backend.repository.RispostaRepository;
 import com.i_rosilients.backend.repository.DomandaQuestionarioRepository;
 import com.i_rosilients.backend.repository.DomandaRepository;
-import com.i_rosilients.backend.repository.QuestionarioCompilatoRepository;
 import com.i_rosilients.backend.repository.UtenteRepository;
 
 import jakarta.transaction.Transactional;
@@ -37,13 +33,7 @@ public class QuestionarioService implements IQuestionarioService {
     private DomandaRepository domandaRepository;
 
     @Autowired
-    private RispostaRepository rispostaRepository;
-
-    @Autowired
     private DomandaQuestionarioRepository domandaQuestionarioRepository;
-
-    @Autowired
-    private QuestionarioCompilatoRepository questionarioCompilatoRepository;
 
     @Autowired
     private QuestionarioCompilatoService questionarioCompilatoService;
