@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import lombok.Data;
 
@@ -17,9 +18,9 @@ public class Risposta {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idRisposta;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "id_compilazione", referencedColumnName = "idCompilazione")
-    private QuestionarioCompilato questionarioCompilato;
+    private QuestionarioCompilato questionarioCompilato;      
 
     @ManyToOne
     @JoinColumn(name = "id_domanda", referencedColumnName = "idDomanda")

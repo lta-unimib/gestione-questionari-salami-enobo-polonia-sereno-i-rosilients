@@ -18,7 +18,7 @@ const CompilaQuestionario = () => {
         }
         const data = await response.json();
         console.log("Dati ricevuti dal backend:", data); // Log per visualizzare i dati ricevuti dal backend
-        setQuestionario(data); // Imposta direttamente l'array di domande
+        setQuestionario(data);
       } catch (error) {
         console.error("Errore nel recupero del questionario:", error);
         alert("Errore nel caricamento del questionario. Riprova più tardi.");
@@ -32,7 +32,6 @@ const CompilaQuestionario = () => {
     console.log(`Risposta per domanda ${domandaId}: ${valore}`); // Log per vedere la risposta scelta per ogni domanda
     setRisposte((prev) => {
       const updatedRisposte = { ...prev, [domandaId]: valore };
-      console.log("Risposte aggiornate:", updatedRisposte); // Log per visualizzare le risposte aggiornate
       return updatedRisposte;
     });
   };
@@ -62,7 +61,7 @@ const CompilaQuestionario = () => {
     // Finestra di conferma prima dell'invio
     const confermaInvio = window.confirm("Sei sicuro di voler inviare le risposte?");
     if (!confermaInvio) {
-      return; // Interrompi l'invio se l'utente annulla
+      return; 
     }
 
     try {

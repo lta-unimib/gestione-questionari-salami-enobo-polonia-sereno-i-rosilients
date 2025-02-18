@@ -5,11 +5,14 @@ import com.i_rosilients.backend.dto.QuestionarioDTO;
 import com.i_rosilients.backend.model.Domanda;
 import com.i_rosilients.backend.model.DomandaQuestionario;
 import com.i_rosilients.backend.model.Questionario;
+import com.i_rosilients.backend.model.QuestionarioCompilato;
 import com.i_rosilients.backend.model.Risposta;
 import com.i_rosilients.backend.model.Utente;
 import com.i_rosilients.backend.repository.QuestionarioRepository;
+import com.i_rosilients.backend.repository.RispostaRepository;
 import com.i_rosilients.backend.repository.DomandaQuestionarioRepository;
 import com.i_rosilients.backend.repository.DomandaRepository;
+import com.i_rosilients.backend.repository.QuestionarioCompilatoRepository;
 import com.i_rosilients.backend.repository.UtenteRepository;
 
 import jakarta.transaction.Transactional;
@@ -34,7 +37,13 @@ public class QuestionarioService implements IQuestionarioService {
     private DomandaRepository domandaRepository;
 
     @Autowired
+    private RispostaRepository rispostaRepository;
+
+    @Autowired
     private DomandaQuestionarioRepository domandaQuestionarioRepository;
+
+    @Autowired
+    private QuestionarioCompilatoRepository questionarioCompilatoRepository;
 
     public void creaQuestionario(QuestionarioDTO questionarioDTO) {
         Optional<Utente> utenteOpt = utenteRepository.findByEmail(questionarioDTO.getEmailUtente());
@@ -60,18 +69,31 @@ public class QuestionarioService implements IQuestionarioService {
     }
     
     @Transactional
-    public void deleteQuestionario(int idQuestionario) {
-        Optional<Questionario> questionarioOpt = questionarioRepository.findById(idQuestionario);
-        if (questionarioOpt.isPresent()) {
-            // Rimuove tutte le associazioni domanda-questionario
-            domandaQuestionarioRepository.deleteByQuestionario(questionarioOpt.get());
-            
-            // Elimina il questionario
-            questionarioRepository.delete(questionarioOpt.get());
-        } else {
-            throw new RuntimeException("Questionario non trovato con id: " + idQuestionario);
+public void deleteQuestionario(int idQuestionario) {
+    Optional<Questionario> questionarioOpt = questionarioRepository.findById(idQuestionario);
+    if (questionarioOpt.isPresent()) {
+        Questionario questionario = questionarioOpt.get();
+
+        // Trova tutti i QuestionarioCompilato associati al Questionario
+        List<QuestionarioCompilato> questionariCompilati = questionarioCompilatoRepository.findByQuestionario(questionario);
+
+        // Per ogni QuestionarioCompilato, elimina prima le Risposte associate
+        for (QuestionarioCompilato questionarioCompilato : questionariCompilati) {
+            rispostaRepository.deleteByQuestionarioCompilato_IdCompilazione(questionarioCompilato.getIdCompilazione());
         }
+
+        // Elimina tutti i QuestionarioCompilato associati
+        questionarioCompilatoRepository.deleteByQuestionario(questionario);
+
+        // Rimuove tutte le associazioni domanda-questionario
+        domandaQuestionarioRepository.deleteByQuestionario(questionario);
+
+        // Elimina il questionario
+        questionarioRepository.delete(questionario);
+    } else {
+        throw new RuntimeException("Questionario non trovato con id: " + idQuestionario);
     }
+}
 
     public void updateQuestionario(int idQuestionario, QuestionarioDTO questionarioDTO) {
         Optional<Questionario> questionarioOpt = questionarioRepository.findById(idQuestionario);

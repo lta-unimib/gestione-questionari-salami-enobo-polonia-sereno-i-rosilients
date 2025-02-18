@@ -9,6 +9,7 @@ import jakarta.persistence.JoinColumn;
 
 import java.time.LocalDateTime;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import lombok.Data;
 
@@ -24,7 +25,7 @@ public class QuestionarioCompilato {
     @JoinColumn(name = "email_utente", referencedColumnName = "email", nullable = true)
     private Utente utente;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "id_questionario", referencedColumnName = "idQuestionario")
     private Questionario questionario;
 

@@ -7,11 +7,15 @@ import com.i_rosilients.backend.dto.RispostaDTO;
 import com.i_rosilients.backend.model.Domanda;
 import com.i_rosilients.backend.model.Questionario;
 import com.i_rosilients.backend.repository.RispostaRepository;
+
+import jakarta.transaction.Transactional;
+
 import com.i_rosilients.backend.repository.QuestionarioCompilatoRepository;
 import com.i_rosilients.backend.repository.QuestionarioRepository;
 import com.i_rosilients.backend.repository.DomandaRepository;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -59,4 +63,5 @@ public class RispostaService {
 
         rispostaRepository.save(risposta);
     }
+
 }

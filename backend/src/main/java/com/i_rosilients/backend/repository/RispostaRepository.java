@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface RispostaRepository extends JpaRepository<Risposta, Integer> {
-    
+     void deleteByQuestionarioCompilato_IdCompilazione(int idCompilazione);
 }
