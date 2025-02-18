@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 const HomeLogged = () => {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
-  const navigate = useNavigate(); // Aggiungi navigate qui
+  const navigate = useNavigate();
 
   const handleSearch = async () => {
     if (!query.trim()) return;
@@ -39,24 +39,21 @@ const HomeLogged = () => {
     <div className="p-4">
       {/* Sezione ricerca */}
       <div className="flex justify-center mt-16">
-        <div className="flex flex-col gap-4">
-          <h1 className='text-5xl font-semibold text-personal-purple text-center'>WebSurveys</h1>
-          <div className="flex gap-4">
-            <input
-              type="text"
-              placeholder='Cerca un questionario'
-              className='bg-personal-purple bg-opacity-20 text-black py-2 px-52 rounded-lg'
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              onKeyDown={handleKeyDown} // Gestisce l'evento per Invio
-            />
-            <button
-              onClick={handleSearch}
-              className='bg-personal-purple text-white py-2 px-4 rounded-lg'
-            >
-              Cerca
-            </button>
-          </div>
+        <div className="flex gap-4">
+          <input
+            type="text"
+            placeholder='Cerca un questionario'
+            className='bg-personal-purple bg-opacity-20 text-black py-2 px-52 rounded-lg'
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={handleKeyDown} // Gestisce l'evento per Invio
+          />
+          <button
+            onClick={handleSearch}
+            className='bg-personal-purple text-white py-2 px-4 rounded-lg'
+          >
+            Cerca
+          </button>
         </div>
       </div>
 
@@ -82,7 +79,7 @@ const HomeLogged = () => {
                         onClick={() => navigate(`/questionari/${questionario.idQuestionario}`)} // Usa navigate per la visualizzazione
                       />
                       <button
-                        onClick={() => console.log(`Compila ${questionario.idQuestionario}`)}
+                        onClick={() => navigate(`/questionari/compilaQuestionario/${questionario.idQuestionario}`)} // Permette all'utente loggato di compilare il questionario
                         className="bg-white text-personal-purple border-2 border-personal-purple py-1 px-3 rounded-lg hover:bg-personal-purple hover:text-white transition duration-200"
                       >
                         Compila
@@ -93,6 +90,19 @@ const HomeLogged = () => {
               );
             })}
           </ul>
+        </div>
+      </div>
+      
+      {/* Gestione questionario compilato */}
+      <div className='mx-16 mt-72'>
+        <h2 className="text-2xl ">Gestione questionari compilati</h2>
+        <div className="flex mt-5">
+          <input
+            type="text"
+            placeholder='Inserisci un codice univoco'
+            className='bg-personal-purple bg-opacity-20 text-black px-16'
+          />
+          <button className='bg-personal-purple text-white py-2 px-4'>Invia</button>
         </div>
       </div>
     </div>

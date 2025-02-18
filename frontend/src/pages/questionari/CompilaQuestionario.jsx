@@ -1,23 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 const CompilaQuestionario = () => {
   console.log("questionario renderizzato");
-  const { id } = useParams(); // Ottiene l'ID del questionario dalla route
+  const { id } = useParams(); 
+  const navigate = useNavigate(); 
   const [questionario, setQuestionario] = useState([]);
   const [risposte, setRisposte] = useState({});
-  const [isSubmitting, setIsSubmitting] = useState(false); // Stato per il caricamento
+  const [isSubmitting, setIsSubmitting] = useState(false); 
+  const [idCompilazione, setIdCompilazione] = useState(null); 
+  const [showModal, setShowModal] = useState(false); 
+  const [codiceUnivoco, setCodiceUnivoco] = useState(null); 
 
   useEffect(() => {
     const fetchQuestionario = async () => {
       try {
-        console.log(`Recupero questionario con ID: ${id}`); // Log per monitorare l'ID del questionario
+        console.log(`Recupero questionario con ID: ${id}`); 
         const response = await fetch(`http://localhost:8080/api/questionari/${id}/domande`);
         if (!response.ok) {
           throw new Error(`Errore nella fetch: ${response.status}`);
         }
         const data = await response.json();
-        console.log("Dati ricevuti dal backend:", data); // Log per visualizzare i dati ricevuti dal backend
+        console.log("Dati ricevuti dal backend:", data); 
         setQuestionario(data);
       } catch (error) {
         console.error("Errore nel recupero del questionario:", error);
@@ -29,7 +33,7 @@ const CompilaQuestionario = () => {
   }, [id]);
 
   const handleChange = (domandaId, valore) => {
-    console.log(`Risposta per domanda ${domandaId}: ${valore}`); // Log per vedere la risposta scelta per ogni domanda
+    console.log(`Risposta per domanda ${domandaId}: ${valore}`); 
     setRisposte((prev) => {
       const updatedRisposte = { ...prev, [domandaId]: valore };
       return updatedRisposte;
@@ -50,7 +54,7 @@ const CompilaQuestionario = () => {
         throw new Error(data.error || 'Errore nella creazione della compilazione');
       }
 
-      return data.idCompilazione; // Restituisci l'ID della nuova compilazione
+      return data.idCompilazione; 
     } catch (error) {
       console.error('Errore nella creazione della compilazione:', error);
       throw error;
@@ -58,16 +62,14 @@ const CompilaQuestionario = () => {
   };
 
   const handleSubmit = async () => {
-    // Finestra di conferma prima dell'invio
     const confermaInvio = window.confirm("Sei sicuro di voler inviare le risposte?");
     if (!confermaInvio) {
       return; 
     }
 
     try {
-      setIsSubmitting(true); // Attiva l'indicatore di caricamento
+      setIsSubmitting(true); 
 
-      // Verifica che tutte le domande siano state risposte
       const domandeNonRisposte = questionario.filter(
         (domanda) => !risposte.hasOwnProperty(domanda.idDomanda)
       );
@@ -76,7 +78,7 @@ const CompilaQuestionario = () => {
         throw new Error('Per favore, rispondi a tutte le domande prima di inviare.');
       }
 
-      const idCompilazione = await creaNuovaCompilazione(id); // Crea una nuova compilazione
+      const idCompilazione = await creaNuovaCompilazione(id); 
 
       const risposteArray = Object.keys(risposte).map((idDomanda) => {
         return {
@@ -101,17 +103,46 @@ const CompilaQuestionario = () => {
         }
       }
 
-      alert('Tutte le risposte inviate con successo');
+      const token = localStorage.getItem('jwt');
+      console.log("il token estratto è " + token); // Check if user is logged in
+
+      if (token) {
+        alert('Tutte le risposte inviate con successo');
+        navigate('/'); // Redirect to home if logged in
+      } else {
+        // If not logged in, show the unique code modal
+        setCodiceUnivoco(idCompilazione); 
+        setShowModal(true); 
+      }
     } catch (error) {
       console.error('Errore nell\'invio delle risposte:', error);
       alert('Errore nell\'invio delle risposte: ' + error.message);
     } finally {
-      setIsSubmitting(false); // Disattiva l'indicatore di caricamento
+      setIsSubmitting(false); 
     }
   };
 
+  const handleCopy = () => {
+    if (codiceUnivoco) {
+      navigator.clipboard.writeText(codiceUnivoco)
+        .then(() => {
+          alert("Codice copiato negli appunti!");
+          closeModal(); // Close modal after copying code
+          navigate('/'); // Redirect to home after copy
+        })
+        .catch((error) => {
+          console.error("Errore nella copia del codice:", error);
+        });
+    }
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    navigate('/'); // Redirect to home after closing the modal
+  };
+
   if (questionario.length === 0) {
-    console.log("Questionario non trovato o in fase di caricamento..."); // Log se il questionario non è ancora stato caricato
+    console.log("Questionario non trovato o in fase di caricamento..."); 
     return <p className="text-center mt-10">Caricamento...</p>;
   }
 
@@ -124,13 +155,12 @@ const CompilaQuestionario = () => {
           <div key={domanda.idDomanda} className="p-4 border rounded-lg">
             <p className="font-semibold">{domanda.testoDomanda}</p>
 
-            {/* Visualizzazione immagine se presente */}
             {domanda.imagePath && (
               <div className="mt-4">
                 <img
-                  src={`http://localhost:8080${domanda.imagePath}`} // Assicurati che il percorso sia corretto
+                  src={`http://localhost:8080${domanda.imagePath}`}
                   alt={domanda.testoDomanda}
-                  className="w-full h-auto rounded-lg" // Modifica le dimensioni se necessario
+                  className="w-full h-auto rounded-lg" 
                 />
               </div>
             )}
@@ -162,7 +192,7 @@ const CompilaQuestionario = () => {
           type="button"
           onClick={handleSubmit}
           className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600"
-          disabled={isSubmitting} // Disabilita il pulsante durante l'invio
+          disabled={isSubmitting}
         >
           {isSubmitting ? (
             <>
@@ -173,6 +203,34 @@ const CompilaQuestionario = () => {
           )}
         </button>
       </form>
+
+      {showModal && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
+            <h2 className="text-xl font-semibold">Ecco il tuo codice univoco!</h2>
+            <div className="mt-4">
+              <input
+                type="text"
+                value={codiceUnivoco}
+                readOnly
+                className="w-full p-2 border rounded-lg"
+              />
+            </div>
+            <button
+              onClick={handleCopy}
+              className="bg-blue-500 text-white py-2 px-4 rounded-lg mt-4 hover:bg-blue-600"
+            >
+              Copia il codice
+            </button>
+            <button
+              onClick={closeModal}
+              className="bg-gray-500 text-white py-2 px-4 rounded-lg mt-4 ml-2 hover:bg-gray-600"  
+            >
+              Chiudi
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
