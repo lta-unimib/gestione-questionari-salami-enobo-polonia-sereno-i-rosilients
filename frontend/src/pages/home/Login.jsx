@@ -5,9 +5,8 @@ const Login = ({ toggleModal, setUser }) => {
   const [password, setPassword] = useState('');
 
   const handleLogin = async (event) => {
-    event.preventDefault(); // Evita il comportamento di submit del form
-    console.log('Login in corso...');
-  
+    event.preventDefault(); 
+    
     const user = {
       email,
       password,
@@ -19,36 +18,45 @@ const Login = ({ toggleModal, setUser }) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        credentials: 'include', // Se usi cookie, altrimenti rimuovi
+        credentials: 'include', 
         body: JSON.stringify(user),
       });
   
-      const data = await response.json();
+      let data;
+      if (response.ok) {
+        try {
+          data = await response.json();
+        } catch (error) {
+          data = await response.text();
+        }
+      } else {
+        data = await response.text();
+      }
   
       if (response.status === 401) {
-        alert(data.message || 'Credenziali errate');
+        alert(data || 'Credenziali errate');
         return;
       }
   
       if (response.ok) {
-        alert(data.message); 
-        console.log('Login avvenuto con successo:', data);
-  
-        // Salva il token nel sessionStorage
-        sessionStorage.setItem('jwt', data.token); // Salvataggio token
+        alert(data.message || 'Login avvenuto con successo');
+        localStorage.setItem('jwt', data.token); 
+        localStorage.setItem("userEmail", user.email);
   
         if (setUser) {
           setUser(user);
         } else {
           console.error("Errore: setUser non è definito!");
         }
-        toggleModal(); // Chiude il modal dopo il login
+        toggleModal(); 
       }
     } catch (error) {
       console.error('Errore:', error);
       alert('Si è verificato un errore durante il login.');
     }
   };
+  
+  
   
 
   return (

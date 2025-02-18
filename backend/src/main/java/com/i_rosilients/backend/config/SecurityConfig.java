@@ -34,7 +34,12 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable()) // Disabilita CSRF se non necessario
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/auth/**").permitAll() // Permetti endpoint di autenticazione
-                        .requestMatchers("/api/").authenticated() // Permetti endpoint di api
+                        .requestMatchers("/api/questionari/search").permitAll() 
+                        .requestMatchers("/api/questionari/{id}/**").permitAll()
+                        .requestMatchers("/api/questionariCompilati/**").permitAll() 
+                        .requestMatchers("/api/domande/uploads/**").permitAll()  
+                        .requestMatchers("/api/risposte/**").permitAll()  
+                        .requestMatchers("/api/**").authenticated() // Permetti endpoint di api
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

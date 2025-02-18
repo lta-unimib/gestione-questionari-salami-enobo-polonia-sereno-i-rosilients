@@ -1,6 +1,9 @@
 package com.i_rosilients.backend.service;
 
 import jakarta.mail.MessagingException;
+import jakarta.transaction.Transactional;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,7 +20,10 @@ import java.util.Random;
 
 @Service
 public class AuthenticationService {
+    
+    @Autowired
     private final UtenteRepository userRepository;
+    
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final EmailService emailService;
@@ -69,8 +75,6 @@ public class AuthenticationService {
             }
             if (user.getVerificationCode().equals(input.getVerificationCode())) {
                 user.setEnabled(true);
-                user.setVerificationCode(null);
-                user.setVerificationCodeExpiresAt(null);
                 userRepository.save(user);
             } else {
                 throw new RuntimeException("Invalid verification code");
@@ -124,4 +128,15 @@ public class AuthenticationService {
         int code = random.nextInt(900000) + 100000;
         return String.valueOf(code);
     }
+
+    // Metodo per trovare un utente tramite email
+    public Utente findUtenteByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Utente non trovato con email: " + email));  
+    }
+
+    @Transactional
+    public void deleteProfile(Utente utente) {
+        userRepository.delete(utente);
+    }
+
 }

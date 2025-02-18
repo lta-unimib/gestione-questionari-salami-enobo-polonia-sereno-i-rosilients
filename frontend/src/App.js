@@ -1,27 +1,64 @@
-import React, { useEffect, useState } from 'react';
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
-import Home from "./pages/home/Home";
-import HomeLogged from "./pages/home/HomeLogged";
-import Navbar from './components/NavbarHome';
+import Home from './pages/home/Home';
+import HomeLogged from './pages/home/HomeLogged';
+import NavbarHome from './components/NavbarHome';
 import NavBarLogged from './components/NavbarLogged';
-import Questionari from "./pages/questionari/Questionari";
-import Domande from "./pages/domande/Domande";
+import Questionari from './pages/questionari/Questionari';
+import CompilaQuestionario from './pages/questionari/CompilaQuestionario';
+import VisualizzaQuestionario from './pages/questionari/VisualizzaQuestionario';
+import Domande from './pages/domande/Domande';
+
+
+// Funzione per decodificare il token e verificarne la scadenza
+const isTokenValid = (token) => {
+  if (!token) return false;
+
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    const expirationTime = payload.exp * 1000; 
+    return expirationTime > Date.now(); // Verifica se il token è scaduto
+  } catch (e) {
+    return false; // Se il token non è valido, restituiamo false
+  }
+};
 
 const App = () => {
   const [user, setUser] = useState(null);
 
+  // Verifica se il token JWT è presente in localStorage al caricamento
+  useEffect(() => {
+    const token = localStorage.getItem('jwt');
+    if (token && isTokenValid(token)) {
+      setUser({ token });
+    } else {
+      localStorage.removeItem('jwt');
+    }
+  }, []); // Solo al primo caricamento
+
   return (
     <div className="font-jersey tracking-widest">
       <BrowserRouter>
-        {console.log(user)}
-        {user ? <NavBarLogged setUser={setUser} /> : <Navbar setUser={setUser} />}
+        {user ? <NavBarLogged setUser={setUser} /> : <NavbarHome setUser={setUser} />}
+        
         <Routes>
-          <Route path="/" element={user ? <HomeLogged/> : <Home />} />
+          {/* Condizioni per mostrare Home o HomeLogged */}
+          <Route path="/" element={user ? <HomeLogged /> : <Home />} />
+
+          {/* Rotte protette per gli utenti autenticati */}
           {user && (
             <>
               <Route path="/questionari" element={<Questionari user={user} />} />
-              <Route path="/domande" element={<Domande user={user} />} /> 
+              <Route path="/questionari/compilaQuestionario/:id" element={<CompilaQuestionario /*user={user}*/ />} />
+              <Route path="/questionari/:id" element={<VisualizzaQuestionario user={user} />} />
+              <Route path="/domande" element={<Domande user={user} />} />
+            </>
+          )}
+          {!user &&(
+            <>
+            <Route path="/questionari/compilaQuestionario/:id" element={<CompilaQuestionario />} />
+            <Route path="/questionari/:id" element={<VisualizzaQuestionario />} />
             </>
           )}
         </Routes>

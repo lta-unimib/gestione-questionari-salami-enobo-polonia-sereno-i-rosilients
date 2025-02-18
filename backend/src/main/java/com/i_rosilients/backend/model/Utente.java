@@ -2,14 +2,17 @@ package com.i_rosilients.backend.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -38,6 +41,12 @@ public class Utente implements UserDetails{
     private LocalDateTime verificationCodeExpiresAt;
     private boolean enabled;
 
+    @OneToMany(mappedBy = "utente", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Domanda> domande = new ArrayList<>();
+
+    @OneToMany(mappedBy = "utente", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Questionario> questionari = new ArrayList<>();
+
 
      //constructor for creating an unverified user
      public Utente(String email, String password) {
@@ -45,32 +54,31 @@ public class Utente implements UserDetails{
         this.password = password;
     }
 
- public Collection<? extends GrantedAuthority> getAuthorities() {
-     return List.of();
-  }
+     public Collection<? extends GrantedAuthority> getAuthorities() {
+         return List.of();
+      }
 
- //TODO: add proper boolean checks
+     @Override
+     public boolean isAccountNonExpired() { return true; }
 
- public boolean isAccountNonExpired() {
-     return true;
- }
+     @Override
+     public boolean isAccountNonLocked() {
+         return true;
+     }
 
- public boolean isAccountNonLocked() {
-     return true;
- }
+     @Override
+     public boolean isCredentialsNonExpired() {
+         return true;
+     }
 
- public boolean isCredentialsNonExpired() {
-     return true;
- }
+     @Override
+     public boolean isEnabled() {
+         return enabled;
+     }
 
- 
- public boolean isEnabled() {
-     return enabled;
- }
-
-@Override
-public String getUsername() {
-    return this.email;
-}
+    @Override
+    public String getUsername() {
+        return this.email;
+    }
 
 }

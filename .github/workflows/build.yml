@@ -1,0 +1,104 @@
+name: SonarQube
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    types: [opened, synchronize, reopened]
+jobs:
+  build:
+    name: Build and analyze
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: 17
+          distribution: 'zulu'
+
+      - name: Cache SonarQube packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
+      - name: Cache Maven packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+
+      # Debug: List files in the backend directory
+      - name: List files in backend directory
+        run: |
+          ls -al backend
+
+      # Debug: Display contents of .env file
+      - name: Display .env file contents
+        run: |
+          cat backend/.env
+
+      # Debug: Check permissions for .env file
+      - name: Adjust permissions for .env file
+        run: |
+          chmod 644 backend/.env
+
+      # Debug: Display current environment variables before loading .env
+      - name: Debug current environment variables before loading .env
+        run: |
+          echo "Current DB_HOST=$DB_HOST"
+          echo "Current DB_USERNAME=$DB_USERNAME"
+          echo "Current DB_PASSWORD=$DB_PASSWORD"
+          echo "Current JWT_SECRET_KEY=$JWT_SECRET_KEY"
+          echo "Current SUPPORT_EMAIL=$SUPPORT_EMAIL"
+          echo "Current APP_PASSWORD=$APP_PASSWORD"
+
+      # Load environment variables from .env
+      - name: Load environment variables from .env
+        run: |
+          set -o allexport
+          source backend/.env
+          set +o allexport
+          echo "DB_HOST=$DB_HOST"
+          echo "DB_USERNAME=$DB_USERNAME"
+          echo "DB_PASSWORD=$DB_PASSWORD"
+          echo "JWT_SECRET_KEY=$JWT_SECRET_KEY"
+          echo "SUPPORT_EMAIL=$SUPPORT_EMAIL"
+          echo "APP_PASSWORD=$APP_PASSWORD"
+
+      # Start Docker container for MySQL
+      - name: Start MySQL Docker container
+        run: |
+          docker run -d --name sonar-mysql -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=websurveys -e MYSQL_USER=sonar -e MYSQL_PASSWORD=sonar -p 3306:3306 mysql:8.0
+          sleep 10  # Wait for MySQL to start
+
+      # Override database configuration for SonarQube analysis
+      - name: Override database configuration for SonarQube
+        run: |
+          echo "DB_HOST=localhost" >> $GITHUB_ENV
+          echo "DB_USERNAME=sonar" >> $GITHUB_ENV
+          echo "DB_PASSWORD=sonar" >> $GITHUB_ENV
+
+      - name: Build and analyze
+        working-directory: ./backend
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
+          DB_HOST: ${{ env.DB_HOST }}             
+          DB_USERNAME: ${{ env.DB_USERNAME }}
+          DB_PASSWORD: ${{ env.DB_PASSWORD }}
+          JWT_SECRET_KEY: ${{ env.JWT_SECRET_KEY }}
+          SUPPORT_EMAIL: ${{ env.SUPPORT_EMAIL }}
+          APP_PASSWORD: ${{ env.APP_PASSWORD }}
+        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=lta-unimib_gestione-questionari-salami-enobo-polonia-sereno-i-rosilients
+
+      # Clean up Docker container
+      - name: Stop and remove MySQL Docker container
+        run: |
+          docker stop sonar-mysql
+          docker rm sonar-mysql
