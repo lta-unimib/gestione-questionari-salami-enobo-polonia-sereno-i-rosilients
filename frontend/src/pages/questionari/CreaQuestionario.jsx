@@ -8,7 +8,7 @@ const CreaQuestionario = ({ user, setUpdateQuestionari }) => {
   const [userEmail, setUserEmail] = useState(localStorage.getItem("userEmail"));
 
   useEffect(() => {
-    fetch(`http://localhost:8080/api/domande/${userEmail}`, {
+    fetch(`http://localhost:8080/api/domande/tutteLeDomande`, {
       headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
     })
       .then((res) => res.json())

@@ -128,6 +128,11 @@ const Questionari = ({ user }) => {
   const handleEditQuestionario = () => {
     if (!questionarioToEdit) return;
 
+    if (!editedNome || domandeAssociate.length === 0) {
+      alert('Compila tutti i campi e seleziona almeno una domanda.');
+      return;
+    }
+
     const updatedQuestionario = {
       ...questionarioToEdit,
       nome: editedNome,
