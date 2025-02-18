@@ -12,13 +12,9 @@ import jakarta.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -58,27 +54,6 @@ public class DomandaService implements IDomandaService {
             }
         }
     }
-    
-    
-    @Transactional
-    public void deleteDomanda(int idDomanda) {
-        Optional<Domanda> domandaOpt = domandaRepository.findById(idDomanda);
-        if (domandaOpt.isPresent()) {
-            Domanda domanda = domandaOpt.get();
-            
-            if (domanda.getImmaginePath() != null && !domanda.getImmaginePath().isEmpty()) {
-                Path imagePath = Paths.get("uploads", new File(domanda.getImmaginePath()).getName());
-                try {
-                    Files.deleteIfExists(imagePath); // Elimina il file fisico se esiste
-                } catch (IOException e) {
-                    throw new RuntimeException("Errore durante la rimozione dell'immagine", e);
-                }
-            }
-            domandaRepository.delete(domanda);
-        } else {
-            throw new RuntimeException("Domanda non trovata con id: " + idDomanda);
-        }
-    }
 
     public void updateDomanda(int idDomanda, DomandaDTO domandaDTO) {
         Optional<Domanda> domandaOpt = domandaRepository.findById(idDomanda);
@@ -87,17 +62,13 @@ public class DomandaService implements IDomandaService {
             domanda.setArgomento(domandaDTO.getArgomento());
             domanda.setTestoDomanda(domandaDTO.getTestoDomanda());
 
-            // 👉 Controlliamo se l'utente ha richiesto la rimozione dell'immagine
-            if (domandaDTO.isRemoveImage() && domanda.getImmaginePath() != null) {
-                Path imagePath = Paths.get("uploads", new File(domanda.getImmaginePath()).getName());
-                try {
-                    Files.deleteIfExists(imagePath); // Elimina il file fisico
-                    domanda.setImmaginePath(null); // Rimuove il riferimento nel database
-                } catch (IOException e) {
-                    throw new RuntimeException("Errore durante la rimozione dell'immagine", e);
-                }
+            // Aggiorna immagine
+            if (domandaDTO.isRemoveImage()) {
+                domanda.setImmaginePath(null);
+            } else {
+                domanda.setImmaginePath(domandaDTO.getImagePath());
             }
-        
+
             domandaRepository.save(domanda);
     
             // Se sono state passate delle nuove opzioni, aggiorniamo le opzioni
@@ -127,6 +98,27 @@ public class DomandaService implements IDomandaService {
             }
         } else {
             throw new RuntimeException("Domanda non trovata con ID: " + idDomanda);
+        }
+    }
+    
+    
+    @Transactional
+    public void deleteDomanda(int idDomanda) {
+        Optional<Domanda> domandaOpt = domandaRepository.findById(idDomanda);
+        if (domandaOpt.isPresent()) {
+            Domanda domanda = domandaOpt.get();
+            
+            if (domanda.getImmaginePath() != null && !domanda.getImmaginePath().isEmpty()) {
+                Path imagePath = Paths.get("uploads", new File(domanda.getImmaginePath()).getName());
+                try {
+                    Files.deleteIfExists(imagePath); // Elimina il file fisico se esiste
+                } catch (IOException e) {
+                    throw new RuntimeException("Errore durante la rimozione dell'immagine", e);
+                }
+            }
+            domandaRepository.delete(domanda);
+        } else {
+            throw new RuntimeException("Domanda non trovata con id: " + idDomanda);
         }
     }
 

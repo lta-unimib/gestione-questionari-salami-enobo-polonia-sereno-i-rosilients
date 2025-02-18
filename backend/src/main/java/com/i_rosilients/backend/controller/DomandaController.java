@@ -2,6 +2,8 @@ package com.i_rosilients.backend.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.i_rosilients.backend.dto.DomandaDTO;
+import com.i_rosilients.backend.model.Domanda;
+import com.i_rosilients.backend.repository.DomandaRepository;
 import com.i_rosilients.backend.service.IDomandaService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -29,6 +32,9 @@ public class DomandaController {
 
     @Autowired
     private IDomandaService domandaService;
+    
+    @Autowired
+    private DomandaRepository domandaRepository;
 
     private static final String UPLOAD_DIR = "uploads/";
 
@@ -69,6 +75,55 @@ public class DomandaController {
         }
     }
 
+    @PutMapping(value = "/updateDomanda/{idDomanda}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> updateDomanda(
+        @PathVariable int idDomanda, 
+        @RequestParam("argomento") String argomento,
+        @RequestParam("testoDomanda") String testoDomanda,
+        @RequestParam("emailUtente") String emailUtente,
+        @RequestParam(value = "opzioni", required = false) String opzioniJson,
+        @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
+        @RequestParam(value = "removeImage", required = false, defaultValue = "false") boolean removeImage) throws IOException {
+        try {
+            
+            Optional<Domanda> domandaOpt = domandaRepository.findById(idDomanda);
+            Domanda domanda = domandaOpt.get();
+            
+            // Converti la lista di opzioni da JSON a List<String>
+            List<String> opzioni = new ArrayList<>();
+            if (opzioniJson != null && !opzioniJson.isEmpty()) {
+                opzioni = new ObjectMapper().readValue(opzioniJson, new com.fasterxml.jackson.core.type.TypeReference<List<String>>() {});
+            }
+
+            String imageUrl = domanda.getImmaginePath();
+            if (removeImage) {
+                // Se si vuole rimuovere l'immagine, cancella il file fisico
+                if (imageUrl != null) {
+                    Path imagePath = Paths.get("uploads", new File(imageUrl).getName());
+                    Files.deleteIfExists(imagePath);
+                }
+                imageUrl = null; // Rimuovi l'immagine dal database
+            } else if (imageFile != null && !imageFile.isEmpty()) {
+                // Se viene caricata una nuova immagine, elimina la vecchia e salva la nuova
+                if (imageUrl != null) {
+                    Path oldImagePath = Paths.get("uploads", new File(imageUrl).getName());
+                    Files.deleteIfExists(oldImagePath);
+                }
+                imageUrl = salvaImmagine(imageFile);
+            }
+            
+            // Creiamo il DTO con l'immagine
+            DomandaDTO domandaDTO = new DomandaDTO(argomento, testoDomanda, emailUtente, imageUrl, opzioni);
+
+            // Passiamo il DTO al service
+            domandaService.updateDomanda(idDomanda, domandaDTO);
+
+            return ResponseEntity.ok("Domanda aggiornata con successo");
+        } catch (RuntimeException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+    }
+
     private String salvaImmagine(MultipartFile file) throws IOException {
         File uploadDir = new File(UPLOAD_DIR);
         if (!uploadDir.exists()) {
@@ -86,15 +141,6 @@ public class DomandaController {
     public void deleteDomanda(@PathVariable int idDomanda) {
         try {
             domandaService.deleteDomanda(idDomanda);
-        } catch (RuntimeException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }
-    }
-
-    @PutMapping("/updateDomanda/{idDomanda}")
-    public void updateDomanda(@PathVariable int idDomanda, @RequestBody DomandaDTO domandaDTO) {
-        try {
-            domandaService.updateDomanda(idDomanda, domandaDTO);
         } catch (RuntimeException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }

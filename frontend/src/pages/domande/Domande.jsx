@@ -15,6 +15,7 @@ const Domande = ({ user }) => {
   const [editedTesto, setEditedTesto] = useState('');
   const [removeImage, setRemoveImage] = useState(false);
   const [editedOpzioni, setEditedOpzioni] = useState([]);
+  const [editedImage, setEditedImage] = useState(null);
   const [filtro, setFiltro] = useState("tue");
   const [searchTerm, setSearchTerm] = useState("");
   const token = localStorage.getItem("jwt");
@@ -24,8 +25,15 @@ const Domande = ({ user }) => {
 
   ReactModal.setAppElement('#root');
 
+  useEffect(() => {
+    
+  
+    console.log(removeImage)
+  }, [removeImage])
+  
+
   const fetchImage = async (fileName) => {
-    console.log(fileName);
+    // console.log(fileName);
     try {
       const response = await fetch(`http://localhost:8080${fileName}`, {
         method: 'GET',
@@ -39,7 +47,7 @@ const Domande = ({ user }) => {
       }
   
       const contentType = response.headers.get("Content-Type");
-      console.log("Tipo di contenuto dell'immagine:", contentType);
+      // console.log("Tipo di contenuto dell'immagine:", contentType);
   
       if (!contentType || !contentType.startsWith("image/")) {
         throw new Error("Il file restituito non è un'immagine");
@@ -144,7 +152,8 @@ const Domande = ({ user }) => {
     setDomandaToEdit(domanda);
     setEditedArgomento(domanda.argomento);
     setEditedTesto(domanda.testoDomanda);
-    setEditedOpzioni(domanda.opzioni || [""]); // Se non ci sono opzioni, inizializza con un array vuoto
+    setEditedOpzioni(domanda.opzioni || [""]); 
+    setRemoveImage(domanda.removeImage)
     setIsEditModalOpen(true);
   };
 
@@ -165,35 +174,43 @@ const Domande = ({ user }) => {
 
   const handleEditDomanda = () => {
     if (!domandaToEdit) return;
-  
-    // Crea l'oggetto di aggiornamento della domanda
-    const updatedDomanda = {
-      argomento: editedArgomento,
-      testoDomanda: editedTesto,
-      removeImage: removeImage
-    };
-  
-    // Se ci sono opzioni, includile nell'aggiornamento
-    if (editedOpzioni && editedOpzioni.length > 0) {
-      updatedDomanda.opzioni = editedOpzioni;
-    }
 
-    console.log(updatedDomanda);
+    
+    const formData = new FormData();
+    formData.append('argomento', editedArgomento);
+    formData.append('testoDomanda', editedTesto);
+    formData.append('emailUtente', user.email);
+
+    if (editedImage) {
+        formData.append('imageFile', editedImage);
+    }
+    if (editedOpzioni && editedOpzioni.length > 0) {
+      formData.append('opzioni', JSON.stringify(editedOpzioni));
+    }
+    
+    if (removeImage) {
+      formData.append('removeImage', 'true');  
+    }
+    for (let pair of formData.entries()) {
+      console.log(pair[0] + ':', pair[1]);
+    }
   
     fetch(`http://localhost:8080/api/domande/updateDomanda/${domandaToEdit.idDomanda}`, {
       method: 'PUT',
       headers: {
-        'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`,
       },
-      body: JSON.stringify(updatedDomanda),
+      // body: JSON.stringify(updatedDomanda),
+      body: formData
     })
     .then(response => {
       if (!response.ok) {
         throw new Error('Errore nell\'aggiornamento della domanda');
       }
-      setDomande(prevState => prevState.map(d => d.idDomanda === updatedDomanda.idDomanda ? updatedDomanda : d));
+      setDomande(prevState => prevState.map(d => d.idDomanda === domandaToEdit.idDomanda ? domandaToEdit : d));
       setUpdateDomande(true);
+      setEditedImage(false);
+      setRemoveImage(false);
       closeEditModal();
       alert("Domanda modificata con successo! ✅");
     })
@@ -232,7 +249,7 @@ const Domande = ({ user }) => {
                 <h3 className="text-xl font-semibold">{d.argomento}</h3>
                 <p>{d.testoDomanda}</p>
                 {d.imagePath && images[d.idDomanda] && (
-                  <img src={images[d.idDomanda]} alt="Domanda" className=" " />
+                  <img src={images[d.idDomanda]} alt="Domanda" className="h-96 w-96" />
                 )}
                 {d.opzioni && d.opzioni.length > 0 && (
                   <ul className="mt-2">
@@ -316,7 +333,12 @@ const Domande = ({ user }) => {
             onChange={(e) => setEditedTesto(e.target.value)} 
             placeholder="Testo della domanda"
           />
-
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => setEditedImage(e.target.files[0])}
+            className="border rounded-lg p-2 w-full my-2"
+          />
           {domandaToEdit?.imagePath && (
             <div className="flex items-center gap-2">
               <input
@@ -361,7 +383,7 @@ const Domande = ({ user }) => {
                 Aggiungi opzione
               </button>
             </div>
-          )}
+           )}
           <br />
           <button onClick={handleEditDomanda} className="bg-blue-500 text-white px-6 py-2 rounded-lg mr-4 hover:bg-blue-600 transition">Salva</button>
           <button onClick={closeEditModal} className="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition">Annulla</button>
