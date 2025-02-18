@@ -4,8 +4,10 @@ import com.i_rosilients.backend.dto.DomandaDTO;
 import com.i_rosilients.backend.model.Domanda;
 import com.i_rosilients.backend.model.Opzione;
 import com.i_rosilients.backend.model.Utente;
+import com.i_rosilients.backend.repository.DomandaQuestionarioRepository;
 import com.i_rosilients.backend.repository.DomandaRepository;
 import com.i_rosilients.backend.repository.OpzioneRepository;
+import com.i_rosilients.backend.repository.QuestionarioRepository;
 import com.i_rosilients.backend.repository.UtenteRepository;
 
 import jakarta.transaction.Transactional;
@@ -34,6 +36,9 @@ public class DomandaService implements IDomandaService {
 
     @Autowired
     private OpzioneRepository opzioneRepository;
+
+    @Autowired
+    private DomandaQuestionarioRepository domandaQuestionarioRepository;
 
     public void creaDomanda(DomandaDTO domandaDTO) throws IOException {
         Optional<Utente> utenteOpt = utenteRepository.findByEmail(domandaDTO.getEmailUtente());
@@ -174,5 +179,39 @@ public class DomandaService implements IDomandaService {
             .collect(Collectors.toList());
     }
 
-    
+    @Override
+    public List<DomandaDTO> getDomandeByQuestionario(String idQuestionario) {
+        try {
+            Integer questionarioId = Integer.valueOf(idQuestionario);  // Conversione della stringa a Integer
+            List<Integer> domandeIds = domandaQuestionarioRepository.findDomandeIdsByQuestionarioId(questionarioId);
+
+            if (domandeIds.isEmpty()) {
+                throw new RuntimeException("Nessuna domanda trovata per il questionario");
+            }
+
+            // Trova le domande per gli ID ottenuti
+            List<Domanda> domande = domandaRepository.findAllById(domandeIds);
+
+            // Converti le domande in DomandaDTO
+            return domande.stream()
+            .map(domanda -> {
+
+                // Creazione del DomandaDTO
+                return new DomandaDTO(
+                    domanda.getIdDomanda(),
+                    domanda.getArgomento(),
+                    domanda.getTestoDomanda(),
+                    domanda.getUtente().getEmail(),
+                    domanda.getImmaginePath(),  // Immagine convertita in file
+                    false,
+                    opzioneRepository.findByDomanda(domanda).stream()
+                        .map(Opzione::getTestoOpzione)
+                        .collect(Collectors.toList())  // Se non ci sono opzioni, restituisce una lista vuota
+                );
+            })
+            .collect(Collectors.toList());
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("ID del questionario non valido");
+        }
+    }
 }

@@ -22,6 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -156,6 +157,17 @@ public class DomandaController {
     @GetMapping("/tutteLeDomande")
     public List<DomandaDTO> getTutteLeDomande() {
         return domandaService.getTutteLeDomande();
+    }
+
+    //per ottenere le domande associate ad un questionario
+    @GetMapping("/domandeByQuestionario/{idQuestionario}")
+    public ResponseEntity<List<DomandaDTO>> getDomandeByQuestionario(@PathVariable String idQuestionario) {
+        try {
+            List<DomandaDTO> domande = domandaService.getDomandeByQuestionario(idQuestionario);
+            return ResponseEntity.ok(domande);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.emptyList());
+        }
     }
 
     @GetMapping("/uploads/{filename:.+}")

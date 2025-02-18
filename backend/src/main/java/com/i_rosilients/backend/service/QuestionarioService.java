@@ -82,30 +82,32 @@ public class QuestionarioService implements IQuestionarioService {
         }
     }
 
-
+    @Transactional
     public void updateQuestionario(int idQuestionario, QuestionarioDTO questionarioDTO) {
         Optional<Questionario> questionarioOpt = questionarioRepository.findById(idQuestionario);
-        if (questionarioOpt.isPresent()) {
-            Questionario questionario = questionarioOpt.get();
-            questionario.setNome(questionarioDTO.getNome());
-            questionarioRepository.save(questionario);
-    
-            // Aggiorna le associazioni con DomandaQuestionario
-            domandaQuestionarioRepository.deleteByQuestionario(questionario);
-    
-            if (questionarioDTO.getIdDomande() != null && !questionarioDTO.getIdDomande().isEmpty()) {
-                for (Integer idDomanda : questionarioDTO.getIdDomande()) {
-                    if (domandaRepository.existsById(idDomanda)) {
-                        DomandaQuestionario dq = new DomandaQuestionario();
-                        dq.setIdDomanda(idDomanda);
-                        dq.setIdQuestionario(questionario.getIdQuestionario());
-                        domandaQuestionarioRepository.save(dq);
-                    }
-                }
-            }
-        } else {
+        
+        if (questionarioOpt.isEmpty()) {
             throw new RuntimeException("Questionario non trovato con ID: " + idQuestionario);
         }
+
+        Questionario questionario = questionarioOpt.get();
+        questionario.setNome(questionarioDTO.getNome());
+        questionarioRepository.save(questionario);
+    
+        // Aggiorna le associazioni con DomandaQuestionario
+        domandaQuestionarioRepository.deleteByQuestionario(questionario);
+    
+        if (questionarioDTO.getIdDomande() != null && !questionarioDTO.getIdDomande().isEmpty()) {
+            for (Integer idDomanda : questionarioDTO.getIdDomande()) {
+                if (domandaRepository.existsById(idDomanda)) {
+                    DomandaQuestionario dq = new DomandaQuestionario();
+                    dq.setIdDomanda(idDomanda);
+                    dq.setIdQuestionario(questionario.getIdQuestionario());
+                    domandaQuestionarioRepository.save(dq);
+                }
+            }
+        }
+        
     }
 
 

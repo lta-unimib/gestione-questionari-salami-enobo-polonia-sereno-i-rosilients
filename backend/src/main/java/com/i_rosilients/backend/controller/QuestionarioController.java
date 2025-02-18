@@ -41,6 +41,7 @@ public class QuestionarioController {
     @PutMapping("/updateQuestionario/{idQuestionario}")
     public void updateQuestionario(@PathVariable int idQuestionario, @RequestBody QuestionarioDTO questionarioDTO) {
         try {
+            System.out.println("Received QuestionarioDTO: " + questionarioDTO);
             questionarioService.updateQuestionario(idQuestionario, questionarioDTO);
         } catch (RuntimeException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());

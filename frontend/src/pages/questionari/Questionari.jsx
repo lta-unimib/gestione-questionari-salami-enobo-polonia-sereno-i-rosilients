@@ -14,6 +14,8 @@ const Questionari = ({ user }) => {
   const [questionarioIdToDelete, setQuestionarioIdToDelete] = useState(null);
   const [questionarioToEdit, setQuestionarioToEdit] = useState(null);
   const [editedNome, setEditedNome] = useState('');
+  const [domande, setDomande] = useState([]); 
+  const [domandeAssociate, setDomandeAssociate] = useState([]);
   ReactModal.setAppElement('#root');
 
   useEffect(() => {
@@ -51,6 +53,27 @@ const Questionari = ({ user }) => {
     setQuestionarioIdToDelete(null);
   };
 
+  //useEffect per recuperare le domande associate al questionario da modificare
+  useEffect(() => {
+    if (isEditModalOpen && questionarioToEdit) {
+      fetch(`http://localhost:8080/api/domande/domandeByQuestionario/${questionarioToEdit.idQuestionario}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          setDomande(data);
+          setDomandeAssociate(data.map((d) => d.idDomanda.toString()));
+        })
+        .catch((error) => console.error('Errore:', error));
+    }
+  }, [isEditModalOpen, questionarioToEdit, token]);
+
+
   // Apertura e chiusura modale modifica
   const openEditModal = (questionario) => {
     setQuestionarioToEdit(questionario);
@@ -87,35 +110,38 @@ const Questionari = ({ user }) => {
 
   // Modifica questionario
   const handleEditQuestionario = () => {
-    if (!questionarioToEdit) return;
+  if (!questionarioToEdit) return;
 
-    const updatedQuestionario = {
-      ...questionarioToEdit,
-      nome: editedNome,
-    };
-
-    fetch(`http://localhost:8080/api/questionari/updateQuestionario/${questionarioToEdit.idQuestionario}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(updatedQuestionario),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Errore nell'aggiornamento del questionario");
-        }
-        setQuestionari((prevState) => prevState.map((q) => (q.idQuestionario === updatedQuestionario.idQuestionario ? updatedQuestionario : q)));
-        setUpdateQuestionari(true);
-        closeEditModal();
-        alert('Questionario modificato con successo! ✅');
-      })
-      .catch((error) => {
-        console.error('Errore:', error);
-        alert('Si è verificato un errore durante la modifica. ❌');
-      });
+  const updatedQuestionario = {
+    ...questionarioToEdit,
+    nome: editedNome,
+    idDomande: domandeAssociate.map(Number),
   };
+
+  console.log('Body JSON inviato al backend:', JSON.stringify(updatedQuestionario));
+  
+  fetch(`http://localhost:8080/api/questionari/updateQuestionario/${questionarioToEdit.idQuestionario}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(updatedQuestionario),
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Errore nell'aggiornamento del questionario");
+      }
+      setQuestionari((prevState) => prevState.map((q) => (q.idQuestionario === updatedQuestionario.idQuestionario ? updatedQuestionario : q)));
+      setUpdateQuestionari(true);
+      closeEditModal();
+      alert('Questionario modificato con successo! ✅');
+    })
+    .catch((error) => {
+      console.error('Errore:', error);
+      alert('Si è verificato un errore durante la modifica. ❌');
+    });
+};
 
   return (
     <div className='mx-24'>
@@ -158,6 +184,43 @@ const Questionari = ({ user }) => {
   <div className='bg-white p-8 rounded-lg w-96'>
     <h2 className='text-2xl font-semibold text-gray-800'>Modifica il nome del questionario</h2>
     <input type='text' className='border rounded-lg p-2 w-full my-2' value={editedNome} onChange={(e) => setEditedNome(e.target.value)} placeholder='Nome' />
+    <div className="mb-4">
+      <h3 className="text-lg font-semibold mb-2">Seleziona le domande:</h3>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {domande.length > 0 ? (
+          domande.map((d) => (
+            <label
+              key={d.idDomanda}
+              htmlFor={`domanda-${d.idDomanda}`}
+              className={`flex items-center p-4 border rounded-lg cursor-pointer transition ${
+                domandeAssociate.includes(d.idDomanda.toString())
+                  ? 'bg-blue-100 border-blue-500'
+                  : 'hover:bg-gray-100 border-gray-300'
+              }`}
+            >
+              <input
+                type="checkbox"
+                id={`domanda-${d.idDomanda}`}
+                value={d.idDomanda}
+                checked={domandeAssociate.includes(d.idDomanda.toString())}
+                onChange={(e) => {
+                  const selectedId = e.target.value;
+                  setDomandeAssociate((prev) =>
+                    prev.includes(selectedId)
+                      ? prev.filter((id) => id !== selectedId)
+                      : [...prev, selectedId]
+                  );
+                }}
+                className="mr-3"
+              />
+              <span className="text-gray-700">{d.testoDomanda}</span>
+            </label>
+          ))
+        ) : (
+          <p className="text-gray-500">Nessuna domanda disponibile.</p>
+        )}
+      </div>
+    </div>
     <button onClick={handleEditQuestionario} className='bg-blue-500 text-white px-6 py-2 rounded-lg mr-4 hover:bg-blue-600'>Salva</button>
     <button onClick={closeEditModal} className='bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600'>Annulla</button>
   </div>
