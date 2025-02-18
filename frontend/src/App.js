@@ -7,6 +7,7 @@ import NavbarHome from './components/NavbarHome';
 import NavBarLogged from './components/NavbarLogged';
 import Questionari from './pages/questionari/Questionari';
 import CompilaQuestionario from './pages/questionari/CompilaQuestionario';
+import VisualizzaQuestionario from './pages/questionari/VisualizzaQuestionario';
 import Domande from './pages/domande/Domande';
 
 
@@ -50,12 +51,14 @@ const App = () => {
             <>
               <Route path="/questionari" element={<Questionari user={user} />} />
               <Route path="/questionari/compilaQuestionario/:id" element={<CompilaQuestionario /*user={user}*/ />} />
+              <Route path="/questionari/:id" element={<VisualizzaQuestionario user={user} />} />
               <Route path="/domande" element={<Domande user={user} />} />
             </>
           )}
           {!user &&(
             <>
             <Route path="/questionari/compilaQuestionario/:id" element={<CompilaQuestionario />} />
+            <Route path="/questionari/:id" element={<VisualizzaQuestionario />} />
             </>
           )}
         </Routes>
