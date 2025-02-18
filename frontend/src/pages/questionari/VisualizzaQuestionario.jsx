@@ -56,19 +56,22 @@ const VisualizzaQuestionario = () => {
     <div className="max-w-3xl mx-auto mt-8 p-6 bg-white shadow-lg rounded-lg">
       {questionario ? (
         <>
-          <h1 className="text-3xl font-bold text-blue-600">{questionario.nome}</h1>
+          <h1 className="text-3xl font-bold text-personal-purple">{questionario.nome}</h1>
           <p className="text-gray-600 mt-2">
             Creato da: <strong>{questionario.emailUtente?.split('@')[0]}</strong>
           </p>
-
+  
           <h2 className="text-2xl font-semibold mt-6">Domande</h2>
           {domande.length > 0 ? (
             <ul className="mt-4 space-y-4">
               {domande.map((domanda) => (
                 <li key={domanda.idDomanda} className="border p-4 rounded-lg shadow-md bg-gray-100">
-                  <h3 className="text-lg font-semibold text-gray-800">📌 Argomento: {domanda.argomento}</h3>
-                  <p className="text-gray-700 mt-1">📝 {domanda.testoDomanda}</p>
-
+                  {/* Argomento non in grassetto */}
+                  <h3 className="text-md font text-gray-700"> Argomento: {domanda.argomento}</h3>
+  
+                  {/* Testo della domanda in grassetto */}
+                  <p className="text-xl text-gray-900 mt-2 ">📌 {domanda.testoDomanda}</p>
+  
                   {/* Visualizzazione dell'immagine, se presente */}
                   {domanda.imagePath && (
                     <div className="mt-4">
@@ -79,6 +82,20 @@ const VisualizzaQuestionario = () => {
                       />
                     </div>
                   )}
+  
+                  {/* Visualizzazione delle opzioni */}
+                  {domanda.opzioni && domanda.opzioni.length > 0 ? (
+                    <div className="mt-4">
+                      <h4 className="text-lg font text-gray-700">Opzioni:</h4>
+                      <ul className="list-disc list-inside">
+                        {domanda.opzioni.map((opzione, index) => (
+                          <li key={index} className="text-black-600">
+                            {opzione}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ) : null}
                 </li>
               ))}
             </ul>
@@ -91,6 +108,7 @@ const VisualizzaQuestionario = () => {
       )}
     </div>
   );
+  
 };
 
 export default VisualizzaQuestionario;
