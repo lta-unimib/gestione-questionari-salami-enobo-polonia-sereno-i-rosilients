@@ -7,6 +7,7 @@ import com.i_rosilients.backend.service.RispostaService;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,4 +42,19 @@ public class RispostaController {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
     }
+
+    @PostMapping("/inviaEmail")
+    public ResponseEntity<?> inviaEmail(@RequestHeader("Authorization") String token, @RequestBody Map<String, Object> request) {
+        try {
+            String userEmail = (String) request.get("userEmail");
+            int idCompilazione = Integer.parseInt(request.get("idCompilazione").toString());
+    
+            rispostaService.inviaEmailConPdf(userEmail, idCompilazione);
+    
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+    
 }

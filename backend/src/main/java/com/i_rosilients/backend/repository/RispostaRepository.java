@@ -1,5 +1,6 @@
 package com.i_rosilients.backend.repository;
 
+import com.i_rosilients.backend.model.QuestionarioCompilato;
 import com.i_rosilients.backend.model.Risposta;
 
 import java.util.List;
@@ -13,5 +14,6 @@ public interface RispostaRepository extends JpaRepository<Risposta, Integer> {
      void deleteByQuestionarioCompilato_IdCompilazione(int idCompilazione);
 
      List<Risposta> findByQuestionarioCompilato_IdCompilazione(int idCompilazione);
-
+     List<Risposta> findByQuestionarioCompilato(QuestionarioCompilato compilato);
+     
 }

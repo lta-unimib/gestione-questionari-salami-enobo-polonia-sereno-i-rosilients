@@ -11,6 +11,7 @@ const CompilaQuestionario = () => {
   const [idCompilazione, setIdCompilazione] = useState(null); 
   const [showModal, setShowModal] = useState(false); 
   const [codiceUnivoco, setCodiceUnivoco] = useState(null); 
+  const [userEmail, setUserEmail] = useState(localStorage.getItem('userEmail'));
 
   useEffect(() => {
     const fetchQuestionario = async () => {
@@ -107,7 +108,24 @@ const CompilaQuestionario = () => {
       console.log("il token estratto è " + token); // Check if user is logged in
 
       if (token) {
-        alert('Tutte le risposte inviate con successo');
+        // If logged in, send email with PDF
+        const emailResponse = await fetch('http://localhost:8080/api/risposte/inviaEmail', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            idCompilazione: idCompilazione,
+            userEmail: userEmail,
+          }),
+        });
+
+        if (!emailResponse.ok) {
+          throw new Error('Errore nell\'invio dell\'email');
+        }
+
+        alert('Tutte le risposte inviate con successo e email inviata!');
         navigate('/'); // Redirect to home if logged in
       } else {
         // If not logged in, show the unique code modal

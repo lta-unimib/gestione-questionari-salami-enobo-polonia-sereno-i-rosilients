@@ -6,4 +6,5 @@ public interface IRispostaService {
 
     public int creaNuovaCompilazione(int idQuestionario);
     public void salvaRisposta(RispostaDTO rispostaDTO);
+    public void inviaEmailConPdf(String userEmail, Long idCompilazione);
 }
