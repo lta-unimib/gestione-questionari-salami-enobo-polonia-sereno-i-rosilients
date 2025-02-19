@@ -4,6 +4,7 @@ import com.i_rosilients.backend.dto.DomandaDTO;
 import com.i_rosilients.backend.dto.QuestionarioDTO;
 import com.i_rosilients.backend.model.Domanda;
 import com.i_rosilients.backend.model.DomandaQuestionario;
+import com.i_rosilients.backend.model.Opzione;
 import com.i_rosilients.backend.model.Questionario;
 import com.i_rosilients.backend.model.Utente;
 import com.i_rosilients.backend.repository.QuestionarioRepository;
@@ -150,6 +151,29 @@ public class QuestionarioService implements IQuestionarioService {
     
         return questionari;
     }
+
+    @Override
+    public List<QuestionarioDTO> getTuttiIQuestionari() {
+        List<Questionario> questionari = questionarioRepository.findAll();  // Recupera tutti i questionari dal DB
+        
+        // Crea la lista di QuestionarioDTO
+        return questionari.stream()
+            .map(questionario -> {
+    
+                // Recupera gli ID delle domande associate al questionario
+                List<Integer> domandeIds = domandaRepository.findDomandeIdsByQuestionarioId(questionario.getIdQuestionario());
+    
+                // Creazione del QuestionarioDTO
+                return new QuestionarioDTO(
+                    questionario.getIdQuestionario(),
+                    questionario.getNome(),
+                    questionario.getUtente().getEmail(),  // L'utente che ha creato il questionario
+                    domandeIds  // Aggiungi solo gli ID delle domande
+                );
+            })
+            .collect(Collectors.toList());
+    }
+
 
     @Override
     public List<DomandaDTO> getDomandeByQuestionario(int idQuestionario) {

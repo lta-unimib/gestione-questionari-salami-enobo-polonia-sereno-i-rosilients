@@ -59,6 +59,11 @@ public class QuestionarioController {
         return ResponseEntity.ok(questionari);
     }
 
+    @GetMapping("/tuttiIQuestionari")
+    public List<QuestionarioDTO> getTuttiIQuestionari() {
+        return questionarioService.getTuttiIQuestionari();
+    }
+
     @GetMapping("/{id}/domande")
     public ResponseEntity<List<DomandaDTO>> getDomande(@PathVariable int id) {
         List<DomandaDTO> domande = questionarioService.getDomandeByQuestionario(id);

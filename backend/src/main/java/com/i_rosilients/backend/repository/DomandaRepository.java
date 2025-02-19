@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import com.i_rosilients.backend.model.Domanda;
 import com.i_rosilients.backend.model.Utente;
+import com.i_rosilients.backend.model.Questionario;
 
 @Repository
 public interface DomandaRepository extends JpaRepository<Domanda, Integer> {
