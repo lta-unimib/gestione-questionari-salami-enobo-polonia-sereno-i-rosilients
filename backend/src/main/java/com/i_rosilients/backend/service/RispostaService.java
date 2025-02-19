@@ -2,12 +2,14 @@ package com.i_rosilients.backend.service;
 
 
 import com.i_rosilients.backend.model.Risposta;
+import com.i_rosilients.backend.model.Utente;
 import com.i_rosilients.backend.model.QuestionarioCompilato;
 import com.i_rosilients.backend.dto.RispostaDTO;
 import com.i_rosilients.backend.model.Domanda;
 import com.i_rosilients.backend.model.Opzione;
 import com.i_rosilients.backend.model.Questionario;
 import com.i_rosilients.backend.repository.RispostaRepository;
+import com.i_rosilients.backend.repository.UtenteRepository;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Element;
@@ -51,18 +53,27 @@ public class RispostaService {
     @Autowired
     private QuestionarioRepository questionarioRepository;
 
+    @Autowired 
+    private UtenteRepository utenteRepository;
+
     @Autowired
     private JavaMailSender emailSender;
 
     private static final String UPLOAD_DIR = "uploads/";
 
     // Crea una nuova compilazione
-    public int creaNuovaCompilazione(int idQuestionario) {
+    public int creaNuovaCompilazione(int idQuestionario, String userEmail) {
         Questionario questionario = questionarioRepository.findById(idQuestionario)
                 .orElseThrow(() -> new RuntimeException("Questionario non trovato"));
 
+        Optional<Utente> utenteOpt = utenteRepository.findByEmail(userEmail);
+        if (utenteOpt.isEmpty()) {
+            throw new RuntimeException("Utente non trovato con email: " + userEmail);
+        }
+
         QuestionarioCompilato nuovaCompilazione = new QuestionarioCompilato();
         nuovaCompilazione.setQuestionario(questionario);
+        nuovaCompilazione.setUtente(utenteOpt.get());
         nuovaCompilazione.setDataCompilazione(LocalDateTime.now()); // Imposta la data corrente
         nuovaCompilazione.setDefinitivo(false); // Imposta lo stato del questionario a non definitivo
 

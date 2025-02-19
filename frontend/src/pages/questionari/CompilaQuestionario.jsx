@@ -44,7 +44,7 @@ const CompilaQuestionario = () => {
 
   const creaNuovaCompilazione = async (idQuestionario) => {
     try {
-      const response = await fetch(`http://localhost:8080/api/risposte/creaCompilazione?idQuestionario=${idQuestionario}`, {
+      const response = await fetch(`http://localhost:8080/api/risposte/creaCompilazione?idQuestionario=${idQuestionario}&userEmail=${userEmail}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

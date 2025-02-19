@@ -21,9 +21,9 @@ public class RispostaController {
 
     // Endpoint per creare una nuova compilazione
     @PostMapping("/creaCompilazione")
-    public ResponseEntity<?> creaCompilazione(@RequestParam int idQuestionario) {
+    public ResponseEntity<?> creaCompilazione(@RequestParam int idQuestionario, @RequestParam String userEmail) {
         try {
-            int idCompilazione = rispostaService.creaNuovaCompilazione(idQuestionario);
+            int idCompilazione = rispostaService.creaNuovaCompilazione(idQuestionario, userEmail);
             return ResponseEntity.ok().body(Map.of(
                     "idCompilazione", idCompilazione,
                     "message", "Compilazione creata con successo"
