@@ -74,7 +74,7 @@ const HomeLogged = () => {
         <div className="">
           {results.length > 0 ? (
             <ul className=' grid grid-cols-3 grid-rows-2 gap-16'>
-              {results.map((questionario) => {
+              {[...results].reverse().map((questionario) => {
                 const nomeCreatore = questionario.emailUtente ? questionario.emailUtente.split("@")[0] : "Sconosciuto";
 
                 return (

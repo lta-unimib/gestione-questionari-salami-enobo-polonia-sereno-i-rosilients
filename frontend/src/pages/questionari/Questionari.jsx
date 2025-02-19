@@ -166,9 +166,11 @@ const Questionari = ({ user }) => {
     <div className='mx-24'>
       <h1 className='text-4xl'>Questionari</h1>
       <h2 className='mt-8 text-2xl'>I tuoi questionari</h2>
+      <CreaQuestionario user={user} setUpdateQuestionari={setUpdateQuestionari} />
+
       {questionari.length > 0 ? (
-        <ul>
-          {questionari.map((q) => (
+        <ul className='mt-12'>
+          {[...questionari].reverse().map((q) => (
             <li key={q.idQuestionario} className='border p-4 my-2 rounded-lg shadow-lg flex justify-between'>
               <Link to={`/questionari/${q.idQuestionario}`} className='text-blue-500 hover:underline text-xl font-semibold'>
                 {q.nome}
@@ -187,7 +189,6 @@ const Questionari = ({ user }) => {
       ) : (
         <p className='text-gray-500 mt-4'>Nessun questionario trovato.</p>
       )}
-      <CreaQuestionario user={user} setUpdateQuestionari={setUpdateQuestionari} />
 
 {/* Modal per eliminazione */}
 <ReactModal isOpen={isDeleteModalOpen} onRequestClose={closeDeleteModal} className='fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50'>

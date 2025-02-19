@@ -1,8 +1,10 @@
+import { ArrowLongLeftIcon } from '@heroicons/react/24/solid';
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 
 const VisualizzaQuestionario = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   console.log('ID del questionario:', id);
   const [questionario, setQuestionario] = useState(null);
   const [domande, setDomande] = useState([]);
@@ -103,6 +105,21 @@ const VisualizzaQuestionario = () => {
       ) : (
         <p className="text-gray-500">Caricamento in corso...</p>
       )}
+      <div className="flex justify-between">
+        <Link
+          to='/'
+          className=" mt-8 flex justify-around gap-2 bg-gray-300 text-gray-800 py-2 px-4 rounded-lg hover:bg-gray-400 transition-all w-48"
+        >
+          <ArrowLongLeftIcon className="h-5 w-5 my-auto" />
+          <span className="my-auto">Torna Indietro</span>
+        </Link>
+        <Link
+          to={`/questionari/compilaQuestionario/${id}`}
+          className=" mt-8 flex justify-around gap-2 bg-white border-personal-purple border-2 text-personal-purple py-2 px-4 rounded-lg hover:bg-personal-purple hover:text-white transition-all w-32"
+        >
+          <span className="my-auto">Compila</span>
+        </Link>
+      </div>
     </div>
   );
   

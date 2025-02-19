@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
+import { ArrowLongLeftIcon } from '@heroicons/react/24/solid';
 
 const CompilaQuestionario = () => {
   console.log("questionario renderizzato");
@@ -184,7 +185,7 @@ const CompilaQuestionario = () => {
 
   return (
     <div className="p-8">
-      <h1 className="text-2xl font-bold">Compila il questionario</h1>
+      <h1 className="text-2xl font-bold mt-6">Compila il questionario</h1>
 
       <form className="mt-6 space-y-6" onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
         {questionario.map((domanda) => (
@@ -228,27 +229,37 @@ const CompilaQuestionario = () => {
             </div>
           </div>
         ))}
-        <button
-          type="button"
-          className="bg-gray-500 text-white py-2 px-4 rounded-lg hover:bg-gray-600"
-          onClick={() => handleSalvaParziale()}
-        >
-          Continua più tardi
-        </button>
+        <div className="flex justify-between">
+          <button
+            type="button"
+            onClick={() => navigate(-1)}
+            className="flex items-center gap-2 bg-gray-300 text-gray-800 py-2 px-4 rounded-lg hover:bg-gray-400 transition-all"
+          >
+            <ArrowLongLeftIcon className="h-5 w-5" />
+            Torna Indietro
+          </button>
+          <button
+            type="button"
+            className="bg-gray-500 text-white py-2 px-4 rounded-lg hover:bg-gray-600"
+            onClick={() => handleSalvaParziale()}
+          >
+            Continua più tardi
+          </button>
 
-        <button
-          type="submit"
-          className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600"
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? (
-            <>
-              <span className="animate-spin mr-2">&#9696;</span> Invio in corso...
-            </>
-          ) : (
-            'Salva e invia'
-          )}
-        </button>
+          <button
+            type="submit"
+            className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? (
+              <>
+                <span className="animate-spin mr-2">&#9696;</span> Invio in corso...
+              </>
+            ) : (
+              'Salva e Invia'
+            )}
+          </button>
+        </div>
       </form>
 
       {showModal && (

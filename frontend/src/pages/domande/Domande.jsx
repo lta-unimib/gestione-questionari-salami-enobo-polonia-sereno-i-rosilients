@@ -240,10 +240,12 @@ const Domande = ({ user }) => {
           className="border rounded-lg p-2"
         />
       </div>
+
+      <CreaDomanda user={user} setUpdateDomande={setUpdateDomande} />
       
       {domandeFiltrate.length > 0 ? (
-        <ul>
-          {domandeFiltrate.map(d => (
+        <ul className='mt-12'>
+          {[...domandeFiltrate].reverse().map(d => (
             <li key={d.idDomanda} className="border p-4 my-2 rounded-lg shadow-lg flex justify-between">
               <div>
                 <h3 className="text-xl font-semibold">{d.argomento}</h3>
@@ -283,7 +285,6 @@ const Domande = ({ user }) => {
         <p className="text-gray-500 mt-4">Nessuna domanda trovata.</p>
       )}
 
-      <CreaDomanda user={user} setUpdateDomande={setUpdateDomande} />
 
       {/* Modal per eliminazione domanda */}
       <ReactModal
