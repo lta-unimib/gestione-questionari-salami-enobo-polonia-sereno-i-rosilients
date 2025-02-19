@@ -63,11 +63,23 @@ const CompilaQuestionario = () => {
   };
 
   const handleSalvaParziale = async () => {
+    const confermaInvio = window.confirm("Sei sicuro di voler fermare la compilazione? La potrai riprendere più tardi");
+      if (!confermaInvio) return;
+
     try {
-      const risposteArray = Object.keys(risposte).map((idDomanda) => ({
+      const domandeRisposte = questionario.filter(
+        (domanda) => risposte.hasOwnProperty(domanda.idDomanda) && risposte[domanda.idDomanda] !== "" && risposte[domanda.idDomanda] !== null
+      );
+      if (domandeRisposte.length < 1) {
+        throw new Error('Per favore, rispondi almeno ad una domanda.');
+      }
+      
+      const idCompilazione = await creaNuovaCompilazione(id);
+      
+      const risposteArray = domandeRisposte.map((domanda) => ({
         idCompilazione: idCompilazione,
-        idDomanda: parseInt(idDomanda),
-        testoRisposta: risposte[idDomanda],
+        idDomanda: domanda.idDomanda,
+        testoRisposta: risposte[domanda.idDomanda],
       }));
   
       for (const risposta of risposteArray) {

@@ -1,6 +1,7 @@
 package com.i_rosilients.backend.controller;
 
 import com.i_rosilients.backend.dto.RispostaDTO;
+import com.i_rosilients.backend.repository.QuestionarioCompilatoRepository;
 import com.i_rosilients.backend.service.RispostaService;
 
 
@@ -41,6 +42,17 @@ public class RispostaController {
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
+    }
+
+    @PostMapping("/finalizzaCompilazione")
+    public ResponseEntity<?> finalizzaCompilazione(@RequestParam int idCompilazione) {
+        try {
+            rispostaService.finalizzaCompilazione(idCompilazione);
+
+            return ResponseEntity.ok().body(Map.of("message", "Compilazione finalizzata con successo"));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }    
     }
 
     @PostMapping("/inviaEmail")

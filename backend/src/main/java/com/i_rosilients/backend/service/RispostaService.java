@@ -64,6 +64,7 @@ public class RispostaService {
         QuestionarioCompilato nuovaCompilazione = new QuestionarioCompilato();
         nuovaCompilazione.setQuestionario(questionario);
         nuovaCompilazione.setDataCompilazione(LocalDateTime.now()); // Imposta la data corrente
+        nuovaCompilazione.setDefinitivo(false); // Imposta lo stato del questionario a non definitivo
 
         QuestionarioCompilato compilazioneSalvata = questionarioCompilatoRepository.save(nuovaCompilazione);
         return compilazioneSalvata.getIdCompilazione(); // Restituisci l'ID della nuova compilazione
@@ -74,6 +75,10 @@ public class RispostaService {
         QuestionarioCompilato questionarioCompilato = questionarioCompilatoRepository.findById(rispostaDTO.getIdCompilazione())
                 .orElseThrow(() -> new RuntimeException("QuestionarioCompilato non trovato"));
 
+        if (questionarioCompilato.isDefinitivo()) {
+            throw new RuntimeException("Il Questionario è definitivo e non può essere modificato");
+        }
+
         Domanda domanda = domandaRepository.findById(rispostaDTO.getIdDomanda())
                 .orElseThrow(() -> new RuntimeException("Domanda non trovata"));
 
@@ -83,6 +88,14 @@ public class RispostaService {
         risposta.setTestoRisposta(rispostaDTO.getTestoRisposta());
 
         rispostaRepository.save(risposta);
+    }
+
+    public void finalizzaCompilazione(int idCompilazione) {
+        QuestionarioCompilato questionarioCompilato = questionarioCompilatoRepository.findById(idCompilazione)
+                .orElseThrow(() -> new RuntimeException("Compilazione non trovata"));
+
+        questionarioCompilato.setDefinitivo(true); // Imposta lo stato del questionario a definitivo
+        questionarioCompilatoRepository.save(questionarioCompilato);
     }
 
     public void inviaEmailConPdf(String userEmail, int idCompilazione) {
