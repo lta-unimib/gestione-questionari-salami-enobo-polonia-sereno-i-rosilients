@@ -47,18 +47,17 @@ const App = () => {
           <Route path="/" element={user ? <HomeLogged /> : <Home />} />
 
           {/* Rotte protette per gli utenti autenticati */}
-          {user && (
+          {user ? (
             <>
               <Route path="/questionari" element={<Questionari user={user} />} />
               <Route path="/questionari/compilaQuestionario/:id" element={<CompilaQuestionario /*user={user}*/ />} />
               <Route path="/questionari/:id" element={<VisualizzaQuestionario user={user} />} />
               <Route path="/domande" element={<Domande user={user} />} />
             </>
-          )}
-          {!user &&(
+          ) : (
             <>
-            <Route path="/questionari/compilaQuestionario/:id" element={<CompilaQuestionario />} />
-            <Route path="/questionari/:id" element={<VisualizzaQuestionario />} />
+              <Route path="/questionari/compilaQuestionario/:id" element={<CompilaQuestionario />} />
+              <Route path="/questionari/:id" element={<VisualizzaQuestionario />} />
             </>
           )}
         </Routes>
