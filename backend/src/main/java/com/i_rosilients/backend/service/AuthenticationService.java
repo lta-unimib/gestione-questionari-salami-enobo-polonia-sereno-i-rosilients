@@ -4,10 +4,12 @@ import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.i_rosilients.backend.dto.UtenteDTO;
 import com.i_rosilients.backend.dto.VerificaUtenteDTO;
@@ -41,6 +43,9 @@ public class AuthenticationService {
     }
 
     public Utente signup(UtenteDTO input) {
+        if (userRepository.findByEmail(input.getEmail()).isPresent()) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "L'email è già registrata"); 
+        }
         Utente user = new Utente(input.getEmail(), passwordEncoder.encode(input.getPassword()));
         user.setVerificationCode(generateVerificationCode());
         user.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(15));

@@ -12,8 +12,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 
 @RequestMapping("/auth")
@@ -29,10 +31,19 @@ public class AuthenticationController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<Utente> register(@RequestBody UtenteDTO registerUtenteDto) {
-        Utente registeredUtente = authenticationService.signup(registerUtenteDto);
-        return ResponseEntity.ok(registeredUtente);
+    public ResponseEntity<?> register(@RequestBody UtenteDTO registerUtenteDto) {
+        try {
+            Utente registeredUtente = authenticationService.signup(registerUtenteDto);
+            return ResponseEntity.ok(registeredUtente);
+        } catch (ResponseStatusException e) {  // Cattura l'eccezione specifica
+            return ResponseEntity.status(e.getStatusCode()).body("{\"message\": \"" + e.getReason() + "\"}");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"message\": \"" + e.getMessage() + "\"}");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("{\"message\": \"Errore durante la registrazione\"}");
+        }
     }
+
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> authenticate(@RequestBody UtenteDTO loginUtenteDto, HttpServletResponse response) {

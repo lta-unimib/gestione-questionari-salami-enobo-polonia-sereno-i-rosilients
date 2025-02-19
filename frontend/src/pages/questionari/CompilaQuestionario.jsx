@@ -168,7 +168,7 @@ const CompilaQuestionario = () => {
     <div className="p-8">
       <h1 className="text-2xl font-bold">Compila il questionario</h1>
 
-      <form className="mt-6 space-y-6">
+      <form className="mt-6 space-y-6" onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
         {questionario.map((domanda) => (
           <div key={domanda.idDomanda} className="p-4 border rounded-lg">
             <p className="font-semibold">{domanda.testoDomanda}</p>
@@ -192,6 +192,7 @@ const CompilaQuestionario = () => {
                       name={`domanda-${domanda.idDomanda}`}
                       value={opzione}
                       onChange={(e) => handleChange(domanda.idDomanda, e.target.value)}
+                      required
                     />
                     {opzione}
                   </label>
@@ -199,16 +200,18 @@ const CompilaQuestionario = () => {
               ) : (
                 <textarea
                   placeholder="Scrivi la tua risposta..."
+                  minLength={10}
+                  maxLength={300}
                   className="w-full p-2 border rounded-lg"
                   onChange={(e) => handleChange(domanda.idDomanda, e.target.value)}
+                  required
                 />
               )}
             </div>
           </div>
         ))}
         <button
-          type="button"
-          onClick={handleSubmit}
+          type="submit"
           className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600"
           disabled={isSubmitting}
         >
