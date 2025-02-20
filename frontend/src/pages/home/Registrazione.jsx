@@ -1,18 +1,22 @@
 import React, { useState } from 'react';
 
-const Registration = ({ toggleModal, onRegistrationSuccess}) => {
+const Registration = ({ toggleModal, onRegistrationSuccess }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [showForgotPasswordModal, setShowForgotPasswordModal] = useState(false);
+  const [forgotPasswordEmail, setForgotPasswordEmail] = useState('');
+  const [isLoading, setIsLoading] = useState(false); // Stato per il caricamento
+  const [errorMessage, setErrorMessage] = useState(''); // Stato per il messaggio di errore
 
   const handleRegister = () => {
     if (password !== confirmPassword) {
       alert('Le password non corrispondono');
       return;
     }
-  
+
     const newUser = { email, password };
-  
+
     fetch('http://localhost:8080/auth/signup', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -20,7 +24,7 @@ const Registration = ({ toggleModal, onRegistrationSuccess}) => {
     })
       .then(async (response) => {
         if (!response.ok) {
-          const errorData = await response.json(); // Legge il messaggio di errore dal backend
+          const errorData = await response.json();
           if (response.status === 400 && errorData.message === "Email già registrata") {
             throw new Error("Email già registrata. Prova ad accedere o usa un'altra email.");
           }
@@ -31,10 +35,39 @@ const Registration = ({ toggleModal, onRegistrationSuccess}) => {
       })
       .catch((error) => {
         console.error('Errore:', error);
-        alert(error.message); // Mostra il messaggio di errore specifico
+        alert(error.message);
       });
   };
+
+  const handleForgotPassword = () => {
+    setIsLoading(true); // Attiva lo stato di caricamento
+    setErrorMessage(''); // Resetta il messaggio di errore
   
+    fetch('http://localhost:8080/auth/forgot-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: forgotPasswordEmail }),
+    })
+      .then(async (response) => {
+        if (!response.ok) {
+          const errorData = await response.json();
+          // Gestisci messaggi di errore specifici
+          if (errorData.message === "Utente non trovato") {
+            throw new Error("Email non trovata. Verifica l'email inserita.");
+          }
+          throw new Error(errorData.message || 'Errore nella richiesta di reset della password');
+        }
+        alert('Email di reset inviata con successo. Controlla la tua casella di posta.');
+        setShowForgotPasswordModal(false); // Chiudi il modal dopo l'invio
+      })
+      .catch((error) => {
+        console.error('Errore:', error);
+        setErrorMessage(error.message); // Mostra il messaggio di errore nel modal
+      })
+      .finally(() => {
+        setIsLoading(false); // Disattiva lo stato di caricamento
+      });
+  };
 
   return (
     <div className="bg-white p-6 rounded-lg w-96">
@@ -76,6 +109,75 @@ const Registration = ({ toggleModal, onRegistrationSuccess}) => {
           Accedi
         </button>
       </p>
+
+      <p className="mt-3 text-center">
+        <button
+          className="text-blue-500"
+          onClick={() => setShowForgotPasswordModal(true)}
+        >
+          Password dimenticata?
+        </button>
+      </p>
+
+      {/* Modal per "Password dimenticata" */}
+      {showForgotPasswordModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg w-96">
+            <h2 className="text-2xl mb-4">Password dimenticata</h2>
+            <input
+              type="email"
+              placeholder="Inserisci la tua email"
+              value={forgotPasswordEmail}
+              onChange={(e) => setForgotPasswordEmail(e.target.value)}
+              className="w-full p-2 mb-3 border border-gray-300 rounded"
+              disabled={isLoading} // Disabilita l'input durante il caricamento
+            />
+            {errorMessage && ( // Mostra il messaggio di errore
+              <p className="text-red-500 mb-3">{errorMessage}</p>
+            )}
+            <button
+              className="w-full p-2 bg-blue-500 text-white rounded flex items-center justify-center"
+              onClick={handleForgotPassword}
+              disabled={isLoading} // Disabilita il pulsante durante il caricamento
+            >
+              {isLoading ? (
+                <>
+                  <svg
+                    className="animate-spin h-5 w-5 mr-3 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  Invio in corso...
+                </>
+              ) : (
+                'Invia richiesta'
+              )}
+            </button>
+            <button
+              className="w-full p-2 mt-2 bg-gray-300 text-gray-700 rounded"
+              onClick={() => setShowForgotPasswordModal(false)}
+              disabled={isLoading} // Disabilita il pulsante durante il caricamento
+            >
+              Annulla
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

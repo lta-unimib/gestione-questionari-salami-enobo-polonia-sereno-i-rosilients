@@ -3,14 +3,13 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import Home from './pages/home/Home';
 import HomeLogged from './pages/home/HomeLogged';
-import NavbarHome from './components/NavbarHome';
-import NavBarLogged from './components/NavbarLogged';
+import NavbarWrapper from './components/NavbarWrapper';
 import Questionari from './pages/questionari/Questionari';
 import CompilaQuestionario from './pages/questionari/CompilaQuestionario';
 import ContinuaCompilazioneQuestionario from './pages/questionari/ContinuaCompilazioneQuestionario';
 import VisualizzaQuestionario from './pages/questionari/VisualizzaQuestionario';
 import Domande from './pages/domande/Domande';
-
+import ResetPassword from './pages/home/ResetPassword';
 
 // Funzione per decodificare il token e verificarne la scadenza
 const isTokenValid = (token) => {
@@ -41,7 +40,8 @@ const App = () => {
   return (
     <div className="font-jersey tracking-widest">
       <BrowserRouter>
-        {user ? <NavBarLogged setUser={setUser} /> : <NavbarHome setUser={setUser} />}
+        {/* Usa NavbarWrapper per gestire le navbar */}
+        <NavbarWrapper user={user} setUser={setUser} />
         
         <Routes>
           {/* Condizioni per mostrare Home o HomeLogged */}
@@ -60,6 +60,7 @@ const App = () => {
             <>
               <Route path="/questionari/compilaQuestionario/:id" element={<CompilaQuestionario />} />
               <Route path="/questionari/:id" element={<VisualizzaQuestionario />} />
+              <Route path="/reset-password/:token" element={<ResetPassword />} />
             </>
           )}
         </Routes>
