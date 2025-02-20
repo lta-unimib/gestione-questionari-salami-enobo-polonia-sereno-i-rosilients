@@ -6,7 +6,7 @@ const CompilaQuestionario = () => {
   console.log("questionario renderizzato");
   const { id } = useParams();
   const query = new URLSearchParams(useLocation().search);
-  const idCompilazione = query.get("idCompilazione");
+  let idCompilazione = query.get("idCompilazione");
   const navigate = useNavigate(); 
   const [questionario, setQuestionario] = useState([]);
   const [idQuestionario, setIdQuestionario] = useState(null);
@@ -102,8 +102,9 @@ const CompilaQuestionario = () => {
         throw new Error('Per favore, rispondi almeno ad una domanda.');
       }
       
-
-      const idCompilazione = await creaNuovaCompilazione(id);
+      if (!idCompilazione) {
+        idCompilazione = await creaNuovaCompilazione(id);
+      }
       
       const risposteArray = domandeRisposte.map((domanda) => ({
         idCompilazione: idCompilazione,

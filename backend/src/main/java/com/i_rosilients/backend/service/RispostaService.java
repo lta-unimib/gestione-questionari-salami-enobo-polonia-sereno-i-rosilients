@@ -93,12 +93,24 @@ public class RispostaService {
         Domanda domanda = domandaRepository.findById(rispostaDTO.getIdDomanda())
                 .orElseThrow(() -> new RuntimeException("Domanda non trovata"));
 
-        Risposta risposta = new Risposta();
-        risposta.setQuestionarioCompilato(questionarioCompilato);
-        risposta.setDomanda(domanda);
-        risposta.setTestoRisposta(rispostaDTO.getTestoRisposta());
+        Optional<Risposta> rispostaEsistente = rispostaRepository.findByQuestionarioCompilato_IdCompilazioneAndDomanda_IdDomanda(
+            rispostaDTO.getIdCompilazione(),
+            rispostaDTO.getIdDomanda()
+        );
 
-        rispostaRepository.save(risposta);
+        if (rispostaEsistente.isPresent()) {
+            // Se la risposta esiste, aggiorno il testo della risposta
+            Risposta risposta = rispostaEsistente.get();
+            risposta.setTestoRisposta(rispostaDTO.getTestoRisposta());
+            rispostaRepository.save(risposta);  // Salvo la risposta aggiornata
+        } else {
+            // Se la risposta non esiste, ne creo una nuova
+            Risposta nuovaRisposta = new Risposta();
+            nuovaRisposta.setQuestionarioCompilato(questionarioCompilato);
+            nuovaRisposta.setDomanda(domanda);
+            nuovaRisposta.setTestoRisposta(rispostaDTO.getTestoRisposta());
+            rispostaRepository.save(nuovaRisposta);  // Salvo la nuova risposta
+        }    
     }
 
     public void finalizzaCompilazione(int idCompilazione) {
