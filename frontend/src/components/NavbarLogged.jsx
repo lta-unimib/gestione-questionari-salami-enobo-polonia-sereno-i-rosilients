@@ -1,15 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
-import {UserIcon} from '@heroicons/react/24/solid'
+import { UserIcon } from '@heroicons/react/24/solid';
 
 const NavbarLogged = ({ setUser }) => {
     const navigate = useNavigate();
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const dropdownRef = useRef(null); // Riferimento al dropdown
 
     const toggleDropdown = () => {
-        setIsDropdownOpen(!isDropdownOpen);
+        setIsDropdownOpen(prev => !prev);
     };
+
+    const handleClickOutside = (event) => {
+        if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+            setIsDropdownOpen(false);
+        }
+    };
+
+    useEffect(() => {
+        if (isDropdownOpen) {
+            document.addEventListener("mousedown", handleClickOutside);
+        } else {
+            document.removeEventListener("mousedown", handleClickOutside);
+        }
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [isDropdownOpen]);
 
     const handleLogout = async () => {
         try {
@@ -19,7 +37,6 @@ const NavbarLogged = ({ setUser }) => {
             });
             localStorage.removeItem('jwt');
             localStorage.removeItem('userEmail');
-            // Rimuovi il cookie del refresh token
             document.cookie = 'refreshToken=; path=/auth/refresh; max-age=0; Secure; HttpOnly';   
             setUser(null);
             navigate('/');
@@ -28,7 +45,6 @@ const NavbarLogged = ({ setUser }) => {
             alert('Si è verificato un errore durante il logout.');
         }
     };
-    
 
     const handleDeleteProfile = async () => {
         const confirmDelete = window.confirm("Sei sicuro di voler eliminare il tuo profilo? Questa azione è irreversibile!");
@@ -60,7 +76,7 @@ const NavbarLogged = ({ setUser }) => {
     };
 
     return (
-        <nav className=''>
+        <nav>
             <div className="flex justify-between py-6 px-4 md:px-16">
                 <div className="ml-4">
                     <Link className='text-3xl text-personal-purple font-semibold' to='/'>WebSurveys</Link>
@@ -82,13 +98,13 @@ const NavbarLogged = ({ setUser }) => {
                     </div>
                     
                     {/* Gestione Profilo Dropdown */}
-                    <div className="relative ml-64">
-                    <button 
-                        onClick={toggleDropdown} 
-                        className="p-2 rounded-full border-2 border-personal-purple bg-white text-personal-purple hover:bg-personal-purple hover:text-white transition duration-300"
-                    >
-                        <UserIcon className="h-6 w-6" />
-                    </button>
+                    <div className="relative ml-64" ref={dropdownRef}>
+                        <button 
+                            onClick={toggleDropdown} 
+                            className="p-2 rounded-full border-2 border-personal-purple bg-white text-personal-purple hover:bg-personal-purple hover:text-white transition duration-300"
+                        >
+                            <UserIcon className="h-6 w-6" />
+                        </button>
                         {isDropdownOpen && (
                             <div className="absolute right-0 mt-2 w-48 bg-white border rounded shadow-lg">
                                 <button 
