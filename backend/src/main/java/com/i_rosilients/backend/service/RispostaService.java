@@ -28,7 +28,9 @@ import com.i_rosilients.backend.repository.DomandaRepository;
 
 import java.io.ByteArrayOutputStream;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -60,6 +62,18 @@ public class RispostaService {
     private JavaMailSender emailSender;
 
     private static final String UPLOAD_DIR = "uploads/";
+
+    // Per precompilare i campi
+    public Map<Integer, String> getRisposteByIdCompilazione(int idCompilazione) {
+        List<Risposta> risposte = rispostaRepository.findByQuestionarioCompilato_IdCompilazione(idCompilazione);
+        Map<Integer, String> Mapparisposte = new HashMap<>();
+        
+        for (Risposta risposta : risposte) {
+            Mapparisposte.put(risposta.getDomanda().getIdDomanda(), risposta.getTestoRisposta());
+        }
+        
+        return Mapparisposte;
+    }
 
     // Crea una nuova compilazione
     public int creaNuovaCompilazione(int idQuestionario, String userEmail) {

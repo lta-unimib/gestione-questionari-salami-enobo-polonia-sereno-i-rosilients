@@ -11,6 +11,8 @@ const CompilaQuestionario = () => {
   const [questionario, setQuestionario] = useState([]);
   const [idQuestionario, setIdQuestionario] = useState(null);
   const [risposte, setRisposte] = useState({});
+  const [risposteMappa, setRisposteMappa] = useState({});
+
   const [isSubmitting, setIsSubmitting] = useState(false); 
   const [showModal, setShowModal] = useState(false); 
   const [codiceUnivoco, setCodiceUnivoco] = useState(null); 
@@ -18,8 +20,6 @@ const CompilaQuestionario = () => {
 
   useEffect(() => {
 
-    console.log("ID Questionario:", id);
-    console.log("ID Compilazione:", idCompilazione);
     if (idCompilazione) {
       const fetchIdQuestionario = async () => {
         try {
@@ -30,6 +30,8 @@ const CompilaQuestionario = () => {
 
           const data = await response.json();
           setIdQuestionario(data.idQuestionario);
+
+          fetchRisposte(idCompilazione);
 
           fetchQuestionario(data.idQuestionario);
         } catch (error) {
@@ -57,6 +59,26 @@ const CompilaQuestionario = () => {
     } catch (error) {
       console.error("Errore nel recupero del questionario:", error);
       alert("Errore nel caricamento del questionario. Riprova più tardi.");
+    }
+  };
+
+
+  const fetchRisposte = async (idCompilazione) => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/risposte/${idCompilazione}`);
+      if (!response.ok) {
+        throw new Error('Errore nel recupero delle risposte');
+      }
+      const risposteMappa = await response.json();
+      setRisposteMappa(risposteMappa);
+
+      Object.entries(risposteMappa).forEach(([domandaId, valore]) => {
+        handleChange(domandaId, valore);  // Aggiorna lo stato 'risposte' tramite 'handleChange'
+      });
+
+    } catch (error) {
+      console.error('Errore nel recupero delle risposte:', error);
+      alert('Errore nel recupero delle risposte. Riprova più tardi.');
     }
   };
 
@@ -143,7 +165,9 @@ const CompilaQuestionario = () => {
         throw new Error('Per favore, rispondi a tutte le domande prima di inviare.');
       }
   
-      const idCompilazione = await creaNuovaCompilazione(id);
+      if (!idCompilazione) {
+        idCompilazione = await creaNuovaCompilazione(id);
+      }
   
       const risposteArray = Object.keys(risposte).map((idDomanda) => ({
         idCompilazione: idCompilazione,
@@ -215,22 +239,22 @@ const CompilaQuestionario = () => {
   return (
     <div className="p-8">
       <h1 className="text-2xl font-bold mt-6">Compila il questionario</h1>
-
+  
       <form className="mt-6 space-y-6" onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
         {questionario.map((domanda) => (
           <div key={domanda.idDomanda} className="p-4 border rounded-lg">
             <p className="font-semibold">{domanda.testoDomanda}</p>
-
+  
             {domanda.imagePath && (
               <div className="mt-4">
                 <img
                   src={`http://localhost:8080${domanda.imagePath}`}
                   alt={domanda.testoDomanda}
-                  className="w-full h-auto rounded-lg" 
+                  className="w-full h-auto rounded-lg"
                 />
               </div>
             )}
-
+  
             <div className="mt-2 space-y-2">
               {domanda.opzioni?.length > 0 ? (
                 domanda.opzioni.map((opzione, index) => (
@@ -241,6 +265,7 @@ const CompilaQuestionario = () => {
                       value={opzione}
                       onChange={(e) => handleChange(domanda.idDomanda, e.target.value)}
                       required
+                      checked={risposte[domanda.idDomanda] === opzione}
                     />
                     {opzione}
                   </label>
@@ -252,6 +277,7 @@ const CompilaQuestionario = () => {
                   maxLength={300}
                   className="w-full p-2 border rounded-lg"
                   onChange={(e) => handleChange(domanda.idDomanda, e.target.value)}
+                  value={risposte[domanda.idDomanda] || ''}
                   required
                 />
               )}
@@ -274,7 +300,7 @@ const CompilaQuestionario = () => {
           >
             Continua più tardi
           </button>
-
+  
           <button
             type="submit"
             className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600"

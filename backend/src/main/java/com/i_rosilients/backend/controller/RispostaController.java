@@ -33,6 +33,11 @@ public class RispostaController {
         }
     }
 
+    @GetMapping("{idCompilazione}")
+    public Map<Integer, String> getRisposteByIdCompilazione(@PathVariable int idCompilazione) {
+        return rispostaService.getRisposteByIdCompilazione(idCompilazione);
+    }
+
     // Endpoint per salvare una risposta
     @PostMapping("/salvaRisposta")
     public ResponseEntity<?> salvaRisposta(@RequestBody RispostaDTO rispostaDTO) {
