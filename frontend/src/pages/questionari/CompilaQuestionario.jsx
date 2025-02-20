@@ -16,7 +16,9 @@ const CompilaQuestionario = () => {
   const [isSubmitting, setIsSubmitting] = useState(false); 
   const [showModal, setShowModal] = useState(false); 
   const [codiceUnivoco, setCodiceUnivoco] = useState(null); 
-  const [userEmail, setUserEmail] = useState(localStorage.getItem('userEmail'));
+  const [userEmail, setUserEmail] = useState(
+    localStorage.getItem('jwt') ? localStorage.getItem('userEmail') : ""
+  );
 
   useEffect(() => {
 
@@ -93,13 +95,13 @@ const CompilaQuestionario = () => {
 
   const creaNuovaCompilazione = async (idQuestionario) => {
     try {
+
       const response = await fetch(`http://localhost:8080/api/risposte/creaCompilazione?idQuestionario=${idQuestionario}&userEmail=${userEmail}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
       });
-
       const data = await response.json();
       if (!response.ok) {
         throw new Error(data.error || 'Errore nella creazione della compilazione');
@@ -140,6 +142,8 @@ const CompilaQuestionario = () => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(risposta),
         });
+
+        handleUtenteNonRegistrato();
       }
   
       alert('Risposte salvate! Puoi riprendere in un secondo momento.');
@@ -200,15 +204,20 @@ const CompilaQuestionario = () => {
   
         alert('Risposte inviate e email con PDF spedita!');
         navigate('/');
-      } else {
-        setCodiceUnivoco(idCompilazione);
-        setShowModal(true);
       }
+      handleUtenteNonRegistrato();
     } catch (error) {
       console.error('Errore nell\'invio delle risposte:', error);
       alert('Errore nell\'invio delle risposte: ' + error.message);
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleUtenteNonRegistrato = () => {
+    if (!localStorage.getItem('jwt')) {
+      setCodiceUnivoco(idCompilazione);
+      setShowModal(true);
     }
   };
 

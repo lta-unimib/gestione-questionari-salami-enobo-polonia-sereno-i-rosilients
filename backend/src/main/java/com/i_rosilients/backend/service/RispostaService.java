@@ -80,19 +80,23 @@ public class RispostaService {
         Questionario questionario = questionarioRepository.findById(idQuestionario)
                 .orElseThrow(() -> new RuntimeException("Questionario non trovato"));
 
-        Optional<Utente> utenteOpt = utenteRepository.findByEmail(userEmail);
-        if (utenteOpt.isEmpty()) {
-            throw new RuntimeException("Utente non trovato con email: " + userEmail);
-        }
-
         QuestionarioCompilato nuovaCompilazione = new QuestionarioCompilato();
         nuovaCompilazione.setQuestionario(questionario);
-        nuovaCompilazione.setUtente(utenteOpt.get());
-        nuovaCompilazione.setDataCompilazione(LocalDateTime.now()); // Imposta la data corrente
-        nuovaCompilazione.setDefinitivo(false); // Imposta lo stato del questionario a non definitivo
+        nuovaCompilazione.setDataCompilazione(LocalDateTime.now());
+        if(userEmail.equals("")) {
+            nuovaCompilazione.setUtente(null);            
+        }
+        else {
+            Optional<Utente> utenteOpt = utenteRepository.findByEmail(userEmail);
+            if (utenteOpt.isEmpty()) {
+                throw new RuntimeException("Utente non trovato con email: " + userEmail);
+            }
+            nuovaCompilazione.setUtente(utenteOpt.get());
+        }    
+        nuovaCompilazione.setDefinitivo(false);
 
         QuestionarioCompilato compilazioneSalvata = questionarioCompilatoRepository.save(nuovaCompilazione);
-        return compilazioneSalvata.getIdCompilazione(); // Restituisci l'ID della nuova compilazione
+        return compilazioneSalvata.getIdCompilazione();
     }
 
     // Salva una risposta

@@ -29,9 +29,6 @@ public class QuestionarioCompilato {
     @JoinColumn(name = "id_questionario", referencedColumnName = "idQuestionario")
     private Questionario questionario;
 
-    @Column(nullable = true)
-    private String utenteAnonimo;
-
     @Column(nullable = false)
     private LocalDateTime dataCompilazione;
 
