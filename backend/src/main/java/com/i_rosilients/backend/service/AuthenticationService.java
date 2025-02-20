@@ -19,6 +19,7 @@ import com.i_rosilients.backend.repository.UtenteRepository;
 import com.i_rosilients.backend.response.VerificationResponse;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 
@@ -138,7 +139,6 @@ public class AuthenticationService {
         return String.valueOf(code);
     }
 
-    // Metodo per trovare un utente tramite email
     public Utente findUtenteByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Utente non trovato con email: " + email));  
     }
@@ -148,14 +148,14 @@ public class AuthenticationService {
         userRepository.delete(utente);
     }
 
-    public ResponseEntity<VerificationResponse> requestPasswordReset(String email) {
+    public ResponseEntity<?> requestPasswordReset(String email) {
         System.out.println("Richiesta di reset della password per l'email: " + email);
     
         Optional<Utente> userOptional = userRepository.findByEmail(email);
         if (userOptional.isEmpty()) {
             System.out.println("Email non trovata: " + email);
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new VerificationResponse("ERROR", "Utente non trovato"));
+                    .body(Map.of("error", "Utente non trovato"));
         }
     
         System.out.println("Utente trovato: " + userOptional.get().getEmail());
@@ -182,11 +182,11 @@ public class AuthenticationService {
         try {
             emailService.sendVerificationEmail(email, subject, htmlMessage);
             System.out.println("Email inviata con successo.");
-            return ResponseEntity.ok(new VerificationResponse("SUCCESS", "Email di reset inviata con successo."));
+            return ResponseEntity.ok(Map.of("message", "Email di reset inviata con successo"));
         } catch (MessagingException e) {
             System.out.println("Errore durante l'invio dell'email: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new VerificationResponse("ERROR", "Errore durante l'invio dell'email di reset"));
+                    .body(Map.of("error", "Errore durante l'invio dell'email di reset"));
         }
     }
 

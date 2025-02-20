@@ -16,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -175,12 +176,8 @@ public class AuthenticationController {
     @PostMapping("/forgot-password")
     public ResponseEntity<?> forgotPassword(@RequestBody Map<String, String> request) {
         String email = request.get("email");
-        try {
-            authenticationService.requestPasswordReset(email);
-            return ResponseEntity.ok("Email di reset inviata con successo");
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+        ResponseEntity<?> response = authenticationService.requestPasswordReset(email);
+        return response;
     }
 
     @PostMapping("/reset-password")
