@@ -142,12 +142,13 @@ const CompilaQuestionario = () => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(risposta),
         });
-
-        handleUtenteNonRegistrato();
       }
-  
-      alert('Risposte salvate! Puoi riprendere in un secondo momento.');
-      navigate('/');
+      if(localStorage.getItem('jwt')) {
+        alert('Risposte salvate! Puoi riprendere in un secondo momento.');
+        navigate('/');
+      }
+      handleUtenteNonRegistrato();
+
     } catch (error) {
       console.error('Errore nel salvataggio parziale:', error);
       alert('Errore nel salvataggio. Riprova più tardi.');
@@ -155,7 +156,8 @@ const CompilaQuestionario = () => {
   };
 
   const handleSubmit = async () => {
-    const confermaInvio = window.confirm("Sei sicuro di voler inviare le risposte?");
+    const confermaInvio = 
+    window.confirm("Sei sicuro di voler salvare le risposte? il questionario non sarà più modificabile.");
     if (!confermaInvio) return;
   
     try {
@@ -329,7 +331,11 @@ const CompilaQuestionario = () => {
       {showModal && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
-            <h2 className="text-xl font-semibold">Ecco il tuo codice univoco!</h2>
+            <h2 
+              className="text-xl font-semibold"
+            >
+              Non dimenticare il tuo codice univoco! NON avrai un altro modo di recuperarlo.
+            </h2>
             <div className="mt-4">
               <input
                 type="text"

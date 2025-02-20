@@ -7,6 +7,8 @@ const HomeLogged = () => {
   const [results, setResults] = useState([]);
   const [allQuestionari, setAllQuestionari] = useState([]); // Stato per tutti i questionari
   const navigate = useNavigate();
+  const [codiceUnivoco, setCodiceUnivoco] = useState(null);
+  const [idQuestionario, setIdQuestionario] = useState(null);
 
   useEffect(() => {
     // Carica tutti i questionari quando il componente si monta
@@ -49,6 +51,49 @@ const HomeLogged = () => {
     if (event.key === 'Enter') {
     }
   };
+
+
+  const continuaCompilazioneNonRegistrato = (idQuestionario, idCompilazione) => {
+    navigate(`/questionari/compilaQuestionario/${idQuestionario}?idCompilazione=${idCompilazione}`);
+  };
+
+  const handleCodeExists = async () => {
+    if(codiceUnivoco === null || codiceUnivoco === "") {
+      alert("Inserisci un codice univoco NUMERICO valido.");
+      return;
+    }
+
+    const codiceInt = Number(codiceUnivoco);
+    if(isNaN(codiceInt)) {
+      alert("Il codice univoco deve essere un numero.");
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:8080/api/questionariCompilati/utenteNonRegistrato/${codiceInt}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      })
+
+      if (!response.ok) {
+        alert("Codice univoco non valido, assicurati che il codice sia corretto. Se stai cercando di vedere una compilazione già terminata clicca su visualizza questionario compilato.");
+        navigate("/");
+        return;
+      }
+
+      const data = await response.json();
+    
+      setIdQuestionario(data.idQuestionario);
+    
+      continuaCompilazioneNonRegistrato(data.idQuestionario, codiceInt);
+      
+    }
+    catch(error) {
+      console.error("Errore nella fetch:", error);
+    }
+  }
 
   return (
     <div className="p-4">
@@ -115,10 +160,17 @@ const HomeLogged = () => {
         <div className="flex mt-5">
           <input
             type="text"
-            placeholder="Inserisci un codice univoco"
+            placeholder="Inserisci un codice"
             className="bg-personal-purple bg-opacity-20 text-black px-16"
+            value={codiceUnivoco ?? ""}
+            onChange={(e) => setCodiceUnivoco(e.target.value ? Number(e.target.value) : null)}
           />
-          <button className="bg-personal-purple text-white py-2 px-4">Invia</button>
+          <button 
+            className="bg-personal-purple text-white py-2 px-4"
+            onClick={handleCodeExists}
+          >
+            Prosegui compilazione
+          </button>
         </div>
       </div>
     </div>

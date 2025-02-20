@@ -21,6 +21,15 @@ public class QuestionarioCompilatoController {
         return ResponseEntity.ok(questionarioCompilatoDTO);
     }
 
+    @GetMapping("/utenteNonRegistrato/{idCompilazione}")
+    public ResponseEntity<QuestionarioCompilatoDTO> getQuestionarioCompilatoNonRegistrato(@PathVariable int idCompilazione) {
+        QuestionarioCompilatoDTO questionarioCompilatoDTO = questionarioCompilatoService.getQuestionarioCompilatoById(idCompilazione);
+        if(questionarioCompilatoService.checkIsDefinitivo(idCompilazione)) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(questionarioCompilatoDTO);
+    }
+
     @GetMapping("/utente/{userEmail}")
     public List<QuestionarioCompilatoDTO> getQuestionariCompilatiUtente(@PathVariable String userEmail) {
         return questionarioCompilatoService.getCompilazioniInSospeso(userEmail);  

@@ -79,4 +79,16 @@ public class QuestionarioCompilatoService implements IQuestionarioCompilatoServi
         );
     }
 
+    public boolean checkIsDefinitivo(int idCompilazione) {
+        QuestionarioCompilato questionarioCompilato = questionarioCompilatoRepository.findById(idCompilazione)
+            .orElse(null);
+    
+        if (questionarioCompilato == null) {
+            System.out.println("❌ Nessun questionario compilato trovato per ID: " + idCompilazione);
+            return false;
+        }
+    
+        return questionarioCompilato.isDefinitivo();
+    }
+
 }
