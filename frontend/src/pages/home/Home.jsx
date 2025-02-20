@@ -78,20 +78,38 @@ const HomeLogged = () => {
       })
 
       if (!response.ok) {
-        alert("Codice univoco non valido, assicurati che il codice sia corretto. Se stai cercando di vedere una compilazione già terminata clicca su visualizza questionario compilato.");
+        alert("Codice univoco non valido, assicurati che il codice sia corretto.");
         navigate("/");
         return;
       }
 
-      const data = await response.json();
-    
+      const data = await response.json();   
       setIdQuestionario(data.idQuestionario);
-    
-      continuaCompilazioneNonRegistrato(data.idQuestionario, codiceInt);
-      
+
+      const checkDefinitivoResponse = await fetch(`http://localhost:8080/api/questionariCompilati/checkIsDefinitivo/${codiceInt}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+
+      if (!checkDefinitivoResponse.ok) {
+        alert("Errore nei controlli del parametro definitivo.");
+        return;
+      }
+
+      const isDefinitivo = await checkDefinitivoResponse.json();
+      if(isDefinitivo) {
+
+        //mostra il questionario compilato
+
+      } else {
+        continuaCompilazioneNonRegistrato(data.idQuestionario, codiceInt);
+      }     
     }
     catch(error) {
       console.error("Errore nella fetch:", error);
+      alert("Si è verificato un errore durante l'operazione handleCodeExists.");
     }
   }
 
@@ -169,7 +187,7 @@ const HomeLogged = () => {
             className="bg-personal-purple text-white py-2 px-4"
             onClick={handleCodeExists}
           >
-            Prosegui compilazione
+            Vai al Questionario
           </button>
         </div>
       </div>

@@ -41,6 +41,15 @@ public class QuestionarioCompilatoService implements IQuestionarioCompilatoServi
         }).collect(Collectors.toList());
     }
 
+    public boolean checkEmailUtenteIsNullForQuestionario(int idCompilazione) {
+        QuestionarioCompilato questionarioCompilato = questionarioCompilatoRepository.findById(idCompilazione)
+            .orElse(null);
+        if (questionarioCompilato == null) {
+            return false;
+        }
+        return (questionarioCompilato.getUtente() == null);
+    }
+
     @Transactional
     public void deleteQuestionarioCompilatoAndRisposte(Questionario questionario) {
         // Trova tutti i QuestionarioCompilato associati al Questionario
@@ -60,7 +69,7 @@ public class QuestionarioCompilatoService implements IQuestionarioCompilatoServi
             .orElse(null);
     
         if (questionarioCompilato == null) {
-            System.out.println("❌ Nessun questionario compilato trovato per ID: " + idCompilazione);
+            System.out.println(" Nessun questionario compilato trovato per ID: " + idCompilazione);
             return null;
         }
     

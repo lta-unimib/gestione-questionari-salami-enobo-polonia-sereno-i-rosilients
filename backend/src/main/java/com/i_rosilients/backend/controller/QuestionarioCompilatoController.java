@@ -24,10 +24,15 @@ public class QuestionarioCompilatoController {
     @GetMapping("/utenteNonRegistrato/{idCompilazione}")
     public ResponseEntity<QuestionarioCompilatoDTO> getQuestionarioCompilatoNonRegistrato(@PathVariable int idCompilazione) {
         QuestionarioCompilatoDTO questionarioCompilatoDTO = questionarioCompilatoService.getQuestionarioCompilatoById(idCompilazione);
-        if(questionarioCompilatoService.checkIsDefinitivo(idCompilazione)) {
+        if (questionarioCompilatoDTO == null || !questionarioCompilatoService.checkEmailUtenteIsNullForQuestionario(idCompilazione)) {
             return ResponseEntity.badRequest().build();
         }
         return ResponseEntity.ok(questionarioCompilatoDTO);
+    }
+
+    @GetMapping("/checkIsDefinitivo/{idCompilazione}")
+    public ResponseEntity<Boolean> checkIsDefinitivo(@PathVariable int idCompilazione) {
+        return ResponseEntity.ok(questionarioCompilatoService.checkIsDefinitivo(idCompilazione));
     }
 
     @GetMapping("/utente/{userEmail}")
