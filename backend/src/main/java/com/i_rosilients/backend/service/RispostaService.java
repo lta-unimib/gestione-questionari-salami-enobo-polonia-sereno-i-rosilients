@@ -109,6 +109,10 @@ public class RispostaService {
         questionarioCompilatoRepository.save(questionarioCompilato);
     }
 
+    public List<Risposta> getAllRisposteByIdCompilazione(int idCompilazione) {
+        return rispostaRepository.findByQuestionarioCompilato_IdCompilazione(idCompilazione);
+    }
+
     public void inviaEmailConPdf(String userEmail, int idCompilazione) {
         try {
             // Recupera il questionario compilato

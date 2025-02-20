@@ -1,4 +1,5 @@
 package com.i_rosilients.backend.controller;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -9,7 +10,6 @@ import com.i_rosilients.backend.service.QuestionarioCompilatoService;
 
 @RestController
 @RequestMapping("/api/questionariCompilati")
-@CrossOrigin(origins = "*")
 public class QuestionarioCompilatoController {
 
     @Autowired
@@ -19,5 +19,10 @@ public class QuestionarioCompilatoController {
     public ResponseEntity<QuestionarioCompilatoDTO> getQuestionarioCompilato(@PathVariable int idCompilazione) {
         QuestionarioCompilatoDTO questionarioCompilatoDTO = questionarioCompilatoService.getQuestionarioCompilatoById(idCompilazione);
         return ResponseEntity.ok(questionarioCompilatoDTO);
+    }
+
+    @GetMapping("/utente/{userEmail}")
+    public List<QuestionarioCompilatoDTO> getQuestionariCompilatiUtente(@PathVariable String userEmail) {
+        return questionarioCompilatoService.getCompilazioniInSospeso(userEmail);  
     }
 }

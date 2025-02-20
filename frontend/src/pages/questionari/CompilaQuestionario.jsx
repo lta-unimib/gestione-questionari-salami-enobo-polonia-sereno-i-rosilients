@@ -1,38 +1,65 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useLocation, useNavigate, Link } from 'react-router-dom';
 import { ArrowLongLeftIcon } from '@heroicons/react/24/solid';
 
 const CompilaQuestionario = () => {
   console.log("questionario renderizzato");
-  const { id } = useParams(); 
+  const { id } = useParams();
+  const query = new URLSearchParams(useLocation().search);
+  const idCompilazione = query.get("idCompilazione");
   const navigate = useNavigate(); 
   const [questionario, setQuestionario] = useState([]);
+  const [idQuestionario, setIdQuestionario] = useState(null);
   const [risposte, setRisposte] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false); 
-  const [idCompilazione, setIdCompilazione] = useState(null); 
   const [showModal, setShowModal] = useState(false); 
   const [codiceUnivoco, setCodiceUnivoco] = useState(null); 
   const [userEmail, setUserEmail] = useState(localStorage.getItem('userEmail'));
 
   useEffect(() => {
-    const fetchQuestionario = async () => {
-      try {
-        console.log(`Recupero questionario con ID: ${id}`); 
-        const response = await fetch(`http://localhost:8080/api/questionari/${id}/domande`);
-        if (!response.ok) {
-          throw new Error(`Errore nella fetch: ${response.status}`);
-        }
-        const data = await response.json();
-        console.log("Dati ricevuti dal backend:", data); 
-        setQuestionario(data);
-      } catch (error) {
-        console.error("Errore nel recupero del questionario:", error);
-        alert("Errore nel caricamento del questionario. Riprova più tardi.");
-      }
-    };
 
-    fetchQuestionario();
-  }, [id]);
+    console.log("ID Questionario:", id);
+    console.log("ID Compilazione:", idCompilazione);
+    if (idCompilazione) {
+      const fetchIdQuestionario = async () => {
+        try {
+          const response = await fetch(`http://localhost:8080/api/questionariCompilati/${idCompilazione}`);
+          if (!response.ok) {
+            throw new Error('Errore nel recupero dei dati della compilazione');
+          }
+
+          const data = await response.json();
+          setIdQuestionario(data.idQuestionario);
+
+          fetchQuestionario(data.idQuestionario);
+        } catch (error) {
+          console.error('Errore nel recupero della compilazione:', error);
+          alert('Errore nel recupero della compilazione. Riprova più tardi.');
+        }
+      };
+
+      fetchIdQuestionario();
+    } else if (id) {
+      fetchQuestionario(id);
+    }
+  }, [idCompilazione, id]);
+
+
+  const fetchQuestionario = async (idQuestionario) => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/questionari/${idQuestionario}/domande`);
+      if (!response.ok) {
+        throw new Error(`Errore nella fetch: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setQuestionario(data);
+    } catch (error) {
+      console.error("Errore nel recupero del questionario:", error);
+      alert("Errore nel caricamento del questionario. Riprova più tardi.");
+    }
+  };
+
 
   const handleChange = (domandaId, valore) => {
     console.log(`Risposta per domanda ${domandaId}: ${valore}`); 
@@ -65,7 +92,7 @@ const CompilaQuestionario = () => {
 
   const handleSalvaParziale = async () => {
     const confermaInvio = window.confirm("Sei sicuro di voler fermare la compilazione? La potrai riprendere più tardi");
-      if (!confermaInvio) return;
+    if (!confermaInvio) return;
 
     try {
       const domandeRisposte = questionario.filter(
@@ -75,6 +102,7 @@ const CompilaQuestionario = () => {
         throw new Error('Per favore, rispondi almeno ad una domanda.');
       }
       
+
       const idCompilazione = await creaNuovaCompilazione(id);
       
       const risposteArray = domandeRisposte.map((domanda) => ({
@@ -164,8 +192,8 @@ const CompilaQuestionario = () => {
       navigator.clipboard.writeText(codiceUnivoco)
         .then(() => {
           alert("Codice copiato negli appunti!");
-          closeModal(); // Close modal after copying code
-          navigate('/'); // Redirect to home after copy
+          closeModal();
+          navigate('/');
         })
         .catch((error) => {
           console.error("Errore nella copia del codice:", error);
@@ -175,7 +203,7 @@ const CompilaQuestionario = () => {
 
   const closeModal = () => {
     setShowModal(false);
-    navigate('/'); // Redirect to home after closing the modal
+    navigate('/');
   };
 
   if (questionario.length === 0) {

@@ -1,5 +1,6 @@
 package com.i_rosilients.backend.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,6 +25,21 @@ public class QuestionarioCompilatoService implements IQuestionarioCompilatoServi
 
     @Autowired
     private RispostaRepository rispostaRepository;
+
+    public List<QuestionarioCompilatoDTO> getCompilazioniInSospeso(String email) {
+        List<QuestionarioCompilato> compilazioni = questionarioCompilatoRepository.findByUtenteEmailAndDefinitivoFalse(email);
+    
+        return compilazioni.stream().map(compilazione -> {
+            return new QuestionarioCompilatoDTO(
+                compilazione.getIdCompilazione(),
+                compilazione.getQuestionario().getIdQuestionario(),
+                compilazione.getQuestionario().getNome(),
+                compilazione.getQuestionario().getUtente().getEmail(),
+                compilazione.getDataCompilazione(),
+                new ArrayList<>()
+            );
+        }).collect(Collectors.toList());
+    }
 
     @Transactional
     public void deleteQuestionarioCompilatoAndRisposte(Questionario questionario) {
@@ -52,6 +68,8 @@ public class QuestionarioCompilatoService implements IQuestionarioCompilatoServi
         System.out.println("✅ Numero risposte trovate: " + risposte.size());
     
         return new QuestionarioCompilatoDTO(
+            questionarioCompilato.getIdCompilazione(),
+            questionarioCompilato.getQuestionario().getIdQuestionario(),
             questionarioCompilato.getQuestionario().getNome(),
             questionarioCompilato.getQuestionario().getUtente().getEmail(),
             questionarioCompilato.getDataCompilazione(),

@@ -61,13 +61,21 @@ const NavbarLogged = ({ setUser }) => {
 
     return (
         <nav className=''>
-            <div className="flex justify-between py-6">
-                <div className="ml-16">
+            <div className="flex justify-between py-6 px-4 md:px-16">
+                <div className="ml-4">
                     <Link className='text-3xl text-personal-purple font-semibold' to='/'>WebSurveys</Link>
                 </div>
-                <div className="flex justify-end mr-16">
+                <div className="flex justify-end space-x-6 w-full">  
                     <div className='my-auto'>
-                        <Link className='ml-72 hover:italic mr-10' to='/domande'>Domande</Link>
+                        <Link 
+                            className="ml-62 hover:italic whitespace-nowrap mr-10" 
+                            to="/continuaCompilazioneQuestionario"
+                        >
+                            Compilazioni in Sospeso
+                        </Link>
+                    </div>                  
+                    <div className='my-auto'>
+                        <Link className='hover:italic mr-10' to='/domande'>Domande</Link>
                     </div>
                     <div className='my-auto'>
                         <Link className='hover:italic mr-10' to='/questionari'>Questionari</Link>
@@ -76,12 +84,11 @@ const NavbarLogged = ({ setUser }) => {
                     {/* Gestione Profilo Dropdown */}
                     <div className="relative ml-64">
                     <button 
-        onClick={toggleDropdown} 
-        className="p-2 rounded-full border-2 border-personal-purple bg-white text-personal-purple hover:bg-personal-purple hover:text-white transition duration-300"
-    >
-        <UserIcon className="h-6 w-6" />
-    </button>
-
+                        onClick={toggleDropdown} 
+                        className="p-2 rounded-full border-2 border-personal-purple bg-white text-personal-purple hover:bg-personal-purple hover:text-white transition duration-300"
+                    >
+                        <UserIcon className="h-6 w-6" />
+                    </button>
                         {isDropdownOpen && (
                             <div className="absolute right-0 mt-2 w-48 bg-white border rounded shadow-lg">
                                 <button 
