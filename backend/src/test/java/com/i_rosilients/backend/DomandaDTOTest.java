@@ -9,12 +9,12 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class TestDomandaDTO {
+class DomandaDTOTest {
 
     private DomandaDTO domanda;
 
     @BeforeEach
-    public void setUp() {
+     void setUp() {
         List<String> opzioni = new ArrayList<String>();
         opzioni.add("opzione1");
         opzioni.add("opzione2");

@@ -24,7 +24,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class QuestionarioServiceTest {
+ class QuestionarioServiceTest {
 
     @Mock
     private QuestionarioRepository questionarioRepository;
@@ -71,7 +71,7 @@ public class QuestionarioServiceTest {
     }
 
     @Test
-    public void testCreaQuestionario() {
+     void testCreaQuestionario() {
         when(utenteRepository.findByEmail("test@example.com")).thenReturn(Optional.of(utente));
         when(domandaRepository.existsById(1)).thenReturn(true);
         when(domandaRepository.existsById(2)).thenReturn(true);
@@ -83,7 +83,7 @@ public class QuestionarioServiceTest {
     }
 
     @Test
-    public void testCreaQuestionario_UtenteNonTrovato() {
+    void testCreaQuestionario_UtenteNonTrovato() {
         when(utenteRepository.findByEmail("test@example.com")).thenReturn(Optional.empty());
 
         Exception exception = assertThrows(RuntimeException.class, () -> {
@@ -94,7 +94,7 @@ public class QuestionarioServiceTest {
     }
 
     @Test
-    public void testDeleteQuestionario() {
+    void testDeleteQuestionario() {
         when(questionarioRepository.findById(1)).thenReturn(Optional.of(questionario));
 
         questionarioService.deleteQuestionario(1);
@@ -105,7 +105,7 @@ public class QuestionarioServiceTest {
     }
 
     @Test
-    public void testDeleteQuestionario_NonTrovato() {
+    void testDeleteQuestionario_NonTrovato() {
         when(questionarioRepository.findById(1)).thenReturn(Optional.empty());
 
         Exception exception = assertThrows(RuntimeException.class, () -> {
@@ -116,7 +116,7 @@ public class QuestionarioServiceTest {
     }
 
     @Test
-    public void testUpdateQuestionario() {
+    void testUpdateQuestionario() {
         when(questionarioRepository.findById(1)).thenReturn(Optional.of(questionario));
         when(domandaRepository.existsById(1)).thenReturn(true);
         when(domandaRepository.existsById(2)).thenReturn(true);
@@ -129,7 +129,7 @@ public class QuestionarioServiceTest {
     }
 
     @Test
-    public void testGetQuestionariByUtente() {
+    void testGetQuestionariByUtente() {
         when(utenteRepository.findByEmail("test@example.com")).thenReturn(Optional.of(utente));
         when(questionarioRepository.findByUtente(utente)).thenReturn(Collections.singletonList(questionario));
         when(domandaQuestionarioRepository.findByQuestionario(questionario)).thenReturn(Collections.emptyList());
@@ -141,7 +141,7 @@ public class QuestionarioServiceTest {
     }
 
     @Test
-    public void testGetDomandeByQuestionario() {
+    void testGetDomandeByQuestionario() {
         DomandaQuestionario domandaQuestionario = new DomandaQuestionario();
         domandaQuestionario.setDomanda(domanda);
 
@@ -155,7 +155,7 @@ public class QuestionarioServiceTest {
     }
 
     @Test
-    public void testGetQuestionario() {
+    void testGetQuestionario() {
         when(questionarioRepository.findById(1)).thenReturn(Optional.of(questionario));
 
         QuestionarioDTO result = questionarioService.getQuestionario(1);

@@ -21,7 +21,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
-public class QuestionarioControllerTest {
+ class QuestionarioControllerTest {
 
     private MockMvc mockMvc;
 
@@ -32,12 +32,12 @@ public class QuestionarioControllerTest {
     private QuestionarioController questionarioController;
 
     @BeforeEach
-    public void setUp() {
+     void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(questionarioController).build();
     }
 
     @Test
-    public void testCreaQuestionario() throws Exception {
+     void testCreaQuestionario() throws Exception {
         QuestionarioDTO questionarioDTO = new QuestionarioDTO();
         questionarioDTO.setNome("Test Questionario");
         questionarioDTO.setEmailUtente("test@example.com");
@@ -53,7 +53,7 @@ public class QuestionarioControllerTest {
     }
 
     @Test
-    public void testCreaQuestionario_BadRequest() throws Exception {
+     void testCreaQuestionario_BadRequest() throws Exception {
         doThrow(new IllegalArgumentException("Invalid input")).when(questionarioService).creaQuestionario(any(QuestionarioDTO.class));
 
         mockMvc.perform(post("/api/questionari/creaQuestionario")
@@ -65,7 +65,7 @@ public class QuestionarioControllerTest {
     }
 
     @Test
-    public void testDeleteQuestionario() throws Exception {
+     void testDeleteQuestionario() throws Exception {
         doNothing().when(questionarioService).deleteQuestionario(1);
 
         mockMvc.perform(delete("/api/questionari/deleteQuestionario/1"))
@@ -75,7 +75,7 @@ public class QuestionarioControllerTest {
     }
 
     @Test
-    public void testDeleteQuestionario_NotFound() throws Exception {
+     void testDeleteQuestionario_NotFound() throws Exception {
         doThrow(new RuntimeException("Questionario non trovato")).when(questionarioService).deleteQuestionario(1);
 
         mockMvc.perform(delete("/api/questionari/deleteQuestionario/1"))
@@ -85,7 +85,7 @@ public class QuestionarioControllerTest {
     }
 
     @Test
-    public void testUpdateQuestionario() throws Exception {
+     void testUpdateQuestionario() throws Exception {
         QuestionarioDTO questionarioDTO = new QuestionarioDTO();
         questionarioDTO.setNome("Updated Questionario");
 
@@ -100,7 +100,7 @@ public class QuestionarioControllerTest {
     }
 
     @Test
-    public void testUpdateQuestionario_NotFound() throws Exception {
+     void testUpdateQuestionario_NotFound() throws Exception {
         QuestionarioDTO questionarioDTO = new QuestionarioDTO();
         questionarioDTO.setNome("Updated Questionario");
 
@@ -115,7 +115,7 @@ public class QuestionarioControllerTest {
     }
 
     @Test
-    public void testGetQuestionariByUtente() throws Exception {
+     void testGetQuestionariByUtente() throws Exception {
         QuestionarioDTO questionarioDTO = new QuestionarioDTO();
         questionarioDTO.setNome("Test Questionario");
         questionarioDTO.setEmailUtente("test@example.com");
@@ -131,7 +131,7 @@ public class QuestionarioControllerTest {
     }
 
     @Test
-    public void testSearchQuestionari() throws Exception {
+     void testSearchQuestionari() throws Exception {
         QuestionarioDTO questionarioDTO = new QuestionarioDTO();
         questionarioDTO.setNome("Test Questionario");
 
@@ -145,7 +145,7 @@ public class QuestionarioControllerTest {
     }
 
     @Test
-    public void testGetTuttiIQuestionari() throws Exception {
+     void testGetTuttiIQuestionari() throws Exception {
         QuestionarioDTO questionarioDTO = new QuestionarioDTO();
         questionarioDTO.setNome("Test Questionario");
 
@@ -159,7 +159,7 @@ public class QuestionarioControllerTest {
     }
 
     @Test
-    public void testGetDomandeByQuestionario() throws Exception {
+     void testGetDomandeByQuestionario() throws Exception {
         DomandaDTO domandaDTO = new DomandaDTO();
         domandaDTO.setTestoDomanda("Test Domanda");
 
@@ -173,7 +173,7 @@ public class QuestionarioControllerTest {
     }
 
     @Test
-    public void testGetQuestionarioWithDomande() throws Exception {
+     void testGetQuestionarioWithDomande() throws Exception {
         QuestionarioDTO questionarioDTO = new QuestionarioDTO();
         questionarioDTO.setNome("Test Questionario");
 

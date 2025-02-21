@@ -33,7 +33,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
-public class DomandaControllerTest {
+ class DomandaControllerTest {
 
     private MockMvc mockMvc;
 
@@ -49,13 +49,13 @@ public class DomandaControllerTest {
     private ObjectMapper objectMapper;
 
     @BeforeEach
-    public void setUp() {
+     void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(domandaController).build();
         objectMapper = new ObjectMapper();
     }
 
     @Test
-    public void testCreaDomanda() throws Exception {
+     void testCreaDomanda() throws Exception {
         MockMultipartFile imageFile = new MockMultipartFile("imageFile", "test.png", "image/png", "test image".getBytes());
         List<String> opzioni = Arrays.asList("Opzione 1", "Opzione 2");
         String opzioniJson = objectMapper.writeValueAsString(opzioni);
@@ -74,7 +74,7 @@ public class DomandaControllerTest {
     }
 
     @Test
-    public void testCreaDomanda_BadRequest() throws Exception {
+     void testCreaDomanda_BadRequest() throws Exception {
         doThrow(new IllegalArgumentException("Invalid input")).when(domandaService).creaDomanda(any(DomandaDTO.class));
 
         mockMvc.perform(multipart("/api/domande/creaDomanda")
@@ -87,7 +87,7 @@ public class DomandaControllerTest {
     }
 
     @Test
-    public void testUpdateDomanda() throws Exception {
+     void testUpdateDomanda() throws Exception {
     MockMultipartFile imageFile = new MockMultipartFile("imageFile", "test.png", "image/png", "test image".getBytes());
     List<String> opzioni = Arrays.asList("Opzione 1", "Opzione 2");
     String opzioniJson = objectMapper.writeValueAsString(opzioni);
@@ -113,7 +113,7 @@ public class DomandaControllerTest {
     }
 
     @Test
-public void testUpdateDomanda_NotFound() throws Exception {
+ void testUpdateDomanda_NotFound() throws Exception {
     when(domandaRepository.findById(1)).thenReturn(Optional.empty());
 
     mockMvc.perform(MockMvcRequestBuilders.put("/api/domande/updateDomanda/1")
@@ -128,7 +128,7 @@ public void testUpdateDomanda_NotFound() throws Exception {
 }
 
     @Test
-    public void testDeleteDomanda() throws Exception {
+     void testDeleteDomanda() throws Exception {
         doNothing().when(domandaService).deleteDomanda(1);
 
         mockMvc.perform(delete("/api/domande/deleteDomanda/1"))
@@ -138,7 +138,7 @@ public void testUpdateDomanda_NotFound() throws Exception {
     }
 
     @Test
-    public void testDeleteDomanda_NotFound() throws Exception {
+     void testDeleteDomanda_NotFound() throws Exception {
         doThrow(new RuntimeException("Domanda non trovata")).when(domandaService).deleteDomanda(1);
 
         mockMvc.perform(delete("/api/domande/deleteDomanda/1"))
@@ -148,7 +148,7 @@ public void testUpdateDomanda_NotFound() throws Exception {
     }
 
     @Test
-    public void testGetDomandeByUtente() throws Exception {
+     void testGetDomandeByUtente() throws Exception {
         DomandaDTO domandaDTO = new DomandaDTO();
         domandaDTO.setTestoDomanda("Test Domanda");
 
@@ -162,7 +162,7 @@ public void testUpdateDomanda_NotFound() throws Exception {
     }
 
     @Test
-    public void testGetTutteLeDomande() throws Exception {
+     void testGetTutteLeDomande() throws Exception {
         DomandaDTO domandaDTO = new DomandaDTO();
         domandaDTO.setTestoDomanda("Test Domanda");
 
@@ -176,7 +176,7 @@ public void testUpdateDomanda_NotFound() throws Exception {
     }
 
     @Test
-    public void testGetDomandeByQuestionario() throws Exception {
+     void testGetDomandeByQuestionario() throws Exception {
         DomandaDTO domandaDTO = new DomandaDTO();
         domandaDTO.setTestoDomanda("Test Domanda");
 
@@ -190,7 +190,7 @@ public void testUpdateDomanda_NotFound() throws Exception {
     }
 
     @Test
-    public void testGetImage() throws Exception {
+     void testGetImage() throws Exception {
         Path imagePath = Paths.get("uploads/test.png");
         Files.createDirectories(imagePath.getParent());
         Files.createFile(imagePath);
@@ -202,7 +202,7 @@ public void testUpdateDomanda_NotFound() throws Exception {
     }
 
     @Test
-    public void testGetImage_NotFound() throws Exception {
+     void testGetImage_NotFound() throws Exception {
         mockMvc.perform(get("/api/domande/uploads/nonexistent.png"))
                 .andExpect(status().isNotFound());
     }

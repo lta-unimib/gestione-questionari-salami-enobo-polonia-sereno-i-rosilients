@@ -23,7 +23,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class DomandaServiceTest {
+ class DomandaServiceTest {
 
     @Mock
     private DomandaRepository domandaRepository;
@@ -45,7 +45,7 @@ public class DomandaServiceTest {
     private DomandaDTO domandaDTO;
 
     @BeforeEach
-    public void setUp() {
+     void setUp() {
         utente = new Utente();
         utente.setEmail("test@example.com");
 
@@ -63,7 +63,7 @@ public class DomandaServiceTest {
     }
 
     @Test
-    public void testCreaDomanda() throws IOException {
+     void testCreaDomanda() throws IOException {
         when(utenteRepository.findByEmail("test@example.com")).thenReturn(Optional.of(utente));
         when(domandaRepository.save(any(Domanda.class))).thenReturn(domanda);
 
@@ -74,7 +74,7 @@ public class DomandaServiceTest {
     }
 
     @Test
-    public void testCreaDomanda_UtenteNonTrovato() {
+     void testCreaDomanda_UtenteNonTrovato() {
         when(utenteRepository.findByEmail("test@example.com")).thenReturn(Optional.empty());
 
         Exception exception = assertThrows(RuntimeException.class, () -> {
@@ -85,7 +85,7 @@ public class DomandaServiceTest {
     }
 
     @Test
-    public void testUpdateDomanda() {
+     void testUpdateDomanda() {
         when(domandaRepository.findById(1)).thenReturn(Optional.of(domanda));
         when(opzioneRepository.findByDomanda(domanda)).thenReturn(Collections.emptyList());
 
@@ -96,7 +96,7 @@ public class DomandaServiceTest {
     }
 
     @Test
-    public void testUpdateDomanda_DomandaNonTrovata() {
+     void testUpdateDomanda_DomandaNonTrovata() {
         when(domandaRepository.findById(1)).thenReturn(Optional.empty());
 
         Exception exception = assertThrows(RuntimeException.class, () -> {
@@ -107,7 +107,7 @@ public class DomandaServiceTest {
     }
 
     @Test
-    public void testDeleteDomanda() {
+     void testDeleteDomanda() {
         when(domandaRepository.findById(1)).thenReturn(Optional.of(domanda));
 
         domandaService.deleteDomanda(1);
@@ -116,7 +116,7 @@ public class DomandaServiceTest {
     }
 
     @Test
-    public void testDeleteDomanda_DomandaNonTrovata() {
+     void testDeleteDomanda_DomandaNonTrovata() {
         when(domandaRepository.findById(1)).thenReturn(Optional.empty());
 
         Exception exception = assertThrows(RuntimeException.class, () -> {
@@ -127,7 +127,7 @@ public class DomandaServiceTest {
     }
 
     @Test
-    public void testGetTutteLeDomande() {
+     void testGetTutteLeDomande() {
         when(domandaRepository.findAll()).thenReturn(Collections.singletonList(domanda));
         when(opzioneRepository.findByDomanda(domanda)).thenReturn(Collections.emptyList());
 
@@ -138,7 +138,7 @@ public class DomandaServiceTest {
     }
 
     @Test
-    public void testGetDomandeByUtente() {
+     void testGetDomandeByUtente() {
         when(utenteRepository.findByEmail("test@example.com")).thenReturn(Optional.of(utente));
         when(domandaRepository.findByUtente(utente)).thenReturn(Collections.singletonList(domanda));
         when(opzioneRepository.findByDomanda(domanda)).thenReturn(Collections.emptyList());
@@ -150,7 +150,7 @@ public class DomandaServiceTest {
     }
 
     @Test
-    public void testGetDomandeByQuestionario() {
+     void testGetDomandeByQuestionario() {
         when(domandaQuestionarioRepository.findDomandeIdsByQuestionarioId(1)).thenReturn(Collections.singletonList(1));
         when(domandaRepository.findAllById(Collections.singletonList(1))).thenReturn(Collections.singletonList(domanda));
         when(opzioneRepository.findByDomanda(domanda)).thenReturn(Collections.emptyList());
@@ -162,7 +162,7 @@ public class DomandaServiceTest {
     }
 
     @Test
-    public void testGetDomandeByQuestionario_InvalidId() {
+     void testGetDomandeByQuestionario_InvalidId() {
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
             domandaService.getDomandeByQuestionario("invalid");
         });
