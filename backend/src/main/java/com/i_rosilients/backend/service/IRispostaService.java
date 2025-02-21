@@ -6,7 +6,6 @@ import com.i_rosilients.backend.dto.RispostaDTO;
 
 public interface IRispostaService {
 
-    public int creaNuovaCompilazione(int idQuestionario);
     public void salvaRisposta(RispostaDTO rispostaDTO);
     public void inviaEmailConPdf(String userEmail, int idCompilazione);
     public Map<Integer, String> getRisposteByIdCompilazione(int idCompilazione);

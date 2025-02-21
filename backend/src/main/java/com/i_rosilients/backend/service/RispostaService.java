@@ -38,7 +38,7 @@ import org.springframework.stereotype.Service;
 
 
 @Service
-public class RispostaService {
+public class RispostaService implements IRispostaService {
     private final RispostaRepository rispostaRepository;
     private final QuestionarioCompilatoRepository questionarioCompilatoRepository;
     private final DomandaRepository domandaRepository;
