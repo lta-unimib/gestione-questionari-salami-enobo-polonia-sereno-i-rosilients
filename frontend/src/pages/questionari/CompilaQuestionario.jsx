@@ -261,7 +261,7 @@ const CompilaQuestionario = () => {
                 <img
                   src={`http://localhost:8080${domanda.imagePath}`}
                   alt={domanda.testoDomanda}
-                  className="w-full h-auto rounded-lg"
+                  className="w-96 h-auto rounded-lg"
                 />
               </div>
             )}

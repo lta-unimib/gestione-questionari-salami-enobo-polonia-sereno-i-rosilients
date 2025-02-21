@@ -1,20 +1,19 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
-import { UserIcon } from '@heroicons/react/24/solid';
+import { UserIcon, ArrowLeftStartOnRectangleIcon, TrashIcon } from '@heroicons/react/24/solid';
 
 const NavbarLogged = ({ setUser }) => {
     const navigate = useNavigate();
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const dropdownRef = useRef(null); // Riferimento al dropdown
-
-    const toggleDropdown = () => {
-        setIsDropdownOpen(prev => !prev);
-    };
+    const [isDropdownProfileOpen, setIsDropdownProfileOpen] = useState(false);
+    const [isVerified, setIsVerified] = useState(false)
 
     const handleClickOutside = (event) => {
         if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
             setIsDropdownOpen(false);
+            setIsDropdownProfileOpen(false);
         }
     };
 
@@ -99,29 +98,35 @@ const NavbarLogged = ({ setUser }) => {
                     
                     {/* Gestione Profilo Dropdown */}
                     <div className="relative ml-64" ref={dropdownRef}>
-                        <button 
-                            onClick={toggleDropdown} 
-                            className="p-2 rounded-full border-2 border-personal-purple bg-white text-personal-purple hover:bg-personal-purple hover:text-white transition duration-300"
-                        >
-                            <UserIcon className="h-6 w-6" />
-                        </button>
-                        {isDropdownOpen && (
-                            <div className="absolute right-0 mt-2 w-48 bg-white border rounded shadow-lg">
-                                <button 
-                                    onClick={handleLogout} 
-                                    className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-200"
-                                >
-                                    Logout
-                                </button>
-                                <button 
-                                    onClick={handleDeleteProfile} 
-                                    className="block w-full text-left px-4 py-2 text-red-600 hover:bg-gray-200"
-                                >
-                                    Elimina Profilo
-                                </button>
-                            </div>
-                        )}
-                    </div>
+                    <button 
+                        onClick={() => setIsDropdownOpen(prev => !prev)} 
+                        className="p-2 rounded-full border-2 border-personal-purple bg-white text-personal-purple hover:bg-personal-purple hover:text-white transition duration-300"
+                    >
+                        <UserIcon className="h-6 w-6" />
+                    </button>
+                    {isDropdownOpen && (
+                        <div className="absolute right-0 mt-2 w-52 bg-white border rounded shadow-xl py-1 transition-all duration-200 ease-in-out">
+                            <button 
+                                onClick={handleDeleteProfile} 
+                                className="flex justify-between gap-4 w-full px-4 py-2 text-red-600 hover:bg-gray-200"
+                            >
+                                <span>Elimina Account</span>
+                                <TrashIcon className='w-6'/>
+                            </button>
+
+                            <div className="border-t border-gray-300 my-1" />
+
+                            <button 
+                                onClick={handleLogout} 
+                                className="flex justify-between gap-4 w-full text-left px-4 py-2 text-blue-500 hover:bg-gray-200"
+                            >
+                                <span>Logout</span>
+                                <ArrowLeftStartOnRectangleIcon className='w-6' />
+                            </button>
+                        </div>
+                    )}
+                </div>
+
                 </div>
             </div>
         </nav>
