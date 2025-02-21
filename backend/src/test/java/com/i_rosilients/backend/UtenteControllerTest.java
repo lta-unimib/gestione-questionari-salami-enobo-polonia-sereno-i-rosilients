@@ -23,7 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
-public class UtenteControllerTest {
+ class UtenteControllerTest {
 
     private MockMvc mockMvc;
 
@@ -34,13 +34,12 @@ public class UtenteControllerTest {
     private UtenteController utenteController;
 
     @BeforeEach
-    public void setup() {
+     void setup() {
         mockMvc = MockMvcBuilders.standaloneSetup(utenteController).build();
     }
 
     @Test
-    public void testAuthenticatedUser() throws Exception {
-        // Configura il contesto di sicurezza
+     void testAuthenticatedUser() throws Exception {
         Utente utente = new Utente();
         utente.setEmail("test@example.com");
 
@@ -50,19 +49,14 @@ public class UtenteControllerTest {
         SecurityContext securityContext = mock(SecurityContext.class);
         when(securityContext.getAuthentication()).thenReturn(authentication);
         SecurityContextHolder.setContext(securityContext);
-
-        // Esegui la richiesta e verifica la risposta
         mockMvc.perform(get("/users/me"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.email").value("test@example.com"));
-
-        // Verifica che il contesto di sicurezza sia stato utilizzato correttamente
         verify(securityContext, times(1)).getAuthentication();
     }
 
     @Test
-    public void testAllUsers() throws Exception {
-        // Configura il comportamento del servizio
+     void testAllUsers() throws Exception {
         Utente utente1 = new Utente();
         utente1.setEmail("utente1@example.com");
 
@@ -71,16 +65,12 @@ public class UtenteControllerTest {
 
         List<Utente> utenti = Arrays.asList(utente1, utente2);
         when(userService.allUsers()).thenReturn(utenti);
-
-        // Esegui la richiesta e verifica la risposta
         mockMvc.perform(get("/users/"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$.length()").value(2))
                 .andExpect(jsonPath("$[0].email").value("utente1@example.com"))
                 .andExpect(jsonPath("$[1].email").value("utente2@example.com"));
-
-        // Verifica che il servizio sia stato chiamato correttamente
         verify(userService, times(1)).allUsers();
     }
 }
