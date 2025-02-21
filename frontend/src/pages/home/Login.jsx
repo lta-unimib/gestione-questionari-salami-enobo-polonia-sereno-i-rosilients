@@ -18,7 +18,6 @@ const Login = ({ toggleModal, setUser }) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        credentials: 'include', 
         body: JSON.stringify(user),
       });
   
@@ -32,9 +31,24 @@ const Login = ({ toggleModal, setUser }) => {
       } else {
         data = await response.text();
       }
+
+      if (response.status === 404) {
+        alert("Email non esistente");
+        return;
+      }
+
+      if (response.status === 500) {
+        alert("Email o password errate");
+        return
+      }
   
       if (response.status === 401) {
         alert(data || 'Credenziali errate');
+        return;
+      }
+
+      if (response.status === 403) {
+        alert("Account non verificato. Controlla la tua email.");
         return;
       }
   
@@ -72,6 +86,7 @@ const Login = ({ toggleModal, setUser }) => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="w-full p-2 mb-3 border border-gray-300 rounded"
+            required
           />
         </div>
 
@@ -83,6 +98,7 @@ const Login = ({ toggleModal, setUser }) => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="w-full p-2 mb-3 border border-gray-300 rounded"
+            required
           />
         </div>
 
