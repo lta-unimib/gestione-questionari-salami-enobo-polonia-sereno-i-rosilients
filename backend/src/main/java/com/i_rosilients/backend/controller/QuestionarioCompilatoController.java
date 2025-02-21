@@ -6,16 +6,26 @@ import org.springframework.web.bind.annotation.*;
 
 import com.i_rosilients.backend.dto.QuestionarioCompilatoDTO;
 import com.i_rosilients.backend.dto.RispostaDTO;
-import com.i_rosilients.backend.service.QuestionarioCompilatoService;
+import com.i_rosilients.backend.service.IQuestionarioCompilatoService;
 
 @RestController
 @RequestMapping("/api/questionariCompilati")
 public class QuestionarioCompilatoController {
 
-    private final QuestionarioCompilatoService questionarioCompilatoService;
+    private final IQuestionarioCompilatoService questionarioCompilatoService;
 
-    public QuestionarioCompilatoController(QuestionarioCompilatoService questionarioCompilatoService) {
+    public QuestionarioCompilatoController(IQuestionarioCompilatoService questionarioCompilatoService) {
         this.questionarioCompilatoService = questionarioCompilatoService;
+    }
+
+    @DeleteMapping("/deleteQuestionarioCompilato/{idCompilazione}")
+    public ResponseEntity<String> deleteQuestionarioCompilatoAndRisposteByIdCompilazione(@PathVariable int idCompilazione) {
+        try {
+            questionarioCompilatoService.deleteQuestionarioCompilatoAndRisposteByIdCompilazione(idCompilazione);
+            return ResponseEntity.ok("Questionario compilato eliminato con successo");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Errore durante l'eliminazione del questionario compilato");
+        }
     }
 
     @GetMapping("/{idCompilazione}")

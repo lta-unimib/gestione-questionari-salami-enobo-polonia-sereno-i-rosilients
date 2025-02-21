@@ -1,7 +1,7 @@
 package com.i_rosilients.backend.controller;
 
 
-import com.i_rosilients.backend.service.UtenteService;
+import com.i_rosilients.backend.service.IUtenteService;
 import com.i_rosilients.backend.model.Utente;
 
 import org.springframework.http.ResponseEntity;
@@ -16,8 +16,10 @@ import java.util.List;
 @RequestMapping("/users")
 @RestController
 public class UtenteController {
-    private final UtenteService userService;
-    public UtenteController(UtenteService userService) {
+
+    private final IUtenteService userService;
+
+    public UtenteController(IUtenteService userService) {
         this.userService = userService;
     }
 
@@ -30,6 +32,7 @@ public class UtenteController {
 
     @GetMapping("/")
     public ResponseEntity<List<Utente>> allUsers() {
+        userService.allUsers();
         List <Utente> users = userService.allUsers();
         return ResponseEntity.ok(users);
     }
