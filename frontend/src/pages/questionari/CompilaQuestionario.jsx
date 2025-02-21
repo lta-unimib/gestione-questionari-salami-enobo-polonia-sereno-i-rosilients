@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useLocation, useNavigate, Link } from 'react-router-dom';
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { ArrowLongLeftIcon } from '@heroicons/react/24/solid';
 
 const CompilaQuestionario = () => {
@@ -19,6 +19,7 @@ const CompilaQuestionario = () => {
   const [userEmail, setUserEmail] = useState(
     localStorage.getItem('jwt') ? localStorage.getItem('userEmail') : ""
   );
+  const [isModalImageOpen, setIsModalImageOpen] = useState(false)
 
   useEffect(() => {
 
@@ -258,12 +259,30 @@ const CompilaQuestionario = () => {
   
             {domanda.imagePath && (
               <div className="mt-4">
-                <img
-                  src={`http://localhost:8080${domanda.imagePath}`}
-                  alt={domanda.testoDomanda}
-                  className="w-96 h-auto rounded-lg"
-                />
-              </div>
+                  <img
+                    src={`http://localhost:8080${domanda.imagePath}`}
+                    alt="Immagine della domanda"
+                    className="w-72 h-auto rounded-lg cursor-pointer"
+                    onClick={() => setIsModalImageOpen(true)}
+                  />
+            
+                  {/* Popup immagine ingrandita */}
+                  {isModalImageOpen && (
+                    <div 
+                      className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+                      onClick={() => setIsModalImageOpen(false)}
+                    >
+                      <div className="relative bg-white p-1 rounded-lg max-w-3xl w-full">
+                        {/* Immagine ingrandita */}
+                        <img
+                          src={`http://localhost:8080${domanda.imagePath}`}
+                          alt="Immagine ingrandita"
+                          className="w-full h-auto rounded-lg"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
             )}
   
             <div className="mt-2 space-y-2">
