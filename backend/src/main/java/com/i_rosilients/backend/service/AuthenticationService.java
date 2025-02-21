@@ -106,7 +106,7 @@ public class AuthenticationService {
         }
     }
 
-    private void sendVerificationEmail(Utente user) { //TODO: Update with company logo
+    private void sendVerificationEmail(Utente user) { 
         String subject = "Account Verification";
         String verificationCode = "VERIFICATION CODE " + user.getVerificationCode();
         String htmlMessage = "<html>"
@@ -125,8 +125,7 @@ public class AuthenticationService {
         try {
             emailService.sendVerificationEmail(user.getEmail(), subject, htmlMessage);
         } catch (MessagingException e) {
-            // Handle email sending exception
-            e.printStackTrace();
+            throw new RuntimeException("Errore nell'invio della mail di verifica", e);
         }
     }
     private String generateVerificationCode() {
@@ -135,7 +134,6 @@ public class AuthenticationService {
         return String.valueOf(code);
     }
 
-    // Metodo per trovare un utente tramite email
     public Utente findUtenteByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Utente non trovato con email: " + email));  
     }
