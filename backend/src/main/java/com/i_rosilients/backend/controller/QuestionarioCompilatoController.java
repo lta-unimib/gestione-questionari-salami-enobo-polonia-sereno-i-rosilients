@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.i_rosilients.backend.dto.QuestionarioCompilatoDTO;
+import com.i_rosilients.backend.dto.RispostaDTO;
 import com.i_rosilients.backend.service.QuestionarioCompilatoService;
 
 @RestController
@@ -41,4 +42,15 @@ public class QuestionarioCompilatoController {
     public List<QuestionarioCompilatoDTO> getQuestionariCompilatiUtente(@PathVariable String userEmail) {
         return questionarioCompilatoService.getCompilazioniInSospeso(userEmail);  
     }
+
+    @GetMapping("/{idCompilazione}/risposte")
+public ResponseEntity<List<RispostaDTO>> getRisposteByCompilazione(@PathVariable int idCompilazione) {
+    List<RispostaDTO> risposte = questionarioCompilatoService.getRisposteByCompilazione(idCompilazione);
+    
+    if (risposte.isEmpty()) {
+        return ResponseEntity.notFound().build();
+    }
+
+    return ResponseEntity.ok(risposte);
+}
 }

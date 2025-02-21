@@ -77,7 +77,7 @@ public class QuestionarioCompilatoService implements IQuestionarioCompilatoServi
             questionarioCompilato.getQuestionario().getUtente().getEmail(),
             questionarioCompilato.getDataCompilazione(),
             risposte.stream()
-                .map(r -> new RispostaDTO(idCompilazione, r.getDomanda().getIdDomanda(), r.getTestoRisposta()))
+                .map(r -> new RispostaDTO(r.getDomanda().getIdDomanda(), r.getTestoRisposta()))
                 .collect(Collectors.toList())
         );
     }
@@ -92,6 +92,14 @@ public class QuestionarioCompilatoService implements IQuestionarioCompilatoServi
         }
     
         return questionarioCompilato.isDefinitivo();
+    }
+
+    public List<RispostaDTO> getRisposteByCompilazione(int idCompilazione) {
+        List<Risposta> risposte = rispostaRepository.findByQuestionarioCompilato_IdCompilazione(idCompilazione);
+    
+        return risposte.stream()
+            .map(r -> new RispostaDTO(r.getDomanda().getIdDomanda(), r.getTestoRisposta()))
+            .collect(Collectors.toList());
     }
 
 }
