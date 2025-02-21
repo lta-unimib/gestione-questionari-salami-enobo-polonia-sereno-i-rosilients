@@ -115,15 +115,13 @@ public class QuestionarioCompilatoService implements IQuestionarioCompilatoServi
     }
 
     public List<QuestionarioCompilatoDTO> getDefinitiviByUtente(String email) {
-        // Recupera tutte le compilazioni definitive per l'utente con email specificata
+        
         List<QuestionarioCompilato> compilazioniDefinitive = questionarioCompilatoRepository.findByUtenteEmailAndDefinitivoTrue(email);
         
-        // Mappa ogni compilazione in un QuestionarioCompilatoDTO
         return compilazioniDefinitive.stream().map(compilazione -> {
-            // Recupera le risposte associate a questa compilazione
+            
             List<Risposta> risposte = rispostaRepository.findByQuestionarioCompilato_IdCompilazione(compilazione.getIdCompilazione());
             
-            // Mappa ogni Risposta in un RispostaDTO
             List<RispostaDTO> risposteDTOs = risposte.stream()
                 .map(risposta -> new RispostaDTO(
                     risposta.getQuestionarioCompilato().getIdCompilazione(),
@@ -131,15 +129,14 @@ public class QuestionarioCompilatoService implements IQuestionarioCompilatoServi
                     risposta.getTestoRisposta()
                 ))
                 .collect(Collectors.toList());
-            
-            // Crea un QuestionarioCompilatoDTO, includendo anche le risposte
+             
             return new QuestionarioCompilatoDTO(
                 compilazione.getIdCompilazione(),
                 compilazione.getQuestionario().getIdQuestionario(),
                 compilazione.getQuestionario().getNome(),
                 compilazione.getQuestionario().getUtente().getEmail(),
                 compilazione.getDataCompilazione(),
-                risposteDTOs // Aggiungi la lista di risposte
+                risposteDTOs 
             );
         }).collect(Collectors.toList());
     }

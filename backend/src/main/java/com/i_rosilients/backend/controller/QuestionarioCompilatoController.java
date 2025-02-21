@@ -6,15 +6,15 @@ import org.springframework.web.bind.annotation.*;
 
 import com.i_rosilients.backend.dto.QuestionarioCompilatoDTO;
 import com.i_rosilients.backend.dto.RispostaDTO;
-import com.i_rosilients.backend.service.QuestionarioCompilatoService;
+import com.i_rosilients.backend.service.IQuestionarioCompilatoService;
 
 @RestController
 @RequestMapping("/api/questionariCompilati")
 public class QuestionarioCompilatoController {
 
-    private final QuestionarioCompilatoService questionarioCompilatoService;
+    private final IQuestionarioCompilatoService questionarioCompilatoService;
 
-    public QuestionarioCompilatoController(QuestionarioCompilatoService questionarioCompilatoService) {
+    public QuestionarioCompilatoController(IQuestionarioCompilatoService questionarioCompilatoService) {
         this.questionarioCompilatoService = questionarioCompilatoService;
     }
 

@@ -1,11 +1,10 @@
 package com.i_rosilients.backend.service;
 
-import com.i_rosilients.backend.dto.UtenteDTO;
+import java.util.List;
+import com.i_rosilients.backend.model.Utente;
 
 public interface IUtenteService {
-
-    void registraUtente(UtenteDTO dto);
-
-    void verificaEmail(String email, String tokenInserito);
+    
+    List<Utente> allUsers();
 
 }

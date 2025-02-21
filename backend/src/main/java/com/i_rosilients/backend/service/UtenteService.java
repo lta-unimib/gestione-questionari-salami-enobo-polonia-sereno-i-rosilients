@@ -8,8 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class UtenteService {
+public class UtenteService implements IUtenteService {
+    
     private final UtenteRepository userRepository;
+
     public UtenteService(UtenteRepository userRepository, EmailService emailService) {
         this.userRepository = userRepository;
     }

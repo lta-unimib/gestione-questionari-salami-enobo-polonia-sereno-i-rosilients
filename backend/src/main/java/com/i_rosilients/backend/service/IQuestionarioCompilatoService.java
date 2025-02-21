@@ -3,6 +3,7 @@ package com.i_rosilients.backend.service;
 import java.util.List;
 
 import com.i_rosilients.backend.dto.QuestionarioCompilatoDTO;
+import com.i_rosilients.backend.dto.RispostaDTO;
 import com.i_rosilients.backend.model.Questionario;
 
 public interface IQuestionarioCompilatoService {
@@ -12,5 +13,7 @@ public interface IQuestionarioCompilatoService {
    public boolean checkIsDefinitivo(int idCompilazione);
    public List<QuestionarioCompilatoDTO> getCompilazioniInSospeso(String email);
    public boolean checkEmailUtenteIsNullForQuestionario(int idCompilazione);
-   
+   public void deleteQuestionarioCompilatoAndRisposteByIdCompilazione(int idCompilazione);
+   public List<RispostaDTO> getRisposteByCompilazione(int idCompilazione);
+   public List<QuestionarioCompilatoDTO> getDefinitiviByUtente(String userEmail);
 }
