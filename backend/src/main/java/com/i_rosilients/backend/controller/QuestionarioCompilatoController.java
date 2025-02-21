@@ -52,5 +52,17 @@ public ResponseEntity<List<RispostaDTO>> getRisposteByCompilazione(@PathVariable
     }
 
     return ResponseEntity.ok(risposte);
-}
+    }
+
+    @GetMapping("/definitivi/utente/{userEmail}")
+    public ResponseEntity<List<QuestionarioCompilatoDTO>> getDefinitiviByUtente(@PathVariable String userEmail) {
+        List<QuestionarioCompilatoDTO> questionariCompilatiDefinitivi = questionarioCompilatoService.getDefinitiviByUtente(userEmail);
+        
+        if (questionariCompilatiDefinitivi.isEmpty()) {
+            return ResponseEntity.noContent().build(); // Se non ci sono compilazioni definitive
+        }
+        
+        return ResponseEntity.ok(questionariCompilatiDefinitivi);
+    }
+
 }
