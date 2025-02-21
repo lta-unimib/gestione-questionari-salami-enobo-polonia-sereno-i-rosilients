@@ -204,12 +204,20 @@ public class QuestionarioService implements IQuestionarioService {
         if (questionarioOpt.isEmpty()) {
             throw new RuntimeException("Questionario non trovato con ID: " + idQuestionario);
         }
-
+    
         Questionario questionario = questionarioOpt.get();
+    
+        // Estrai gli ID delle domande tramite la relazione domandeQuestionario
+        List<Integer> idDomande = questionario.getDomandeQuestionario().stream()
+            .map(domandaQuestionario -> domandaQuestionario.getDomanda().getIdDomanda()) // Ottieni l'ID della domanda
+            .collect(Collectors.toList());
+    
+        // Restituisci il DTO popolato con i dettagli del questionario e gli ID delle domande
         return new QuestionarioDTO(
             questionario.getIdQuestionario(),
             questionario.getNome(),
-            questionario.getUtente().getEmail()
+            questionario.getUtente().getEmail(),
+            idDomande  // Lista di ID domande
         );
     }
 
