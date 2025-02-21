@@ -95,7 +95,7 @@ jobs:
           JWT_SECRET_KEY: ${{ env.JWT_SECRET_KEY }}
           SUPPORT_EMAIL: ${{ env.SUPPORT_EMAIL }}
           APP_PASSWORD: ${{ env.APP_PASSWORD }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=lta-unimib_gestione-questionari-salami-enobo-polonia-sereno-i-rosilients
+        run: mvn -B clean verify jacoco:report sonar:sonar
 
       # Clean up Docker container
       - name: Stop and remove MySQL Docker container
