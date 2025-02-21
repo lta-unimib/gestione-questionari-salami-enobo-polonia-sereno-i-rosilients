@@ -25,7 +25,7 @@ public class QuestionarioCompilato {
     @JoinColumn(name = "email_utente", referencedColumnName = "email", nullable = true)
     private Utente utente;
 
-    @ManyToOne(cascade = CascadeType.REMOVE)
+    @ManyToOne
     @JoinColumn(name = "id_questionario", referencedColumnName = "idQuestionario")
     private Questionario questionario;
 
