@@ -48,6 +48,8 @@ public class AuthenticationController {
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> authenticate(@RequestBody UtenteDTO loginUtenteDto, HttpServletResponse response) {
         try {
+            
+
             Utente authenticatedUtente = authenticationService.authenticate(loginUtenteDto);
     
             if (authenticatedUtente == null) {

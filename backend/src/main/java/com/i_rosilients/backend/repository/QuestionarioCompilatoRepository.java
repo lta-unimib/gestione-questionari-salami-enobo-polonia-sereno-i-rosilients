@@ -14,4 +14,5 @@ public interface QuestionarioCompilatoRepository extends JpaRepository<Questiona
     void deleteByIdCompilazione(int idCompilazione);
     List<QuestionarioCompilato> findByQuestionario(Questionario questionario);
     List<QuestionarioCompilato> findByUtenteEmailAndDefinitivoFalse(String email);
+    List<QuestionarioCompilato> findByUtenteEmailAndDefinitivoTrue(String email);
 }

@@ -193,7 +193,7 @@ const Questionari = ({ user }) => {
 {/* Modal per eliminazione */}
 <ReactModal isOpen={isDeleteModalOpen} onRequestClose={closeDeleteModal} className='fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50'>
   <div className='bg-white p-8 rounded-lg w-96 text-center'>
-    <h2 className='text-2xl font-semibold text-gray-800'>Sei sicuro di voler eliminare questo questionario?</h2>
+    <h2 className='text-2xl font-semibold mt-4 text-gray-800'>Sei sicuro di voler eliminare questo questionario?</h2>
     <button onClick={handleDeleteQuestionario} className='bg-red-500 text-white px-6 py-2 rounded-lg mr-4 hover:bg-red-600'>Elimina</button>
     <button onClick={closeDeleteModal} className='bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600'>Annulla</button>
   </div>

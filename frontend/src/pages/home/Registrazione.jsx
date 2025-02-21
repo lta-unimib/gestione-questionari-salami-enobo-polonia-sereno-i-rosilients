@@ -47,6 +47,7 @@ const Registration = ({ toggleModal, onRegistrationSuccess}) => {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           className="w-full p-2 mb-3 border border-gray-300 rounded"
+          required
         />
         <input
           type="password"
@@ -54,6 +55,7 @@ const Registration = ({ toggleModal, onRegistrationSuccess}) => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           className="w-full p-2 mb-3 border border-gray-300 rounded"
+          required
         />
         <input
           type="password"
@@ -61,6 +63,7 @@ const Registration = ({ toggleModal, onRegistrationSuccess}) => {
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
           className="w-full p-2 mb-3 border border-gray-300 rounded"
+          required
         />
         <button
           className="w-full p-2 bg-blue-500 text-white rounded"

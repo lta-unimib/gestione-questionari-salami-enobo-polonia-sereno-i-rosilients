@@ -12,5 +12,9 @@ public class RispostaDTO {
     private int idDomanda; // ID della Domanda
     private String testoRisposta; // Testo della risposta
 
+    public RispostaDTO(int idDomanda, String testoRisposta) {
+        this.idDomanda = idDomanda;
+        this.testoRisposta = testoRisposta;
+    }
    
 }
