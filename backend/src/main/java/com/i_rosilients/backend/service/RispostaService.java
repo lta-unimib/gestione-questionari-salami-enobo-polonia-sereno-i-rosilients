@@ -40,28 +40,31 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+
 @Service
 public class RispostaService {
-
-    @Autowired
-    private RispostaRepository rispostaRepository;
-
-    @Autowired
-    private QuestionarioCompilatoRepository questionarioCompilatoRepository;
-
-    @Autowired
-    private DomandaRepository domandaRepository;
-
-    @Autowired
-    private QuestionarioRepository questionarioRepository;
-
-    @Autowired 
-    private UtenteRepository utenteRepository;
-
-    @Autowired
-    private JavaMailSender emailSender;
-
+    private final RispostaRepository rispostaRepository;
+    private final QuestionarioCompilatoRepository questionarioCompilatoRepository;
+    private final DomandaRepository domandaRepository;
+    private final QuestionarioRepository questionarioRepository;
+    private final UtenteRepository utenteRepository;
+    private final JavaMailSender emailSender;
     private static final String UPLOAD_DIR = "uploads/";
+
+    public RispostaService(
+            RispostaRepository rispostaRepository,
+            QuestionarioCompilatoRepository questionarioCompilatoRepository,
+            DomandaRepository domandaRepository,
+            QuestionarioRepository questionarioRepository,
+            UtenteRepository utenteRepository,
+            JavaMailSender emailSender) {
+        this.rispostaRepository = rispostaRepository;
+        this.questionarioCompilatoRepository = questionarioCompilatoRepository;
+        this.domandaRepository = domandaRepository;
+        this.questionarioRepository = questionarioRepository;
+        this.utenteRepository = utenteRepository;
+        this.emailSender = emailSender;
+    }
 
     // Per precompilare i campi
     public Map<Integer, String> getRisposteByIdCompilazione(int idCompilazione) {
@@ -117,17 +120,15 @@ public class RispostaService {
         );
 
         if (rispostaEsistente.isPresent()) {
-            // Se la risposta esiste, aggiorno il testo della risposta
             Risposta risposta = rispostaEsistente.get();
             risposta.setTestoRisposta(rispostaDTO.getTestoRisposta());
-            rispostaRepository.save(risposta);  // Salvo la risposta aggiornata
+            rispostaRepository.save(risposta);
         } else {
-            // Se la risposta non esiste, ne creo una nuova
             Risposta nuovaRisposta = new Risposta();
             nuovaRisposta.setQuestionarioCompilato(questionarioCompilato);
             nuovaRisposta.setDomanda(domanda);
             nuovaRisposta.setTestoRisposta(rispostaDTO.getTestoRisposta());
-            rispostaRepository.save(nuovaRisposta);  // Salvo la nuova risposta
+            rispostaRepository.save(nuovaRisposta);
         }    
     }
 
@@ -135,7 +136,7 @@ public class RispostaService {
         QuestionarioCompilato questionarioCompilato = questionarioCompilatoRepository.findById(idCompilazione)
                 .orElseThrow(() -> new RuntimeException("Compilazione non trovata"));
 
-        questionarioCompilato.setDefinitivo(true); // Imposta lo stato del questionario a definitivo
+        questionarioCompilato.setDefinitivo(true);
         questionarioCompilatoRepository.save(questionarioCompilato);
     }
 
@@ -145,15 +146,12 @@ public class RispostaService {
 
     public void inviaEmailConPdf(String userEmail, int idCompilazione) {
         try {
-            // Recupera il questionario compilato
             QuestionarioCompilato compilato = questionarioCompilatoRepository.findById(idCompilazione)
                     .orElseThrow(() -> new RuntimeException("Compilazione non trovata"));
     
-            // Ottiene il titolo del questionario associato
-            Questionario questionario = compilato.getQuestionario(); // Assumendo che ci sia una relazione con Questionario
-            String titoloQuestionario = questionario.getNome(); // Ottieni il titolo del questionario
+            Questionario questionario = compilato.getQuestionario();
+            String titoloQuestionario = questionario.getNome();
     
-            // Ottiene tutte le risposte associate al questionario compilato
             List<Risposta> risposte = rispostaRepository.findByQuestionarioCompilato(compilato);
     
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -161,72 +159,55 @@ public class RispostaService {
             PdfWriter.getInstance(document, baos);
             document.open();
     
-            // Aggiungi il titolo del questionario al PDF centrato
             Paragraph titolo = new Paragraph(titoloQuestionario, FontFactory.getFont(FontFactory.HELVETICA_BOLD, 16));
             titolo.setAlignment(Element.ALIGN_CENTER);
             document.add(titolo);
             document.add(new Paragraph("\n"));
     
-            // Definisci il font normale (non grassetto)
             Font fontNormale = FontFactory.getFont(FontFactory.HELVETICA, 12);
     
             for (Risposta risposta : risposte) {
                 Domanda domanda = risposta.getDomanda();
     
-                // Aggiungi la domanda con "Domanda:" in grassetto e il testo normale
                 Paragraph domandaParagrafo = new Paragraph();
-                domandaParagrafo.add(new Chunk("Domanda: ", FontFactory.getFont(FontFactory.HELVETICA_BOLD))); // "Domanda:" in grassetto
-                domandaParagrafo.add(new Chunk(domanda.getTestoDomanda(), fontNormale)); // Testo della domanda normale
+                domandaParagrafo.add(new Chunk("Domanda: ", FontFactory.getFont(FontFactory.HELVETICA_BOLD)));
+                domandaParagrafo.add(new Chunk(domanda.getTestoDomanda(), fontNormale));
                 document.add(domandaParagrafo);
     
-                // Se la domanda ha un'immagine, aggiungila al PDF
                 if (domanda.getImmaginePath() != null && !domanda.getImmaginePath().isEmpty()) {
                     try {
-                        // Converti il percorso relativo in percorso assoluto
                         String relativePath = domanda.getImmaginePath();
-                        
-                        // Il percorso assoluto potrebbe essere diverso in base alla struttura del tuo progetto
                         String absolutePath = UPLOAD_DIR + relativePath.replace("/api/domande/uploads/", "");
-                        
-                        // Carica l'immagine dal percorso assoluto
                         Image image = Image.getInstance(absolutePath);
-    
-                        // Ridimensiona l'immagine per adattarla al PDF
-                        image.scaleToFit(400, 200); // Puoi cambiare queste dimensioni in base alle tue necessità
-    
-                        // Aggiungi l'immagine al PDF
+                        image.scaleToFit(400, 200);
                         document.add(image);
                     } catch (Exception e) {
                         System.err.println("Errore nel caricamento dell'immagine: " + e.getMessage());
                     }
                 }
     
-                // Aggiungi la sezione "Opzioni" in grassetto
                 if (!domanda.getOpzioni().isEmpty()) {
                     Paragraph opzioniParagrafo = new Paragraph();
-                    opzioniParagrafo.add(new Chunk("Opzioni: ", FontFactory.getFont(FontFactory.HELVETICA_BOLD))); // "Opzioni:" in grassetto
+                    opzioniParagrafo.add(new Chunk("Opzioni: ", FontFactory.getFont(FontFactory.HELVETICA_BOLD)));
                     document.add(opzioniParagrafo);
     
-                    // Aggiungi le opzioni, segnando la selezionata
                     for (Opzione opzione : domanda.getOpzioni()) {
                         Paragraph opzioneParagrafo = new Paragraph();
-                        opzioneParagrafo.add(new Chunk("• " + opzione.getTestoOpzione(), fontNormale)); // Opzione normale
+                        opzioneParagrafo.add(new Chunk("• " + opzione.getTestoOpzione(), fontNormale));
                         document.add(opzioneParagrafo);
                     }
                 }
     
-                // Aggiungi la risposta con "Risposta:" in grassetto e il testo normale
                 Paragraph rispostaParagrafo = new Paragraph();
-                rispostaParagrafo.add(new Chunk("Risposta: ", FontFactory.getFont(FontFactory.HELVETICA_BOLD))); // "Risposta:" in grassetto
-                rispostaParagrafo.add(new Chunk(risposta.getTestoRisposta(), fontNormale)); // Testo della risposta normale
+                rispostaParagrafo.add(new Chunk("Risposta: ", FontFactory.getFont(FontFactory.HELVETICA_BOLD)));
+                rispostaParagrafo.add(new Chunk(risposta.getTestoRisposta(), fontNormale));
                 document.add(rispostaParagrafo);
     
-                document.add(new Paragraph("\n")); // Aggiungi spazio tra le domande
+                document.add(new Paragraph("\n"));
             }
     
             document.close();
     
-            // Invia l'email con il PDF allegato
             MimeMessage message = emailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
             helper.setTo(userEmail);
@@ -240,7 +221,5 @@ public class RispostaService {
         } catch (Exception e) {
             throw new RuntimeException("Errore nell'invio dell'email", e);
         }
-    }    
-
-
+    }
 }
