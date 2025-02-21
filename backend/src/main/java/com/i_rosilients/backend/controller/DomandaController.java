@@ -9,7 +9,6 @@ import com.i_rosilients.backend.service.IDomandaService;
 
 import jakarta.annotation.PostConstruct;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
@@ -35,14 +34,17 @@ import java.util.UUID;
 @RequestMapping("/api/domande")
 public class DomandaController {
 
-    @Autowired
-    private IDomandaService domandaService;
-    
-    @Autowired
-    private DomandaRepository domandaRepository;
-
+    private final IDomandaService domandaService;
+    private final DomandaRepository domandaRepository;
     private static final String UPLOAD_DIR = "uploads/";
     private static final Path targetPath = Paths.get(UPLOAD_DIR).toAbsolutePath().normalize();
+
+    
+    public DomandaController(IDomandaService domandaService, DomandaRepository domandaRepository) {
+        this.domandaService = domandaService;
+        this.domandaRepository = domandaRepository;
+        init();
+    }
 
     @PostConstruct
     public void init() {

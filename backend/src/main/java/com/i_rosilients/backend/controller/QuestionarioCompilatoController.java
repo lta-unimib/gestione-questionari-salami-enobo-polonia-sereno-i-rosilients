@@ -1,7 +1,6 @@
 package com.i_rosilients.backend.controller;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,8 +11,11 @@ import com.i_rosilients.backend.service.QuestionarioCompilatoService;
 @RequestMapping("/api/questionariCompilati")
 public class QuestionarioCompilatoController {
 
-    @Autowired
-    private QuestionarioCompilatoService questionarioCompilatoService;
+    private final QuestionarioCompilatoService questionarioCompilatoService;
+
+    public QuestionarioCompilatoController(QuestionarioCompilatoService questionarioCompilatoService) {
+        this.questionarioCompilatoService = questionarioCompilatoService;
+    }
 
     @GetMapping("/{idCompilazione}")
     public ResponseEntity<QuestionarioCompilatoDTO> getQuestionarioCompilato(@PathVariable int idCompilazione) {

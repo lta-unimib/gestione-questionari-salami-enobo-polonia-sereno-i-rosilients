@@ -7,12 +7,9 @@ import com.i_rosilients.backend.model.Utente;
 import com.i_rosilients.backend.repository.DomandaQuestionarioRepository;
 import com.i_rosilients.backend.repository.DomandaRepository;
 import com.i_rosilients.backend.repository.OpzioneRepository;
-import com.i_rosilients.backend.repository.QuestionarioRepository;
 import com.i_rosilients.backend.repository.UtenteRepository;
 
 import jakarta.transaction.Transactional;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -28,17 +25,18 @@ import java.util.stream.Collectors;
 @Service
 public class DomandaService implements IDomandaService {
 
-    @Autowired
-    private DomandaRepository domandaRepository;
+ 
+    private final DomandaRepository domandaRepository;
+    private final UtenteRepository utenteRepository;
+    private final OpzioneRepository opzioneRepository;
+    private final DomandaQuestionarioRepository domandaQuestionarioRepository;
 
-    @Autowired
-    private UtenteRepository utenteRepository;
-
-    @Autowired
-    private OpzioneRepository opzioneRepository;
-
-    @Autowired
-    private DomandaQuestionarioRepository domandaQuestionarioRepository;
+    public DomandaService(DomandaRepository domandaRepository, UtenteRepository utenteRepository, OpzioneRepository opzioneRepository, DomandaQuestionarioRepository domandaQuestionarioRepository){
+        this.domandaRepository = domandaRepository;
+        this.utenteRepository = utenteRepository;
+        this.opzioneRepository = opzioneRepository;
+        this.domandaQuestionarioRepository = domandaQuestionarioRepository;
+    }
 
     public void creaDomanda(DomandaDTO domandaDTO) throws IOException {
         Optional<Utente> utenteOpt = utenteRepository.findByEmail(domandaDTO.getEmailUtente());

@@ -4,7 +4,6 @@ import com.i_rosilients.backend.dto.DomandaDTO;
 import com.i_rosilients.backend.dto.QuestionarioDTO;
 import com.i_rosilients.backend.model.Domanda;
 import com.i_rosilients.backend.model.DomandaQuestionario;
-import com.i_rosilients.backend.model.Opzione;
 import com.i_rosilients.backend.model.Questionario;
 import com.i_rosilients.backend.model.Utente;
 import com.i_rosilients.backend.repository.QuestionarioRepository;
@@ -24,20 +23,19 @@ import java.util.stream.Collectors;
 @Service
 public class QuestionarioService implements IQuestionarioService {
 
-    @Autowired
-    private QuestionarioRepository questionarioRepository;
+    private final QuestionarioRepository questionarioRepository;
+    private final UtenteRepository utenteRepository;
+    private final DomandaRepository domandaRepository;
+    private final DomandaQuestionarioRepository domandaQuestionarioRepository;
+    private final IQuestionarioCompilatoService questionarioCompilatoService;
 
-    @Autowired
-    private UtenteRepository utenteRepository;
-
-    @Autowired
-    private DomandaRepository domandaRepository;
-
-    @Autowired
-    private DomandaQuestionarioRepository domandaQuestionarioRepository;
-
-    @Autowired
-    private QuestionarioCompilatoService questionarioCompilatoService;
+    public QuestionarioService(QuestionarioRepository questionarioRepository, UtenteRepository utenteRepository, DomandaRepository domandaRepository, DomandaQuestionarioRepository domandaQuestionarioRepository, IQuestionarioCompilatoService questionarioCompilatoService ){
+        this.questionarioRepository = questionarioRepository;
+        this.utenteRepository = utenteRepository;
+        this.domandaRepository = domandaRepository;
+        this.domandaQuestionarioRepository = domandaQuestionarioRepository;
+        this.questionarioCompilatoService = questionarioCompilatoService;
+    }
 
     public void creaQuestionario(QuestionarioDTO questionarioDTO) {
         Optional<Utente> utenteOpt = utenteRepository.findByEmail(questionarioDTO.getEmailUtente());

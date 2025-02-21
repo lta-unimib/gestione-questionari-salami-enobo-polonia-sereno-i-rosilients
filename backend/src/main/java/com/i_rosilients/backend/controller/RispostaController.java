@@ -1,13 +1,9 @@
 package com.i_rosilients.backend.controller;
 
 import com.i_rosilients.backend.dto.RispostaDTO;
-import com.i_rosilients.backend.repository.QuestionarioCompilatoRepository;
-import com.i_rosilients.backend.service.RispostaService;
-
-
+import com.i_rosilients.backend.service.IRispostaService;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,10 +12,13 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/risposte")
 public class RispostaController {
 
-    @Autowired
-    private RispostaService rispostaService;
+    private final IRispostaService rispostaService;
 
-    // Endpoint per creare una nuova compilazione
+    public RispostaController(IRispostaService rispostaService){
+        this.rispostaService = rispostaService;
+    }
+
+
     @PostMapping("/creaCompilazione")
     public ResponseEntity<?> creaCompilazione(@RequestParam int idQuestionario, @RequestParam String userEmail) {
         try {

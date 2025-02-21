@@ -3,10 +3,7 @@ package com.i_rosilients.backend.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.i_rosilients.backend.dto.QuestionarioCompilatoDTO;
 import com.i_rosilients.backend.dto.RispostaDTO;
 import com.i_rosilients.backend.model.Questionario;
@@ -14,17 +11,18 @@ import com.i_rosilients.backend.model.QuestionarioCompilato;
 import com.i_rosilients.backend.model.Risposta;
 import com.i_rosilients.backend.repository.QuestionarioCompilatoRepository;
 import com.i_rosilients.backend.repository.RispostaRepository;
-
 import jakarta.transaction.Transactional;
 
 @Service
 public class QuestionarioCompilatoService implements IQuestionarioCompilatoService{
 
-    @Autowired
-    private QuestionarioCompilatoRepository questionarioCompilatoRepository;
+    private final QuestionarioCompilatoRepository questionarioCompilatoRepository;
+    private final RispostaRepository rispostaRepository;
 
-    @Autowired
-    private RispostaRepository rispostaRepository;
+    public QuestionarioCompilatoService(QuestionarioCompilatoRepository questionarioCompilatoRepository, RispostaRepository rispostaRepository){
+        this.questionarioCompilatoRepository = questionarioCompilatoRepository;
+        this.rispostaRepository = rispostaRepository;
+    }
 
     public List<QuestionarioCompilatoDTO> getCompilazioniInSospeso(String email) {
         List<QuestionarioCompilato> compilazioni = questionarioCompilatoRepository.findByUtenteEmailAndDefinitivoFalse(email);
@@ -52,15 +50,11 @@ public class QuestionarioCompilatoService implements IQuestionarioCompilatoServi
 
     @Transactional
     public void deleteQuestionarioCompilatoAndRisposte(Questionario questionario) {
-        // Trova tutti i QuestionarioCompilato associati al Questionario
         List<QuestionarioCompilato> questionariCompilati =  questionarioCompilatoRepository.findByQuestionario(questionario);
 
-        // Per ogni QuestionarioCompilato, elimina prima le Risposte associate
         for (QuestionarioCompilato questionarioCompilato : questionariCompilati) {
             rispostaRepository.deleteByQuestionarioCompilato_IdCompilazione(questionarioCompilato.getIdCompilazione());
         }
-
-        // Elimina tutti i QuestionarioCompilato associati
         questionarioCompilatoRepository.deleteByQuestionario(questionario);
     }
 

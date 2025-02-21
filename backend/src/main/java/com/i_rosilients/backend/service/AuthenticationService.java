@@ -3,7 +3,6 @@ package com.i_rosilients.backend.service;
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,14 +18,11 @@ import com.i_rosilients.backend.repository.UtenteRepository;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Optional;
-import java.util.Random;
 
 @Service
 public class AuthenticationService {
     
-    @Autowired
-    private final UtenteRepository userRepository;
-    
+    private final UtenteRepository userRepository; 
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final EmailService emailService;

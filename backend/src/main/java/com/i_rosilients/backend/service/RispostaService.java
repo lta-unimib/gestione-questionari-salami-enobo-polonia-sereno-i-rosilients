@@ -20,7 +20,6 @@ import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
 
 import jakarta.mail.internet.MimeMessage;
-import jakarta.transaction.Transactional;
 
 import com.i_rosilients.backend.repository.QuestionarioCompilatoRepository;
 import com.i_rosilients.backend.repository.QuestionarioRepository;
@@ -32,9 +31,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
