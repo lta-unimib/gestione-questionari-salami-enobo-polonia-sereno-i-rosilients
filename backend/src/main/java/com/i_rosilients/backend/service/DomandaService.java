@@ -154,9 +154,9 @@ public class DomandaService implements IDomandaService {
 
 
     public List<DomandaDTO> getDomandeByUtente(String emailUtente) {
-        Optional<Utente> utenteOpt = utenteRepository.findByEmail(emailUtente);
-        List<Domanda> domande = domandaRepository.findByUtente(utenteOpt.get());  // Recupera tutte le domande dal DB
-        
+        Utente utente = utenteRepository.findByEmail(emailUtente)
+                                    .orElseThrow(() -> new IllegalArgumentException("Utente con email " + emailUtente + " non trovato."));
+        List<Domanda> domande = domandaRepository.findByUtente(utente);
         // Crea la lista di DomandaDTO
         return domande.stream()
             .map(domanda -> {
