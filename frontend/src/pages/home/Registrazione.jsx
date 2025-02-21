@@ -6,8 +6,8 @@ const Registration = ({ toggleModal, onRegistrationSuccess }) => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showForgotPasswordModal, setShowForgotPasswordModal] = useState(false);
   const [forgotPasswordEmail, setForgotPasswordEmail] = useState('');
-  const [isLoading, setIsLoading] = useState(false); // Stato per il caricamento
-  const [errorMessage, setErrorMessage] = useState(''); // Stato per il messaggio di errore
+  const [isLoading, setIsLoading] = useState(false); 
+  const [errorMessage, setErrorMessage] = useState(''); 
 
   const handleRegister = () => {
     if (password !== confirmPassword) {
@@ -40,8 +40,8 @@ const Registration = ({ toggleModal, onRegistrationSuccess }) => {
   };
 
   const handleForgotPassword = () => {
-    setIsLoading(true); // Attiva lo stato di caricamento
-    setErrorMessage(''); // Resetta il messaggio di errore
+    setIsLoading(true); 
+    setErrorMessage(''); 
   
     fetch('http://localhost:8080/auth/forgot-password', {
       method: 'POST',
@@ -58,14 +58,14 @@ const Registration = ({ toggleModal, onRegistrationSuccess }) => {
           throw new Error(errorData.message || 'Errore nella richiesta di reset della password');
         }
         alert('Email di reset inviata con successo. Controlla la tua casella di posta.');
-        setShowForgotPasswordModal(false); // Chiudi il modal dopo l'invio
+        setShowForgotPasswordModal(false); 
       })
       .catch((error) => {
         console.error('Errore:', error);
-        setErrorMessage(error.message); // Mostra il messaggio di errore nel modal
+        setErrorMessage(error.message); 
       })
       .finally(() => {
-        setIsLoading(false); // Disattiva lo stato di caricamento
+        setIsLoading(false); 
       });
   };
 
@@ -130,15 +130,15 @@ const Registration = ({ toggleModal, onRegistrationSuccess }) => {
               value={forgotPasswordEmail}
               onChange={(e) => setForgotPasswordEmail(e.target.value)}
               className="w-full p-2 mb-3 border border-gray-300 rounded"
-              disabled={isLoading} // Disabilita l'input durante il caricamento
+              disabled={isLoading} 
             />
-            {errorMessage && ( // Mostra il messaggio di errore
+            {errorMessage && ( 
               <p className="text-red-500 mb-3">{errorMessage}</p>
             )}
             <button
               className="w-full p-2 bg-blue-500 text-white rounded flex items-center justify-center"
               onClick={handleForgotPassword}
-              disabled={isLoading} // Disabilita il pulsante durante il caricamento
+              disabled={isLoading} 
             >
               {isLoading ? (
                 <>
@@ -171,7 +171,7 @@ const Registration = ({ toggleModal, onRegistrationSuccess }) => {
             <button
               className="w-full p-2 mt-2 bg-gray-300 text-gray-700 rounded"
               onClick={() => setShowForgotPasswordModal(false)}
-              disabled={isLoading} // Disabilita il pulsante durante il caricamento
+              disabled={isLoading} 
             >
               Annulla
             </button>

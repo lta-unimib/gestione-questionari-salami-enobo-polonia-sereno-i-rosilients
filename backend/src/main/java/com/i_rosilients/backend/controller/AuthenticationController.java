@@ -146,29 +146,23 @@ public class AuthenticationController {
         String token = jwtService.extractToken(request);
         String username = jwtService.extractUsername(token);
         
-        // Verifica che il token sia valido
         if (token == null || !jwtService.isTokenValid(token, username)) {
             return ResponseEntity.status(401).body("Utente non autenticato.");
         }
-        
-        // Estrai l'utente dal token
+
         String emailUtente = jwtService.extractUsername(token);
         Utente utente = authenticationService.findUtenteByEmail(emailUtente);
-        
-        // Verifica che l'utente esista
+
         if (utente == null) {
             return ResponseEntity.status(404).body("Utente non trovato.");
         }
         
         try {
-            
-            // Elimina il profilo dell'utente
+
             authenticationService.deleteProfile(utente);
             
-            // Restituisci una risposta di successo
             return ResponseEntity.ok("Profilo eliminato con successo.");
         } catch (Exception e) {
-            // Gestione errore durante l'eliminazione
             return ResponseEntity.status(500).body("Errore durante l'eliminazione del profilo: " + e.getMessage());
         }
     }

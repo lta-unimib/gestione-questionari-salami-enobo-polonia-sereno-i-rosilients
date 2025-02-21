@@ -11,23 +11,22 @@ import VisualizzaQuestionario from './pages/questionari/VisualizzaQuestionario';
 import Domande from './pages/domande/Domande';
 import ResetPassword from './pages/home/ResetPassword';
 
-// Funzione per decodificare il token e verificarne la scadenza
+
 const isTokenValid = (token) => {
   if (!token) return false;
 
   try {
     const payload = JSON.parse(atob(token.split('.')[1]));
     const expirationTime = payload.exp * 1000; 
-    return expirationTime > Date.now(); // Verifica se il token è scaduto
+    return expirationTime > Date.now(); 
   } catch (e) {
-    return false; // Se il token non è valido, restituiamo false
+    return false; 
   }
 };
 
 const App = () => {
   const [user, setUser] = useState(null);
 
-  // Verifica se il token JWT è presente in localStorage al caricamento
   useEffect(() => {
     const token = localStorage.getItem('jwt');
     if (token && isTokenValid(token)) {

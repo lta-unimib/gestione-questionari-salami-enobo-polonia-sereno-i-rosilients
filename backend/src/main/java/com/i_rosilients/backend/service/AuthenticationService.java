@@ -160,11 +160,11 @@ public class AuthenticationService {
     
         System.out.println("Utente trovato: " + userOptional.get().getEmail());
     
-        // Genera un token di reset
+        
         String resetToken = passwordResetService.generateResetToken(email);
         System.out.println("Token generato: " + resetToken);
     
-        // Invia l'email con il link di reset
+       
         String resetLink = "http://localhost:3000/reset-password/" + resetToken;
         String subject = "Reset della Password";
         String htmlMessage = "<html>"
@@ -192,7 +192,6 @@ public class AuthenticationService {
 
     public ResponseEntity<VerificationResponse> resetPassword(String token, String newPassword) {
         if (!passwordResetService.isResetTokenValid(token)) {
-            // Restituisci una risposta JSON in caso di errore
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new VerificationResponse("ERROR", "Token non valido o scaduto"));
         }
@@ -200,18 +199,16 @@ public class AuthenticationService {
         String email = passwordResetService.getEmailFromResetToken(token);
         Utente user = userRepository.findByEmail(email)
                 .orElseThrow(() -> {
-                    // Restituisci una risposta JSON in caso di errore
                     return new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
                         "Utente non trovato"
                     );
                 });
     
-        // Aggiorna la password
+       
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
-    
-        // Rimuovi il token dopo l'uso
+
         passwordResetService.removeResetToken(token);
     
         return ResponseEntity.ok(new VerificationResponse("SUCCESS", "Password resettata con successo."));
