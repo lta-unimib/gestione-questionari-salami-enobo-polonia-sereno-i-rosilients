@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface QuestionarioCompilatoRepository extends JpaRepository<QuestionarioCompilato, Integer> {
     void deleteByQuestionario(Questionario questionario);
+    void deleteByIdCompilazione(int idCompilazione);
     List<QuestionarioCompilato> findByQuestionario(Questionario questionario);
     List<QuestionarioCompilato> findByUtenteEmailAndDefinitivoFalse(String email);
 }

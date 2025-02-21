@@ -17,6 +17,16 @@ public class QuestionarioCompilatoController {
         this.questionarioCompilatoService = questionarioCompilatoService;
     }
 
+    @DeleteMapping("/deleteQuestionarioCompilato/{idCompilazione}")
+    public ResponseEntity<String> deleteQuestionarioCompilatoAndRisposteByIdCompilazione(@PathVariable int idCompilazione) {
+        try {
+            questionarioCompilatoService.deleteQuestionarioCompilatoAndRisposteByIdCompilazione(idCompilazione);
+            return ResponseEntity.ok("Questionario compilato eliminato con successo");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Errore durante l'eliminazione del questionario compilato");
+        }
+    }
+
     @GetMapping("/{idCompilazione}")
     public ResponseEntity<QuestionarioCompilatoDTO> getQuestionarioCompilato(@PathVariable int idCompilazione) {
         QuestionarioCompilatoDTO questionarioCompilatoDTO = questionarioCompilatoService.getQuestionarioCompilatoById(idCompilazione);

@@ -2,6 +2,7 @@ package com.i_rosilients.backend.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import com.i_rosilients.backend.dto.QuestionarioCompilatoDTO;
@@ -46,6 +47,17 @@ public class QuestionarioCompilatoService implements IQuestionarioCompilatoServi
             return false;
         }
         return (questionarioCompilato.getUtente() == null);
+    }
+
+    @Transactional
+    public void deleteQuestionarioCompilatoAndRisposteByIdCompilazione(int idCompilazione) {
+        Optional<QuestionarioCompilato> questionarioCompilato = questionarioCompilatoRepository.findById(idCompilazione);
+        if (questionarioCompilato.isEmpty()) {
+            System.out.println("❌ Nessun questionario compilato trovato per ID: " + idCompilazione);
+            return;
+        }
+        rispostaRepository.deleteByQuestionarioCompilato_IdCompilazione(idCompilazione);
+        questionarioCompilatoRepository.deleteByIdCompilazione(idCompilazione);
     }
 
     @Transactional

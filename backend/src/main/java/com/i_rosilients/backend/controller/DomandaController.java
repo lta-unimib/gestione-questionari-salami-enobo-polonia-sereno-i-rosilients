@@ -93,85 +93,85 @@ public class DomandaController {
     }
 
     @PutMapping(value = "/updateDomanda/{idDomanda}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-public ResponseEntity<String> updateDomanda(
-    @PathVariable int idDomanda, 
-    @RequestParam("argomento") String argomento,
-    @RequestParam("testoDomanda") String testoDomanda,
-    @RequestParam("emailUtente") String emailUtente,
-    @RequestParam(value = "opzioni", required = false) String opzioniJson,
-    @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
-    @RequestParam(value = "removeImage", required = false, defaultValue = "false") boolean removeImage) {
-    
-    try {
-        Optional<Domanda> domandaOpt = domandaRepository.findById(idDomanda);
-        if (domandaOpt.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        Domanda domanda = domandaOpt.get();
+    public ResponseEntity<String> updateDomanda(
+        @PathVariable int idDomanda, 
+        @RequestParam("argomento") String argomento,
+        @RequestParam("testoDomanda") String testoDomanda,
+        @RequestParam("emailUtente") String emailUtente,
+        @RequestParam(value = "opzioni", required = false) String opzioniJson,
+        @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
+        @RequestParam(value = "removeImage", required = false, defaultValue = "false") boolean removeImage) {
         
-        List<String> opzioni = new ArrayList<>();
-        if (opzioniJson != null && !opzioniJson.isEmpty()) {
-            try {
-                opzioni = new ObjectMapper().readValue(opzioniJson, 
-                    new com.fasterxml.jackson.core.type.TypeReference<List<String>>() {});
-            } catch (JsonProcessingException e) {
-                return ResponseEntity.badRequest().body("Formato opzioni non valido");
+        try {
+            Optional<Domanda> domandaOpt = domandaRepository.findById(idDomanda);
+            if (domandaOpt.isEmpty()) {
+                return ResponseEntity.notFound().build();
             }
-        }
-
-        String imageUrl = domanda.getImmaginePath();
-        
-        if (removeImage) {
-            if (imageUrl != null) {
-                try {
-                    String filename = new File(imageUrl).getName();
-                    Path imagePath = targetPath.resolve(filename).normalize();
-                    
-                    if (!imagePath.startsWith(targetPath)) {
-                        throw new IOException("Invalid image path detected");
-                    }
-                    
-                    Files.deleteIfExists(imagePath);
-                    imageUrl = null;
-                } catch (IOException e) {
-                    // Logger.error("Errore durante la rimozione del file", e);
-                }
-            }
-        } else if (imageFile != null && !imageFile.isEmpty()) {
-            // Rimuovi il vecchio file se esiste
-            if (imageUrl != null) {
-                try {
-                    String oldFilename = new File(imageUrl).getName();
-                    Path oldImagePath = targetPath.resolve(oldFilename).normalize();
-                    
-                    if (!oldImagePath.startsWith(targetPath)) {
-                        throw new IOException("Invalid old image path detected");
-                    }
-                    
-                    Files.deleteIfExists(oldImagePath);
-                } catch (IOException e) {
-                    // Logger.error("Errore durante la rimozione del vecchio file", e);
-                }
-            }
+            Domanda domanda = domandaOpt.get();
             
-            try {
-                imageUrl = salvaImmagine(imageFile);
-            } catch (IOException e) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Errore durante il salvataggio della nuova immagine");
+            List<String> opzioni = new ArrayList<>();
+            if (opzioniJson != null && !opzioniJson.isEmpty()) {
+                try {
+                    opzioni = new ObjectMapper().readValue(opzioniJson, 
+                        new com.fasterxml.jackson.core.type.TypeReference<List<String>>() {});
+                } catch (JsonProcessingException e) {
+                    return ResponseEntity.badRequest().body("Formato opzioni non valido");
+                }
             }
-        }
-        DomandaDTO domandaDTO = new DomandaDTO(argomento, testoDomanda, emailUtente, imageUrl, opzioni);
-        domandaService.updateDomanda(idDomanda, domandaDTO);
 
-        return ResponseEntity.ok("Domanda aggiornata con successo");
-        
-    } catch (Exception e) {
-        // Logger.error("Errore durante l'aggiornamento della domanda", e);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-            .body("Errore durante l'aggiornamento della domanda: " + e.getMessage());
+            String imageUrl = domanda.getImmaginePath();
+            
+            if (removeImage) {
+                if (imageUrl != null) {
+                    try {
+                        String filename = new File(imageUrl).getName();
+                        Path imagePath = targetPath.resolve(filename).normalize();
+                        
+                        if (!imagePath.startsWith(targetPath)) {
+                            throw new IOException("Invalid image path detected");
+                        }
+                        
+                        Files.deleteIfExists(imagePath);
+                        imageUrl = null;
+                    } catch (IOException e) {
+                        // Logger.error("Errore durante la rimozione del file", e);
+                    }
+                }
+            } else if (imageFile != null && !imageFile.isEmpty()) {
+                // Rimuovi il vecchio file se esiste
+                if (imageUrl != null) {
+                    try {
+                        String oldFilename = new File(imageUrl).getName();
+                        Path oldImagePath = targetPath.resolve(oldFilename).normalize();
+                        
+                        if (!oldImagePath.startsWith(targetPath)) {
+                            throw new IOException("Invalid old image path detected");
+                        }
+                        
+                        Files.deleteIfExists(oldImagePath);
+                    } catch (IOException e) {
+                        // Logger.error("Errore durante la rimozione del vecchio file", e);
+                    }
+                }
+                
+                try {
+                    imageUrl = salvaImmagine(imageFile);
+                } catch (IOException e) {
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body("Errore durante il salvataggio della nuova immagine");
+                }
+            }
+            DomandaDTO domandaDTO = new DomandaDTO(argomento, testoDomanda, emailUtente, imageUrl, opzioni);
+            domandaService.updateDomanda(idDomanda, domandaDTO);
+
+            return ResponseEntity.ok("Domanda aggiornata con successo");
+            
+        } catch (Exception e) {
+            // Logger.error("Errore durante l'aggiornamento della domanda", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Errore durante l'aggiornamento della domanda: " + e.getMessage());
+        }
     }
-}
 
      private String salvaImmagine(MultipartFile file) throws IOException {
         if (file == null) {
