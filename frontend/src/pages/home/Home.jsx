@@ -57,6 +57,23 @@ const HomeLogged = () => {
     navigate(`/questionari/compilaQuestionario/${idQuestionario}?idCompilazione=${idCompilazione}`);
   };
 
+  const deleteCompilazioneNonRegistrato = async (idCompilazione) => {
+    const response = await fetch(`http://localhost:8080/api/questionariCompilati/deleteQuestionarioCompilato/${idCompilazione}`, {
+      method : 'DELETE',
+      headers: {
+        'Content-Type' : 'application/json'
+      }
+    });
+
+    if(!response.ok) {
+      alert("Errore nella cancellazione del questionario compilato, assicurati di aver inserito un codice corretto.");
+      return;
+    } else {
+      alert("Questionario compilato eliminato con successo");
+      navigate("/");
+    }
+  };
+
   const handleCodeExists = async () => {
     if(codiceUnivoco === null || codiceUnivoco === "") {
       alert("Inserisci un codice univoco NUMERICO valido.");
@@ -110,6 +127,41 @@ const HomeLogged = () => {
     catch(error) {
       console.error("Errore nella fetch:", error);
       alert("Si è verificato un errore durante l'operazione handleCodeExists.");
+    }
+  }
+
+  const handleCodeExistsDel = async () => {
+    if(codiceUnivoco === null || codiceUnivoco === "") {
+      alert("Inserisci un codice univoco NUMERICO valido.");
+      return;
+    }
+
+    const codiceInt = Number(codiceUnivoco);
+    if(isNaN(codiceInt)) {
+      alert("Il codice univoco deve essere un numero.");
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:8080/api/questionariCompilati/utenteNonRegistrato/${codiceInt}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      })
+
+      if (!response.ok) {
+        alert("Codice univoco non valido, assicurati che il codice sia corretto.");
+        navigate("/");
+        return;
+      }
+      
+      deleteCompilazioneNonRegistrato(codiceInt);
+        
+    }
+    catch(error) {
+      console.error("Errore nella fetch:", error);
+      alert("Si è verificato un errore durante l'operazione handleCodeExistsDel.");
     }
   }
 
@@ -188,6 +240,12 @@ const HomeLogged = () => {
             onClick={handleCodeExists}
           >
             Vai al Questionario
+          </button>
+          <button 
+            className="bg-[#5C0005] text-white py-2 px-4"
+            onClick={handleCodeExistsDel}
+          >
+            Delete
           </button>
         </div>
       </div>
