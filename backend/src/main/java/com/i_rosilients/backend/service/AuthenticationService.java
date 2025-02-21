@@ -16,6 +16,7 @@ import com.i_rosilients.backend.dto.VerificaUtenteDTO;
 import com.i_rosilients.backend.model.Utente;
 import com.i_rosilients.backend.repository.UtenteRepository;
 
+import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Random;
@@ -129,8 +130,8 @@ public class AuthenticationService {
         }
     }
     private String generateVerificationCode() {
-        Random random = new Random();
-        int code = random.nextInt(900000) + 100000;
+        SecureRandom secureRandom = new SecureRandom();
+        int code = secureRandom.nextInt(900000) + 100000;
         return String.valueOf(code);
     }
 

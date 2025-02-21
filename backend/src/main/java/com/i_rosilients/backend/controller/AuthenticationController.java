@@ -35,7 +35,7 @@ public class AuthenticationController {
         try {
             Utente registeredUtente = authenticationService.signup(registerUtenteDto);
             return ResponseEntity.ok(registeredUtente);
-        } catch (ResponseStatusException e) {  // Cattura l'eccezione specifica
+        } catch (ResponseStatusException e) {  
             return ResponseEntity.status(e.getStatusCode()).body("{\"message\": \"" + e.getReason() + "\"}");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"message\": \"" + e.getMessage() + "\"}");
@@ -51,7 +51,7 @@ public class AuthenticationController {
             Utente authenticatedUtente = authenticationService.authenticate(loginUtenteDto);
     
             if (authenticatedUtente == null) {
-                return ResponseEntity.status(401).body(null);  // Se l'utente non è stato autenticato
+                return ResponseEntity.status(401).body(null); 
             }
     
             String accessToken = jwtService.generateToken((UserDetails) authenticatedUtente);
@@ -60,7 +60,7 @@ public class AuthenticationController {
             // Crea il cookie
             Cookie refreshCookie = new Cookie("refreshToken", refreshToken);
             refreshCookie.setHttpOnly(true);
-            refreshCookie.setSecure(true); // Abilita solo in HTTPS
+            refreshCookie.setSecure(true); 
             refreshCookie.setPath("/auth/refresh");
             refreshCookie.setMaxAge(7 * 24 * 60 * 60);
     
@@ -68,14 +68,12 @@ public class AuthenticationController {
     
             return ResponseEntity.ok(new LoginResponse(accessToken, jwtService.getExpirationTime()));
         } catch (Exception e) {
-            e.printStackTrace();  // Stampa eventuali eccezioni
-            return ResponseEntity.status(500).body(null);  // Risposta di errore generico
+            return ResponseEntity.status(500).body(null);  
         }
     }
 
     @PostMapping("/refresh")
     public ResponseEntity<LoginResponse> refresh(HttpServletRequest request, HttpServletResponse response) {
-        // Legge il refresh token dal cookie
         Cookie[] cookies = request.getCookies();
         String refreshToken = null;
         if (cookies != null) {
