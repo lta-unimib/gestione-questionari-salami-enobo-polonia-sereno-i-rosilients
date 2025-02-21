@@ -10,6 +10,7 @@ import CompilaQuestionario from './pages/questionari/CompilaQuestionario';
 import ContinuaCompilazioneQuestionario from './pages/questionari/ContinuaCompilazioneQuestionario';
 import VisualizzaQuestionario from './pages/questionari/VisualizzaQuestionario';
 import Domande from './pages/domande/Domande';
+import VisualizzaCompilazioniUtenti from './pages/questionari/VisualizzaCompilazioniUtenti';
 
 
 // Funzione per decodificare il token e verificarne la scadenza
@@ -55,6 +56,7 @@ const App = () => {
               <Route path="/questionari/:id" element={<VisualizzaQuestionario user={user} />} />
               <Route path="/domande" element={<Domande user={user} />} />
               <Route path="/continuaCompilazioneQuestionario" element={<ContinuaCompilazioneQuestionario />} />
+              <Route path="/visualizzaCompilazioniDiTutti/:id" element={<VisualizzaCompilazioniUtenti />} />
             </>
           ) : (
             <>

@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { TrashIcon, PencilSquareIcon } from '@heroicons/react/24/solid';
 import ReactModal from 'react-modal';
 import CreaQuestionario from './CreaQuestionario';
 
 const Questionari = ({ user }) => {
+  const navigate = useNavigate();
   const [questionari, setQuestionari] = useState([]);
+  const [idQuestionario, setIdQuestionario] = useState(null);
   const [updateQuestionari, setUpdateQuestionari] = useState(false);
   const token = localStorage.getItem('jwt');
   const [userEmail, setUserEmail] = useState(localStorage.getItem("userEmail"));;
+  const [isSelectModalOpen, setIsSelectModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [questionarioIdToDelete, setQuestionarioIdToDelete] = useState(null);
@@ -162,6 +165,27 @@ const Questionari = ({ user }) => {
       });
   };
 
+  // Apre il modal per la selezione delle opzioni
+  const openSelectModal = () => {
+    setIsSelectModalOpen(true);
+  };
+
+  // Chiude il modal per la selezione delle opzioni
+  const closeSelectModal = () => {
+    setIsSelectModalOpen(false);
+  };
+
+  // Visualizza il questionario
+  const handleVisualizzaQuestionario = (idQuestionario) => {
+    navigate(`/questionari/${idQuestionario}`);
+    setIsSelectModalOpen(false);
+  }
+
+  const handleVisualizzaCompilazioni = (idQuestionario) => {
+    navigate(`/visualizzaCompilazioniDiTutti/${idQuestionario}`);
+    setIsSelectModalOpen(false);
+  }
+
   return (
     <div className='mx-24'>
       <h1 className='text-4xl'>Questionari</h1>
@@ -172,7 +196,14 @@ const Questionari = ({ user }) => {
         <ul className='mt-12'>
           {[...questionari].reverse().map((q) => (
             <li key={q.idQuestionario} className='border p-4 my-2 rounded-lg shadow-lg flex justify-between'>
-              <Link to={`/questionari/${q.idQuestionario}`} className='text-blue-500 hover:underline text-xl font-semibold'>
+              <Link 
+                to="#"
+                onClick = {() => {
+                    openSelectModal();
+                    setIdQuestionario(q.idQuestionario);
+                  }
+                }
+                className='text-blue-500 hover:underline text-xl font-semibold'>
                 {q.nome}
               </Link>
               <div className='edit flex gap-4'>
@@ -190,10 +221,38 @@ const Questionari = ({ user }) => {
         <p className='text-gray-500 mt-4'>Nessun questionario trovato.</p>
       )}
 
+
+{/* Modal per selezione opzioni */}
+<ReactModal isOpen={isSelectModalOpen} onRequestClose={closeSelectModal} className='fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50'>
+<div className='bg-white p-8 rounded-lg w-96 relative'>
+  <button
+    onClick={closeSelectModal}
+    className="text-gray-300 text-2xl hover:text-gray-700 transition-colors absolute top-2 right-2"
+  >
+    ✖
+  </button>
+  <h2 className='text-2xl font-semibold mb-8 text-gray-800 text-center'>Cosa vuoi fare con questo Questionario?</h2>
+  <div className='flex justify-center space-x-4'>
+    <button 
+      onClick = {() => handleVisualizzaQuestionario(idQuestionario)} 
+      className='bg-white text-personal-purple border-2 border-personal-purple py-1 px-3 rounded-lg hover:bg-personal-purple hover:text-white transition duration-200'
+      >
+        Visualizza Questionario
+    </button>
+    <button 
+    onClick = {() => handleVisualizzaCompilazioni(idQuestionario)}
+    className = 'bg-white text-personal-purple border-2 border-personal-purple py-1 px-3 rounded-lg hover:bg-personal-purple hover:text-white transition duration-200'
+    >
+      Visualizza Compilazioni
+    </button>
+  </div>
+</div>
+</ReactModal>
+
 {/* Modal per eliminazione */}
 <ReactModal isOpen={isDeleteModalOpen} onRequestClose={closeDeleteModal} className='fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50'>
   <div className='bg-white p-8 rounded-lg w-96 text-center'>
-    <h2 className='text-2xl font-semibold mt-4 text-gray-800'>Sei sicuro di voler eliminare questo questionario?</h2>
+    <h2 className='text-2xl font-semibold mt-0 mb-8 text-gray-800'>Sei sicuro di voler eliminare questo questionario?</h2>
     <button onClick={handleDeleteQuestionario} className='bg-red-500 text-white px-6 py-2 rounded-lg mr-4 hover:bg-red-600'>Elimina</button>
     <button onClick={closeDeleteModal} className='bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600'>Annulla</button>
   </div>
