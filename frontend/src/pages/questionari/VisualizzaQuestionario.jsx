@@ -4,7 +4,6 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 
 const VisualizzaQuestionario = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
   console.log('ID del questionario:', id);
   const [questionario, setQuestionario] = useState(null);
   const [domande, setDomande] = useState([]);
