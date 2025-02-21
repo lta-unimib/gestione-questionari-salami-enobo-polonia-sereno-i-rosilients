@@ -96,6 +96,7 @@ jobs:
           SUPPORT_EMAIL: ${{ env.SUPPORT_EMAIL }}
           APP_PASSWORD: ${{ env.APP_PASSWORD }}
         run: mvn -B clean verify jacoco:report sonar:sonar
+        
 
       # Clean up Docker container
       - name: Stop and remove MySQL Docker container
