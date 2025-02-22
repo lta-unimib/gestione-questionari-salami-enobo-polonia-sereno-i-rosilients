@@ -208,7 +208,9 @@ const CompilaQuestionario = () => {
         alert('Risposte inviate e email con PDF spedita!');
         navigate('/');
       }
+
       handleUtenteNonRegistrato();
+      
     } catch (error) {
       console.error('Errore nell\'invio delle risposte:', error);
       alert('Errore nell\'invio delle risposte: ' + error.message);

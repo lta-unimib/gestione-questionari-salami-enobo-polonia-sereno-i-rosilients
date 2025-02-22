@@ -6,10 +6,10 @@ import com.i_rosilients.backend.dto.DomandaDTO;
 import com.i_rosilients.backend.dto.QuestionarioDTO;
 
 public interface IQuestionarioService {
-    void creaQuestionario(QuestionarioDTO questionarioDTO);
-    void deleteQuestionario(int idQuestionario);
-    void updateQuestionario(int idQuestionario, QuestionarioDTO questionarioDTO);
-    List<QuestionarioDTO> getQuestionariByUtente(String emailUtente);
+    public void creaQuestionario(QuestionarioDTO questionarioDTO);
+    public void deleteQuestionario(int idQuestionario);
+    public void updateQuestionario(int idQuestionario, QuestionarioDTO questionarioDTO);
+    public List<QuestionarioDTO> getQuestionariByUtente(String emailUtente);
     public List<QuestionarioDTO> searchQuestionariWithQuestions(String nome);
     public List<QuestionarioDTO> getTuttiIQuestionari();
     public List<DomandaDTO> getDomandeByQuestionario(int idQuestionario);

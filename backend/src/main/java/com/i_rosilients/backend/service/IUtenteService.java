@@ -5,6 +5,6 @@ import com.i_rosilients.backend.model.Utente;
 
 public interface IUtenteService {
     
-    List<Utente> allUsers();
+    public List<Utente> allUsers();
 
 }

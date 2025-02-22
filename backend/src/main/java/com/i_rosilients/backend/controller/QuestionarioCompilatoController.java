@@ -1,6 +1,8 @@
 package com.i_rosilients.backend.controller;
 import java.util.List;
+import java.util.Map;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,8 +37,12 @@ public class QuestionarioCompilatoController {
     }
 
     @GetMapping("/utente/{userEmail}")
-    public List<QuestionarioCompilatoDTO> getQuestionariCompilatiUtente(@PathVariable String userEmail) {
-        return questionarioCompilatoService.getCompilazioniInSospeso(userEmail);  
+    public ResponseEntity<List<QuestionarioCompilatoDTO>> getQuestionariCompilatiUtente(@PathVariable String userEmail) {
+        List<QuestionarioCompilatoDTO> questionariCompilati = questionarioCompilatoService.getCompilazioniInSospeso(userEmail);
+        if (questionariCompilati.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(questionariCompilati);  
     }
 
     @GetMapping("/definitivi/utente/{userEmail}")
@@ -44,7 +50,7 @@ public class QuestionarioCompilatoController {
         List<QuestionarioCompilatoDTO> questionariCompilatiDefinitivi = questionarioCompilatoService.getDefinitiviByUtente(userEmail);
         
         if (questionariCompilatiDefinitivi.isEmpty()) {
-            return ResponseEntity.noContent().build(); // Se non ci sono compilazioni definitive
+            return ResponseEntity.noContent().build();
         }
         
         return ResponseEntity.ok(questionariCompilatiDefinitivi);
@@ -82,5 +88,21 @@ public class QuestionarioCompilatoController {
         }
 
         return ResponseEntity.ok(risposte);
+    }
+
+    @PostMapping("/inviaEmail")
+    public ResponseEntity<?> inviaEmail(@RequestHeader("Authorization") String token, @RequestBody Map<String, Object> request) {
+        try {
+            String userEmail = (String) request.get("userCompilazioneToDelete");
+            int idCompilazione = Integer.parseInt(request.get("compilazioneToDelete").toString());
+
+            questionarioCompilatoService.inviaEmail(idCompilazione, userEmail);
+    
+            return ResponseEntity.ok().build();
+        } catch (NumberFormatException e) {
+            return ResponseEntity.badRequest().body("ID compilazione non valido.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
 }

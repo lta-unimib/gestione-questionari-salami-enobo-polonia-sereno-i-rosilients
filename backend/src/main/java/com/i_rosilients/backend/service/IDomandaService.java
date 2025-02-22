@@ -7,15 +7,15 @@ import com.i_rosilients.backend.dto.DomandaDTO;
 
 public interface IDomandaService{
 
-    void creaDomanda(DomandaDTO domandaDTO) throws IOException;
+    public void creaDomanda(DomandaDTO domandaDTO) throws IOException;
 
-    void deleteDomanda(int idDomanda);
+    public void deleteDomanda(int idDomanda);
 
-    void updateDomanda(int idDomanda, DomandaDTO domandaDTO);
+    public void updateDomanda(int idDomanda, DomandaDTO domandaDTO);
 
-    List<DomandaDTO> getDomandeByUtente(String emailUtente);
+    public List<DomandaDTO> getDomandeByUtente(String emailUtente);
 
-    List<DomandaDTO> getTutteLeDomande();
+    public List<DomandaDTO> getTutteLeDomande();
     
     public List<DomandaDTO> getDomandeByQuestionario(String idQuestionario);
 

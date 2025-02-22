@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import com.i_rosilients.backend.dto.QuestionarioCompilatoDTO;
 import com.i_rosilients.backend.dto.RispostaDTO;
@@ -12,6 +15,8 @@ import com.i_rosilients.backend.model.QuestionarioCompilato;
 import com.i_rosilients.backend.model.Risposta;
 import com.i_rosilients.backend.repository.QuestionarioCompilatoRepository;
 import com.i_rosilients.backend.repository.RispostaRepository;
+
+import jakarta.mail.internet.MimeMessage;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -19,10 +24,15 @@ public class QuestionarioCompilatoService implements IQuestionarioCompilatoServi
 
     private final QuestionarioCompilatoRepository questionarioCompilatoRepository;
     private final RispostaRepository rispostaRepository;
+    private final JavaMailSender emailSender;
 
-    public QuestionarioCompilatoService(QuestionarioCompilatoRepository questionarioCompilatoRepository, RispostaRepository rispostaRepository){
+    public QuestionarioCompilatoService(
+        QuestionarioCompilatoRepository questionarioCompilatoRepository, 
+        RispostaRepository rispostaRepository,
+        JavaMailSender emailSender){
         this.questionarioCompilatoRepository = questionarioCompilatoRepository;
         this.rispostaRepository = rispostaRepository;
+        this.emailSender = emailSender;
     }
 
     public List<QuestionarioCompilatoDTO> getCompilazioniInSospeso(String email) {
@@ -169,6 +179,26 @@ public class QuestionarioCompilatoService implements IQuestionarioCompilatoServi
                 risposteDTOs 
             );
         }).collect(Collectors.toList());
+    }
+
+    public void inviaEmail(int idCompilazione, String userEmail) {
+        try {
+            QuestionarioCompilato compilato = questionarioCompilatoRepository.findByIdCompilazione(idCompilazione)
+                    .orElse(null);
+            if (compilato == null) {
+                throw new RuntimeException("Compilazione non trovata");
+            }
+    
+            MimeMessage message = emailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+            helper.setTo(userEmail);
+            helper.setSubject("Cancellazione Compilazione!!!");
+            helper.setText("La tua compilazione con ID: " + idCompilazione + " per il questionario: " + compilato.getQuestionario().getNome() + " è stata cancellata dal suo proprietario.");
+    
+            emailSender.send(message);
+        } catch (Exception e) {
+            throw new RuntimeException("Errore nell'invio dell'email", e);
+        }
     }
 
 }

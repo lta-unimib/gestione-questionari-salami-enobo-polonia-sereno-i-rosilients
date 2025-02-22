@@ -25,14 +25,13 @@ const QuestionariCompilati = () => {
       }
     })
     .then(response => {
-      if (!response.ok) {
-        throw new Error('Errore nel recupero dei questionari');
-      }
-      return response.json();
-    })
-    .then(data => {
-      console.log("Risposta dal backend:", data);
-      setQuestionari(data); // Aggiorna lo stato con i questionari ricevuti
+        if (response.status === 204) {
+            console.log('Nessuna compilazione trovata.');
+            return [];
+        } else if (!response.ok) {
+            throw new Error('Errore nel recupero delle compilazioni');
+        }
+        return response.json();
     })
     .catch(error => {
       console.error('Errore:', error);

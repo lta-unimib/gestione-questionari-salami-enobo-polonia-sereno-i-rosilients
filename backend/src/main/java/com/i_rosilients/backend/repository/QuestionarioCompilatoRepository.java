@@ -4,6 +4,7 @@ import com.i_rosilients.backend.model.Questionario;
 import com.i_rosilients.backend.model.QuestionarioCompilato;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -18,6 +19,8 @@ public interface QuestionarioCompilatoRepository extends JpaRepository<Questiona
     void deleteByIdCompilazione(int idCompilazione);
 
     List<QuestionarioCompilato> findByQuestionario(Questionario questionario);
+
+    Optional<QuestionarioCompilato> findByIdCompilazione(int idCompilazione);
 
     List<QuestionarioCompilato> findByUtenteEmailAndDefinitivoFalse(String email);
 
