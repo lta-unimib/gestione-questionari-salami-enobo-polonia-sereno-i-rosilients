@@ -26,6 +26,8 @@ public interface QuestionarioCompilatoRepository extends JpaRepository<Questiona
 
     List<QuestionarioCompilato> findByUtenteEmailAndDefinitivoTrue(String email);
 
+    List<QuestionarioCompilato> findByUtenteEmail(String email);
+
     @Query("SELECT qc FROM QuestionarioCompilato qc " +
        "WHERE (qc.utente.email IS NULL OR qc.utente.email <> :email) " +
        "AND qc.questionario.idQuestionario = :idQuestionario " + 

@@ -57,6 +57,10 @@ const Home = () => {
     navigate(`/questionari/compilaQuestionario/${idQuestionario}?idCompilazione=${idCompilazione}`);
   };
 
+  const visualizzaCompilazioneNonRegistrato = (idQuestionario, idCompilazione) => {
+    navigate(`/questionari/visualizzaQuestionarioCompilato/${idCompilazione}`);
+  };
+
   const deleteCompilazioneNonRegistrato = async (idCompilazione) => {
     const response = await fetch(`http://localhost:8080/api/questionariCompilati/deleteQuestionarioCompilato/${idCompilazione}`, {
       method : 'DELETE',
@@ -118,7 +122,7 @@ const Home = () => {
       const isDefinitivo = await checkDefinitivoResponse.json();
       if(isDefinitivo) {
 
-        //mostra il questionario compilato
+        //TODO: Visualizza questionario compilato
 
       } else {
         continuaCompilazioneNonRegistrato(data.idQuestionario, codiceInt);

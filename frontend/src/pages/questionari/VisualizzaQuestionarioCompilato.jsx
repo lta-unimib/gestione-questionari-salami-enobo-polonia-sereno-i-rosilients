@@ -1,8 +1,6 @@
 import { ArrowLongLeftIcon } from '@heroicons/react/24/solid';
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
-import ReactModal from 'react-modal';
-import { TrashIcon } from '@heroicons/react/24/solid';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const VisualizzaQuestionarioCompilato = () => {
   const { idCompilazione } = useParams();
@@ -10,7 +8,6 @@ const VisualizzaQuestionarioCompilato = () => {
   console.log('ID della compilazione:', idCompilazione);
   const [questionarioCompilato, setQuestionarioCompilato] = useState(null);
   const [risposte, setRisposte] = useState([]);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   // Fetch questionario compilato
   useEffect(() => {
@@ -22,7 +19,7 @@ const VisualizzaQuestionarioCompilato = () => {
     })
       .then((res) => {
         if (!res.ok) {
-          throw new Error(`Errore HTTP: ${res.status}`);
+          throw new Error('Errore nel recupero del questionario compilato');
         }
         return res.json();
       })
@@ -32,38 +29,6 @@ const VisualizzaQuestionarioCompilato = () => {
       })
       .catch((err) => console.error('Errore nel recupero del questionario compilato:', err));
   }, [idCompilazione]);
-
-  const openDeleteModal = () => {
-    setIsDeleteModalOpen(true);
-  };
-
-  const closeDeleteModal = () => {
-    setIsDeleteModalOpen(false);
-  };
-
-  const handleDelete = () => {
-    const token = localStorage.getItem('jwt');
-  
-    if (!token) {
-      console.error('Token mancante');
-      return;
-    }
-  
-    fetch(`http://localhost:8080/api/deleteQuestionarioCompilato/${idCompilazione}`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`, 
-      },
-    })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error(`Errore HTTP: ${res.status}`);
-        }
-        navigate('/questionari/compilazioni');
-      })
-      .catch((err) => console.error('Errore nella cancellazione del questionario compilato:', err));
-  };
 
   return (
     <div className="max-w-3xl mx-auto mt-8 p-6 bg-white shadow-lg rounded-lg">
@@ -103,42 +68,7 @@ const VisualizzaQuestionarioCompilato = () => {
           <ArrowLongLeftIcon className="h-5 w-5 my-auto" />
           <span className="my-auto">Torna Indietro</span>
         </button>
-
-        <button
-          onClick={openDeleteModal}
-          className="flex justify-around gap-2 bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 transition-all w-32"
-        >
-          <TrashIcon className="h-5 w-5 my-auto" />
-          <span className="my-auto">Elimina</span>
-        </button>
       </div>
-
-      {/* Modal per confermare l'eliminazione */}
-      <ReactModal
-        isOpen={isDeleteModalOpen}
-        onRequestClose={closeDeleteModal}
-        contentLabel="Conferma eliminazione"
-        className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
-        overlayClassName="modal-overlay"
-      >
-        <div className="bg-white p-8 rounded-lg w-96 text-center">
-          <h2 className="text-2xl font-semibold text-gray-800">Sei sicuro di voler eliminare questa compilazione?</h2>
-          <div className="mt-4">
-            <button
-              onClick={handleDelete}
-              className="bg-red-500 text-white px-6 py-2 rounded-lg mr-4 hover:bg-red-600 transition"
-            >
-              Elimina
-            </button>
-            <button
-              onClick={closeDeleteModal}
-              className="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition"
-            >
-              Annulla
-            </button>
-          </div>
-        </div>
-      </ReactModal>
     </div>
   );
 };

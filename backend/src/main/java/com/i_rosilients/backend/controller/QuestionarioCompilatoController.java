@@ -56,6 +56,17 @@ public class QuestionarioCompilatoController {
         return ResponseEntity.ok(questionariCompilatiDefinitivi);
     }
 
+    @GetMapping("/all/utente/{userEmail}")
+    public ResponseEntity<List<QuestionarioCompilatoDTO>> getAllByUtente(@PathVariable String userEmail) {
+        List<QuestionarioCompilatoDTO> questionariCompilati = questionarioCompilatoService.getAllByUtente(userEmail);
+        
+        if (questionariCompilati.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        
+        return ResponseEntity.ok(questionariCompilati);
+    }
+
     @GetMapping("/utenteNonRegistrato/{idCompilazione}")
     public ResponseEntity<QuestionarioCompilatoDTO> getQuestionarioCompilatoNonRegistrato(@PathVariable int idCompilazione) {
         QuestionarioCompilatoDTO questionarioCompilatoDTO = questionarioCompilatoService.getQuestionarioCompilatoById(idCompilazione);
