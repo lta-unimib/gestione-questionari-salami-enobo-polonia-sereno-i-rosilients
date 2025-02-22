@@ -6,7 +6,6 @@ import com.i_rosilients.backend.model.Risposta;
 import com.i_rosilients.backend.repository.DomandaRepository;
 import com.i_rosilients.backend.repository.QuestionarioCompilatoRepository;
 import com.i_rosilients.backend.repository.RispostaRepository;
-import com.i_rosilients.backend.service.RispostaService;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
