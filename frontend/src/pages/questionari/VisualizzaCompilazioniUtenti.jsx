@@ -86,10 +86,10 @@ const VisualizzaCompilazioniUtenti = () => {
                     <div>       
                         <h2 className="text-xl font-semibold">{compilazione.titoloQuestionario}</h2>
                         <p className="text-gray-600">
-                        Creato da: {compilazione.emailCreatore || "Anonymous"}
+                            Compilato da: {compilazione.emailCreatore}
                         </p>
                         <p className="text-gray-600">
-                            Compilato il: {new Date(compilazione.dataCompilazione).toLocaleString()}
+                            In data: {new Date(compilazione.dataCompilazione).toLocaleString()}
                         </p>
                     </div>
 

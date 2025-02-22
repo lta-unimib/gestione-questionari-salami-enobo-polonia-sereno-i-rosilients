@@ -109,11 +109,19 @@ public class QuestionarioCompilatoService implements IQuestionarioCompilatoServi
                 compilazione.getIdCompilazione(),
                 compilazione.getQuestionario().getIdQuestionario(),
                 compilazione.getQuestionario().getNome(),
-                compilazione.getQuestionario().getUtente().getEmail(),
+                getEmailUtenteByCompilazione(compilazione),
                 compilazione.getDataCompilazione(),
                 new ArrayList<>()
             );
         }).collect(Collectors.toList());
+    }
+
+    public String getEmailUtenteByCompilazione(QuestionarioCompilato questionarioCompilato) {
+        
+        if (questionarioCompilato.getUtente() != null) {
+            return questionarioCompilato.getUtente().getEmail();
+        }
+        return "Anonymous";
     }
 
     public boolean checkIsDefinitivo(int idCompilazione) {
