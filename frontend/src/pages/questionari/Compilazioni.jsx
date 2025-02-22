@@ -172,6 +172,16 @@ const Compilazioni = ({ user }) => {
     }
   };
 
+  const continuaCompilazione = (idQuestionario, idCompilazione) => {
+    console.log("Continuare la compilazione del questionario", idQuestionario, "con id compilazione", idCompilazione);
+    navigate(`/questionari/compilaQuestionario/${idQuestionario}?idCompilazione=${idCompilazione}`);
+  };
+
+  const visualizzaQuestionario = (idCompilazione) => {
+    console.log("Visualizzare il questionario con idCompilazione:", idCompilazione);
+    navigate(`/questionari/visualizzaQuestionarioCompilato/${idCompilazione}`);
+  };
+
   return (
     <div className='mx-24'>
       <h1 className="text-4xl">Compilazioni</h1>
@@ -201,17 +211,19 @@ const Compilazioni = ({ user }) => {
               </div>
               
               <div className="flex items-center">
-                <button 
-                  className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
-                  onClick={() => openModal(c)}
-                >
-                  Dettagli
-                </button>
+                {c.stato === "DEFINITIVO" && (
+                  <button 
+                    className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
+                    onClick={() => visualizzaQuestionario(c.idCompilazione)}
+                  >
+                    Visualizza
+                  </button>
+                )}
 
                 {c.stato === "IN SOSPESO" && (
                   <button
                     className="bg-white text-personal-purple border-2 border-personal-purple py-1 px-3 rounded-lg hover:bg-personal-purple hover:text-white transition duration-200 ml-4"
-                    onClick={() => handleTerminaCompilazione(c.idCompilazione)}
+                    onClick={() => continuaCompilazione(c.idQuestionario, c.idCompilazione)}
                   >
                     Termina
                   </button>

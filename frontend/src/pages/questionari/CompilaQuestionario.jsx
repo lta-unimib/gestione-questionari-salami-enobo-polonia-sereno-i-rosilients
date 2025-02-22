@@ -245,6 +245,8 @@ const CompilaQuestionario = () => {
     navigate('/');
   };
 
+
+
   if (questionario.length === 0) {
     console.log("Questionario non trovato o in fase di caricamento..."); 
     return <p className="text-center mt-10">Caricamento...</p>;
