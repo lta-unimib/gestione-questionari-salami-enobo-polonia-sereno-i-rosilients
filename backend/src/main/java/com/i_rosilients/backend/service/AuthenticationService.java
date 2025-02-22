@@ -65,8 +65,7 @@ public class AuthenticationService {
                 new UsernamePasswordAuthenticationToken(input.getEmail(), input.getPassword())
                 );
 
-            // UserDetails userDetails = userDetailsService.loadUserByUsername(input.getEmail());
-            // return (Utente) userDetails;
+            
         } catch (BadCredentialsException ex) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenziali errate");
         } catch (AuthenticationException ex) {
@@ -132,7 +131,7 @@ public class AuthenticationService {
             throw new RuntimeException("Errore nell'invio della mail di verifica", e);
         }
     }
-    private String generateVerificationCode() {
+    public String generateVerificationCode() {
         SecureRandom secureRandom = new SecureRandom();
         int code = secureRandom.nextInt(900000) + 100000;
         return String.valueOf(code);

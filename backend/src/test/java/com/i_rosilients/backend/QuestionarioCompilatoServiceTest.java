@@ -125,16 +125,24 @@ import com.i_rosilients.backend.service.QuestionarioCompilatoService;
     verify(rispostaRepository, times(1)).findByQuestionarioCompilato_IdCompilazione(1);
 }
 
-    @Test
-     void testCheckIsDefinitivo() {
-        when(questionarioCompilatoRepository.findById(1)).thenReturn(Optional.of(questionarioCompilato));
+@Test
+void testCheckIsDefinitivo() {
 
-        boolean result = questionarioCompilatoService.checkIsDefinitivo(1);
+    QuestionarioCompilato questionario = new QuestionarioCompilato();
+    questionario.setDefinitivo(true);
 
-        assertFalse(result); 
+    when(questionarioCompilatoRepository.findByIdCompilazione(1))
+        .thenReturn(Optional.of(questionario));
 
-        verify(questionarioCompilatoRepository, times(1)).findById(1);
-    }
+
+    boolean result = questionarioCompilatoService.checkIsDefinitivo(1);
+
+
+    assertTrue(result);
+
+
+    verify(questionarioCompilatoRepository, times(1)).findByIdCompilazione(1);
+}
 
     @Test
  void testGetRisposteByCompilazione() {
