@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { EyeIcon } from '@heroicons/react/24/solid';
 import { useNavigate } from 'react-router-dom';
 
-const HomeLogged = () => {
+const Home = () => {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const [allQuestionari, setAllQuestionari] = useState([]); // Stato per tutti i questionari
@@ -253,4 +253,4 @@ const HomeLogged = () => {
   );
 };
 
-export default HomeLogged;
+export default Home;

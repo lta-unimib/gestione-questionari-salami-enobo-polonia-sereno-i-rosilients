@@ -84,9 +84,9 @@ const NavbarLogged = ({ setUser }) => {
                     <div className='my-auto'>
                         <Link 
                             className="ml-62 hover:italic whitespace-nowrap mr-10" 
-                            to="/continuaCompilazioneQuestionario"
+                            to="/questionari/compilazioni"
                         >
-                            Compilazioni in Sospeso
+                            Compilazioni
                         </Link>
                     </div>                  
                     <div className='my-auto'>
