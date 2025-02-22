@@ -98,7 +98,7 @@ import com.i_rosilients.backend.service.IQuestionarioCompilatoService;
     }
 
     @Test
-     void testGetQuestionariCompilatiUtente() throws Exception {
+     void testGetQuestionariCompilatiInSospesoUtente() throws Exception {
         String userEmail = "test@example.com";
         List<QuestionarioCompilatoDTO> questionari = Arrays.asList(
                 new QuestionarioCompilatoDTO(1, "Titolo 1", userEmail, LocalDateTime.now(), Collections.emptyList()),
@@ -106,7 +106,7 @@ import com.i_rosilients.backend.service.IQuestionarioCompilatoService;
         );
         when(questionarioCompilatoService.getCompilazioniInSospeso(userEmail)).thenReturn(questionari);
 
-        mockMvc.perform(get("/api/questionariCompilati/utente/{userEmail}", userEmail))
+        mockMvc.perform(get("/api/questionariCompilati/inSospeso/utente/{userEmail}", userEmail))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$.length()").value(2))
