@@ -39,13 +39,23 @@ public class QuestionarioCompilatoService implements IQuestionarioCompilatoServi
         List<QuestionarioCompilato> compilazioni = questionarioCompilatoRepository.findByUtenteEmailAndDefinitivoFalse(email);
     
         return compilazioni.stream().map(compilazione -> {
+            List<Risposta> risposte = rispostaRepository.findByQuestionarioCompilato_IdCompilazione(compilazione.getIdCompilazione());
+    
+            List<RispostaDTO> risposteDTOs = risposte.stream()
+                .map(risposta -> new RispostaDTO(
+                    risposta.getQuestionarioCompilato().getIdCompilazione(),
+                    risposta.getDomanda().getIdDomanda(),
+                    risposta.getTestoRisposta()
+                ))
+                .collect(Collectors.toList());
+    
             return new QuestionarioCompilatoDTO(
                 compilazione.getIdCompilazione(),
                 compilazione.getQuestionario().getIdQuestionario(),
                 compilazione.getQuestionario().getNome(),
                 compilazione.getQuestionario().getUtente().getEmail(),
                 compilazione.getDataCompilazione(),
-                new ArrayList<>()
+                risposteDTOs
             );
         }).collect(Collectors.toList());
     }

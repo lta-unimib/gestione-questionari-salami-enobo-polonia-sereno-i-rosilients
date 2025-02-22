@@ -7,10 +7,11 @@ import NavbarHome from './components/NavbarHome';
 import NavBarLogged from './components/NavbarLogged';
 import Questionari from './pages/questionari/Questionari';
 import CompilaQuestionario from './pages/questionari/CompilaQuestionario';
-import ContinuaCompilazioneQuestionario from './pages/questionari/ContinuaCompilazioneQuestionario';
+import Compilazioni from './pages/questionari/Compilazioni';
 import VisualizzaQuestionario from './pages/questionari/VisualizzaQuestionario';
 import Domande from './pages/domande/Domande';
 import VisualizzaCompilazioniUtenti from './pages/questionari/VisualizzaCompilazioniUtenti';
+import TerminaQuestionario from './pages/questionari/TerminaQuestionario';  // Aggiungi questa importazione
 
 
 // Funzione per decodificare il token e verificarne la scadenza
@@ -52,11 +53,12 @@ const App = () => {
           {user ? (
             <>
               <Route path="/questionari" element={<Questionari user={user} />} />
-              <Route path="/questionari/compilaQuestionario/:id" element={<CompilaQuestionario /*user={user}*/ />} />
+              <Route path="/questionari/compilaQuestionario/:id" element={<CompilaQuestionario />} />
               <Route path="/questionari/:id" element={<VisualizzaQuestionario user={user} />} />
               <Route path="/domande" element={<Domande user={user} />} />
-              <Route path="/continuaCompilazioneQuestionario" element={<ContinuaCompilazioneQuestionario />} />
+              <Route path="/questionari/compilazioni" element={<Compilazioni />} />
               <Route path="/visualizzaCompilazioniDiTutti/:id" element={<VisualizzaCompilazioniUtenti />} />
+              <Route path="/questionari/terminaQuestionario/:id" element={<TerminaQuestionario />} /> {/* Aggiungi questa rotta */}
             </>
           ) : (
             <>

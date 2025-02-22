@@ -36,7 +36,7 @@ public class QuestionarioCompilatoController {
         return ResponseEntity.ok(questionarioCompilatoDTO);
     }
 
-    @GetMapping("/utente/{userEmail}")
+    @GetMapping("/inSospeso/utente/{userEmail}")
     public ResponseEntity<List<QuestionarioCompilatoDTO>> getQuestionariCompilatiUtente(@PathVariable String userEmail) {
         List<QuestionarioCompilatoDTO> questionariCompilati = questionarioCompilatoService.getCompilazioniInSospeso(userEmail);
         if (questionariCompilati.isEmpty()) {
