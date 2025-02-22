@@ -32,8 +32,7 @@ public class UtenteController {
 
     @GetMapping("/")
     public ResponseEntity<List<Utente>> allUsers() {
-        userService.allUsers();
-        List <Utente> users = userService.allUsers();
+        List<Utente> users = userService.allUsers(); 
         return ResponseEntity.ok(users);
     }
 }
