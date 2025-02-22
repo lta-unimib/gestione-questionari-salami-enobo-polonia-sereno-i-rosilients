@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import ReactModal from 'react-modal';
 import { useNavigate } from 'react-router-dom';
+import { TrashIcon } from '@heroicons/react/20/solid';
 
 const Compilazioni = ({ user }) => {
   const [compilazioni, setCompilazioni] = useState([]);
   const [filtro, setFiltro] = useState("Tutti");
   const [searchTerm, setSearchTerm] = useState("");
-
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [compilazioneToDelete, setCompilazioneToDelete] = useState(null);
   const token = localStorage.getItem("jwt");
   const userEmail = localStorage.getItem("userEmail");
 
@@ -52,7 +54,6 @@ const Compilazioni = ({ user }) => {
         const compilazioniConStato = await Promise.all(
           data.map(async (compilazione) => {
             const isDefinitivo = await handleIsDefinitivo(compilazione.idCompilazione);
-            console.log("isDefinitivo", isDefinitivo);
             return {
               ...compilazione,
               stato: isDefinitivo ? "DEFINITIVO" : "IN SOSPESO",
@@ -118,6 +119,43 @@ const Compilazioni = ({ user }) => {
     }
   };
 
+  const openDeleteModal = (idCompilazione) => {
+    setIsDeleteModalOpen(true);
+    setCompilazioneToDelete(idCompilazione);
+  };
+
+  const closeDeleteModal = () => {
+    setCompilazioneToDelete(null);
+    setIsDeleteModalOpen(false);
+  };
+
+  const handleDelete = async () => {
+    try {
+
+      const deleteResponse = await fetch(
+          `http://localhost:8080/api/questionariCompilati/deleteQuestionarioCompilato/${compilazioneToDelete}`,
+          {
+              method: 'DELETE',
+              headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${token}`,
+              },
+          }
+      );
+
+      if (!deleteResponse.ok) {
+          throw new Error('Errore nella cancellazione del questionario');
+      }
+
+      setCompilazioni(compilazioni.filter((q) => q.idCompilazione !== compilazioneToDelete));
+
+      closeDeleteModal();
+
+    } catch (error) {
+        console.error('Errore:', error);
+    }
+};
+
   return (
     <div className='mx-24'>
       <h1 className="text-4xl">Compilazioni</h1>
@@ -164,6 +202,12 @@ const Compilazioni = ({ user }) => {
                     Termina
                   </button>
                 )}
+                <button
+                  onClick={() => openDeleteModal(c.idCompilazione)}
+                  className="text-red-600 ml-5 hover:text-red-800 mr-6"
+                  >
+                  <TrashIcon className="h-6 w-6" />
+                </button>
               </div>
             </li>
           ))}
@@ -171,6 +215,33 @@ const Compilazioni = ({ user }) => {
       ) : (
         <p className="text-gray-500 mt-4">Nessuna compilazione trovata.</p>
       )}
+
+      {/* Modal per confermare l'eliminazione */}
+      <ReactModal
+        isOpen={isDeleteModalOpen}
+        onRequestClose={closeDeleteModal}
+        contentLabel="Conferma eliminazione"
+        className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
+        overlayClassName="modal-overlay"
+      >
+        <div className="bg-white p-8 rounded-lg w-96 text-center">
+          <h2 className="text-2xl font-semibold text-gray-800">Sei sicuro di voler eliminare questa compilazione?</h2>
+          <div className="mt-4">
+            <button
+              onClick={handleDelete}
+              className="bg-red-500 text-white px-6 py-2 rounded-lg mr-4 hover:bg-red-600 transition"
+            >
+              Elimina
+            </button>
+            <button
+              onClick={closeDeleteModal}
+              className="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition"
+            >
+              Annulla
+            </button>
+          </div>
+        </div>
+      </ReactModal>
     </div>
   );
 };

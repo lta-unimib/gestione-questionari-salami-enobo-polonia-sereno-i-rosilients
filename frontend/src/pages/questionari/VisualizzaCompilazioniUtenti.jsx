@@ -42,7 +42,7 @@ const VisualizzaCompilazioniUtenti = () => {
         });
     }, [userEmail, token]);
 
-    // Per visualizzare la compilazione
+    
     const handleVisualizzaCompilazione = (idQuestionario, idCompilazione) => {
         //TO DO: collegare alla route per visualizzare le compilazioni che manca
     };
@@ -143,7 +143,7 @@ const VisualizzaCompilazioniUtenti = () => {
                         className="text-red-600 hover:text-red-800 mr-6"
                         >
                         <TrashIcon className="h-6 w-6" />
-                        </button>
+                    </button>
                     </div>
 
                 </li>
