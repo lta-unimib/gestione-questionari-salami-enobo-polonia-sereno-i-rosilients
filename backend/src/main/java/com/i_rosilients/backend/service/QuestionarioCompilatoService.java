@@ -145,7 +145,7 @@ public class QuestionarioCompilatoService implements IQuestionarioCompilatoServi
     }
 
     public boolean checkIsDefinitivo(int idCompilazione) {
-        QuestionarioCompilato questionarioCompilato = questionarioCompilatoRepository.findById(idCompilazione)
+        QuestionarioCompilato questionarioCompilato = questionarioCompilatoRepository.findByIdCompilazione(idCompilazione)
             .orElse(null);
     
         if (questionarioCompilato == null) {
@@ -169,6 +169,33 @@ public class QuestionarioCompilatoService implements IQuestionarioCompilatoServi
         List<QuestionarioCompilato> compilazioniDefinitive = questionarioCompilatoRepository.findByUtenteEmailAndDefinitivoTrue(email);
         
         return compilazioniDefinitive.stream().map(compilazione -> {
+            
+            List<Risposta> risposte = rispostaRepository.findByQuestionarioCompilato_IdCompilazione(compilazione.getIdCompilazione());
+            
+            List<RispostaDTO> risposteDTOs = risposte.stream()
+                .map(risposta -> new RispostaDTO(
+                    risposta.getQuestionarioCompilato().getIdCompilazione(),
+                    risposta.getDomanda().getIdDomanda(),
+                    risposta.getTestoRisposta()
+                ))
+                .collect(Collectors.toList());
+             
+            return new QuestionarioCompilatoDTO(
+                compilazione.getIdCompilazione(),
+                compilazione.getQuestionario().getIdQuestionario(),
+                compilazione.getQuestionario().getNome(),
+                compilazione.getQuestionario().getUtente().getEmail(),
+                compilazione.getDataCompilazione(),
+                risposteDTOs 
+            );
+        }).collect(Collectors.toList());
+    }
+
+    public List<QuestionarioCompilatoDTO> getAllByUtente(String userEmail) {
+        
+        List<QuestionarioCompilato> compilazioni = questionarioCompilatoRepository.findByUtenteEmail(userEmail);
+        
+        return compilazioni.stream().map(compilazione -> {
             
             List<Risposta> risposte = rispostaRepository.findByQuestionarioCompilato_IdCompilazione(compilazione.getIdCompilazione());
             
