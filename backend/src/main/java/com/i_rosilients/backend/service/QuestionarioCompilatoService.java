@@ -106,7 +106,7 @@ public class QuestionarioCompilatoService implements IQuestionarioCompilatoServi
             questionarioCompilato.getIdCompilazione(),
             questionarioCompilato.getQuestionario().getIdQuestionario(),
             questionarioCompilato.getQuestionario().getNome(),
-            questionarioCompilato.getQuestionario().getUtente().getEmail(),
+            getEmailUtenteByCompilazione(questionarioCompilato),
             questionarioCompilato.getDataCompilazione(),
             risposte.stream()
                 .map(r -> new RispostaDTO(r.getDomanda().getIdDomanda(), r.getTestoRisposta()))
