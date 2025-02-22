@@ -85,7 +85,13 @@ jobs:
           echo "DB_USERNAME=sonar" >> $GITHUB_ENV
           echo "DB_PASSWORD=sonar" >> $GITHUB_ENV
 
-      - name: Build and analyze
+      # Build the project and run tests to generate JaCoCo report
+      - name: Build and run tests
+        working-directory: ./backend
+        run: mvn -B verify
+
+      # Run SonarQube analysis
+      - name: Analyze with SonarQube
         working-directory: ./backend
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
@@ -95,8 +101,7 @@ jobs:
           JWT_SECRET_KEY: ${{ env.JWT_SECRET_KEY }}
           SUPPORT_EMAIL: ${{ env.SUPPORT_EMAIL }}
           APP_PASSWORD: ${{ env.APP_PASSWORD }}
-        run: mvn -B clean verify jacoco:report sonar:sonar
-        
+        run: mvn -B org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=lta-unimib_gestione-questionari-salami-enobo-polonia-sereno-i-rosilients
 
       # Clean up Docker container
       - name: Stop and remove MySQL Docker container
