@@ -94,6 +94,28 @@ public class QuestionarioCompilatoService implements IQuestionarioCompilatoServi
         );
     }
 
+    public List<QuestionarioCompilatoDTO> getQuestionariCompilatiByUtenteAndIdQuestionario(String userEmail, int idQuestionario) {
+        List<QuestionarioCompilato> compilazioni = questionarioCompilatoRepository
+        .findByUtenteEmailNotOrNullAndQuestionarioIdQuestionarioAndDefinitivo(userEmail, idQuestionario);
+    
+        if (compilazioni == null) {
+            System.out.println(" Nessun questionario compilato trovato per email:" + userEmail + " ID: " + idQuestionario);
+            return null;
+        }
+
+        return compilazioni.stream().map(compilazione -> {
+
+            return new QuestionarioCompilatoDTO(
+                compilazione.getIdCompilazione(),
+                compilazione.getQuestionario().getIdQuestionario(),
+                compilazione.getQuestionario().getNome(),
+                compilazione.getQuestionario().getUtente().getEmail(),
+                compilazione.getDataCompilazione(),
+                new ArrayList<>()
+            );
+        }).collect(Collectors.toList());
+    }
+
     public boolean checkIsDefinitivo(int idCompilazione) {
         QuestionarioCompilato questionarioCompilato = questionarioCompilatoRepository.findById(idCompilazione)
             .orElse(null);

@@ -34,34 +34,9 @@ public class QuestionarioCompilatoController {
         return ResponseEntity.ok(questionarioCompilatoDTO);
     }
 
-    @GetMapping("/utenteNonRegistrato/{idCompilazione}")
-    public ResponseEntity<QuestionarioCompilatoDTO> getQuestionarioCompilatoNonRegistrato(@PathVariable int idCompilazione) {
-        QuestionarioCompilatoDTO questionarioCompilatoDTO = questionarioCompilatoService.getQuestionarioCompilatoById(idCompilazione);
-        if (questionarioCompilatoDTO == null || !questionarioCompilatoService.checkEmailUtenteIsNullForQuestionario(idCompilazione)) {
-            return ResponseEntity.badRequest().build();
-        }
-        return ResponseEntity.ok(questionarioCompilatoDTO);
-    }
-
-    @GetMapping("/checkIsDefinitivo/{idCompilazione}")
-    public ResponseEntity<Boolean> checkIsDefinitivo(@PathVariable int idCompilazione) {
-        return ResponseEntity.ok(questionarioCompilatoService.checkIsDefinitivo(idCompilazione));
-    }
-
     @GetMapping("/utente/{userEmail}")
     public List<QuestionarioCompilatoDTO> getQuestionariCompilatiUtente(@PathVariable String userEmail) {
         return questionarioCompilatoService.getCompilazioniInSospeso(userEmail);  
-    }
-
-    @GetMapping("/{idCompilazione}/risposte")
-public ResponseEntity<List<RispostaDTO>> getRisposteByCompilazione(@PathVariable int idCompilazione) {
-    List<RispostaDTO> risposte = questionarioCompilatoService.getRisposteByCompilazione(idCompilazione);
-    
-    if (risposte.isEmpty()) {
-        return ResponseEntity.notFound().build();
-    }
-
-    return ResponseEntity.ok(risposte);
     }
 
     @GetMapping("/definitivi/utente/{userEmail}")
@@ -75,4 +50,37 @@ public ResponseEntity<List<RispostaDTO>> getRisposteByCompilazione(@PathVariable
         return ResponseEntity.ok(questionariCompilatiDefinitivi);
     }
 
+    @GetMapping("/utenteNonRegistrato/{idCompilazione}")
+    public ResponseEntity<QuestionarioCompilatoDTO> getQuestionarioCompilatoNonRegistrato(@PathVariable int idCompilazione) {
+        QuestionarioCompilatoDTO questionarioCompilatoDTO = questionarioCompilatoService.getQuestionarioCompilatoById(idCompilazione);
+        if (questionarioCompilatoDTO == null || !questionarioCompilatoService.checkEmailUtenteIsNullForQuestionario(idCompilazione)) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(questionarioCompilatoDTO);
+    }
+
+    @GetMapping("/others/{userEmail}/{idQuestionario}")
+    public ResponseEntity<List<QuestionarioCompilatoDTO>> getQuestionariCompilatiByUtenteAndQuestionario(@PathVariable String userEmail, @PathVariable int idQuestionario) {
+        List<QuestionarioCompilatoDTO> questionariCompilati = questionarioCompilatoService.getQuestionariCompilatiByUtenteAndIdQuestionario(userEmail, idQuestionario);
+        if (questionariCompilati.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(questionariCompilati);
+    }
+
+    @GetMapping("/checkIsDefinitivo/{idCompilazione}")
+    public ResponseEntity<Boolean> checkIsDefinitivo(@PathVariable int idCompilazione) {
+        return ResponseEntity.ok(questionarioCompilatoService.checkIsDefinitivo(idCompilazione));
+    }   
+
+    @GetMapping("/{idCompilazione}/risposte")
+    public ResponseEntity<List<RispostaDTO>> getRisposteByCompilazione(@PathVariable int idCompilazione) {
+        List<RispostaDTO> risposte = questionarioCompilatoService.getRisposteByCompilazione(idCompilazione);
+        
+        if (risposte.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(risposte);
+    }
 }

@@ -16,4 +16,5 @@ public interface IQuestionarioCompilatoService {
    public void deleteQuestionarioCompilatoAndRisposteByIdCompilazione(int idCompilazione);
    public List<RispostaDTO> getRisposteByCompilazione(int idCompilazione);
    public List<QuestionarioCompilatoDTO> getDefinitiviByUtente(String userEmail);
+   public List<QuestionarioCompilatoDTO> getQuestionariCompilatiByUtenteAndIdQuestionario(String userEmail, int idQuestionario);
 }
