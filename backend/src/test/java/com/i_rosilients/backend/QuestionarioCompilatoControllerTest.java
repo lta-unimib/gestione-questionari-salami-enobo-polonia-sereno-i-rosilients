@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,16 +16,18 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.i_rosilients.backend.controller.QuestionarioCompilatoController;
 import com.i_rosilients.backend.dto.QuestionarioCompilatoDTO;
 import com.i_rosilients.backend.dto.RispostaDTO;
 import com.i_rosilients.backend.service.IQuestionarioCompilatoService;
 
 @ExtendWith(MockitoExtension.class)
- class QuestionarioCompilatoControllerTest {
+class QuestionarioCompilatoControllerTest {
 
     private MockMvc mockMvc;
 
@@ -35,12 +38,12 @@ import com.i_rosilients.backend.service.IQuestionarioCompilatoService;
     private QuestionarioCompilatoController questionarioCompilatoController;
 
     @BeforeEach
-     void setup() {
+    void setup() {
         mockMvc = MockMvcBuilders.standaloneSetup(questionarioCompilatoController).build();
     }
 
     @Test
-     void testDeleteQuestionarioCompilatoAndRisposteByIdCompilazione() throws Exception {
+    void testDeleteQuestionarioCompilatoAndRisposteByIdCompilazione() throws Exception {
         int idCompilazione = 1;
         doNothing().when(questionarioCompilatoService).deleteQuestionarioCompilatoAndRisposteByIdCompilazione(idCompilazione);
 
@@ -49,6 +52,107 @@ import com.i_rosilients.backend.service.IQuestionarioCompilatoService;
                 .andExpect(content().string("Questionario compilato eliminato con successo"));
 
         verify(questionarioCompilatoService, times(1)).deleteQuestionarioCompilatoAndRisposteByIdCompilazione(idCompilazione);
+    }
+
+    @Test
+    void testDeleteQuestionarioCompilatoAndRisposteByIdCompilazione_Error() throws Exception {
+        int idCompilazione = 1;
+        doThrow(new RuntimeException("Errore durante l'eliminazione")).when(questionarioCompilatoService).deleteQuestionarioCompilatoAndRisposteByIdCompilazione(idCompilazione);
+
+        mockMvc.perform(delete("/api/questionariCompilati/deleteQuestionarioCompilato/{idCompilazione}", idCompilazione))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Errore durante l'eliminazione del questionario compilato"));
+
+        verify(questionarioCompilatoService, times(1)).deleteQuestionarioCompilatoAndRisposteByIdCompilazione(idCompilazione);
+    }
+
+    @Test
+    void testGetQuestionariCompilatiByUtenteAndQuestionario() throws Exception {
+        String userEmail = "test@example.com";
+        int idQuestionario = 1;
+        List<QuestionarioCompilatoDTO> questionariCompilati = Arrays.asList(
+                new QuestionarioCompilatoDTO(1, "Titolo 1", userEmail, LocalDateTime.now(), Collections.emptyList()),
+                new QuestionarioCompilatoDTO(2, "Titolo 2", userEmail, LocalDateTime.now(), Collections.emptyList())
+        );
+        when(questionarioCompilatoService.getQuestionariCompilatiByUtenteAndIdQuestionario(userEmail, idQuestionario)).thenReturn(questionariCompilati);
+
+        mockMvc.perform(get("/api/questionariCompilati/others/{userEmail}/{idQuestionario}", userEmail, idQuestionario))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$.length()").value(2))
+                .andExpect(jsonPath("$[0].titoloQuestionario").value("Titolo 1"))
+                .andExpect(jsonPath("$[1].titoloQuestionario").value("Titolo 2"));
+
+        verify(questionarioCompilatoService, times(1)).getQuestionariCompilatiByUtenteAndIdQuestionario(userEmail, idQuestionario);
+    }
+
+    @Test
+    void testGetQuestionariCompilatiByUtenteAndQuestionario_NoContent() throws Exception {
+        String userEmail = "test@example.com";
+        int idQuestionario = 1;
+        when(questionarioCompilatoService.getQuestionariCompilatiByUtenteAndIdQuestionario(userEmail, idQuestionario)).thenReturn(Collections.emptyList());
+
+        mockMvc.perform(get("/api/questionariCompilati/others/{userEmail}/{idQuestionario}", userEmail, idQuestionario))
+                .andExpect(status().isNoContent());
+
+        verify(questionarioCompilatoService, times(1)).getQuestionariCompilatiByUtenteAndIdQuestionario(userEmail, idQuestionario);
+    }
+
+    @Test
+    void testInviaEmail() throws Exception {
+        String userEmail = "test@example.com";
+        int idCompilazione = 1;
+        Map<String, Object> request = Map.of(
+                "userCompilazioneToDelete", userEmail,
+                "compilazioneToDelete", idCompilazione
+        );
+
+        doNothing().when(questionarioCompilatoService).inviaEmail(idCompilazione, userEmail);
+
+        mockMvc.perform(post("/api/questionariCompilati/inviaEmail")
+                .header("Authorization", "Bearer token")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(request)))
+                .andExpect(status().isOk());
+
+        verify(questionarioCompilatoService, times(1)).inviaEmail(idCompilazione, userEmail);
+    }
+
+    @Test
+    void testInviaEmail_InvalidId() throws Exception {
+        String userEmail = "test@example.com";
+        Map<String, Object> request = Map.of(
+                "userCompilazioneToDelete", userEmail,
+                "compilazioneToDelete", "invalid"
+        );
+
+        mockMvc.perform(post("/api/questionariCompilati/inviaEmail")
+                .header("Authorization", "Bearer token")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("ID compilazione non valido."));
+    }
+
+    @Test
+    void testInviaEmail_Error() throws Exception {
+        String userEmail = "test@example.com";
+        int idCompilazione = 1;
+        Map<String, Object> request = Map.of(
+                "userCompilazioneToDelete", userEmail,
+                "compilazioneToDelete", idCompilazione
+        );
+
+        doThrow(new RuntimeException("Errore durante l'invio dell'email")).when(questionarioCompilatoService).inviaEmail(idCompilazione, userEmail);
+
+        mockMvc.perform(post("/api/questionariCompilati/inviaEmail")
+                .header("Authorization", "Bearer token")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(request)))
+                .andExpect(status().isInternalServerError())
+                .andExpect(content().string("Errore durante l'invio dell'email"));
+
+        verify(questionarioCompilatoService, times(1)).inviaEmail(idCompilazione, userEmail);
     }
 
     @Test
