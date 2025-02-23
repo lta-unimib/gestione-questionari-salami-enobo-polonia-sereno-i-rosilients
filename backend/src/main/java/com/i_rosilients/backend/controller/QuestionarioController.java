@@ -68,12 +68,18 @@ public class QuestionarioController {
     @GetMapping("/{id}/domande")
     public ResponseEntity<List<DomandaDTO>> getDomande(@PathVariable int id) {
         List<DomandaDTO> domande = questionarioService.getDomandeByQuestionario(id);
+        if (domande == null) {
+            return ResponseEntity.notFound().build();
+        }
         return ResponseEntity.ok(domande);
     }
     
     @GetMapping("/{id}/view")
     public ResponseEntity<QuestionarioDTO> getQuestionarioWithDomande(@PathVariable int id) {
         QuestionarioDTO questionarioWithDomande = questionarioService.getQuestionario(id);
+        if (questionarioWithDomande == null) {
+            return ResponseEntity.notFound().build();
+        }
         return ResponseEntity.ok(questionarioWithDomande);
     }
     

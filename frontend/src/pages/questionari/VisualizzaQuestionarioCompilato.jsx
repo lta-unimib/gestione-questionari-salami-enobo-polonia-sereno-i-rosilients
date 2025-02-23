@@ -3,15 +3,15 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 const VisualizzaQuestionarioCompilato = () => {
-  const { idCompilazione } = useParams();
+  const { idCompilazione, idQuestionario } = useParams();
   const navigate = useNavigate();
-  console.log('ID della compilazione:', idCompilazione);
-  const [questionarioCompilato, setQuestionarioCompilato] = useState(null);
+  const [domande, setDomande] = useState([]);
+  const [questionarioCompilato, setQuestionarioCompilato] = useState([]);
   const [risposte, setRisposte] = useState([]);
 
-  // Fetch questionario compilato
   useEffect(() => {
-    fetch(`http://localhost:8080/api/questionariCompilati/${idCompilazione}`, {
+    // Fetch per ottenere le domande
+    const fetchDomande = fetch(`http://localhost:8080/api/questionari/${idQuestionario}/domande`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -19,25 +19,76 @@ const VisualizzaQuestionarioCompilato = () => {
     })
       .then((res) => {
         if (!res.ok) {
-          throw new Error('Errore nel recupero del questionario compilato');
+          throw new Error('Errore nel recupero delle domande');
         }
         return res.json();
+      });
+
+    // Fetch per ottenere la compilazione
+    const fetchCompilazione = fetch(`http://localhost:8080/api/questionariCompilati/${idCompilazione}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error('Errore nel recupero della compilazione');
+        }
+        return res.json();
+      });
+  
+    // Fetch per ottenere le risposte
+    const fetchRisposte = fetch(`http://localhost:8080/api/questionariCompilati/${idCompilazione}/risposte`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error('Errore nel recupero delle risposte');
+        }
+        return res.json();
+      });
+
+    Promise.all([fetchDomande, fetchCompilazione, fetchRisposte])
+      .then(([dataDomande,  dataCompilazione, dataRisposte]) => {
+
+        setQuestionarioCompilato(dataCompilazione);
+
+        const risposteConDomande = dataRisposte.map((risposta) => {
+
+          const domandaCorrispondente = dataDomande.find(
+            (domanda) => domanda.idDomanda === risposta.idDomanda
+          );
+
+          if (domandaCorrispondente) {
+            return {
+              ...risposta,
+              argomento: domandaCorrispondente.argomento,
+              testoDomanda: domandaCorrispondente.testoDomanda,
+              imagePath: domandaCorrispondente.imagePath,
+            };
+          }
+
+          return risposta;
+        });
+
+        setRisposte(risposteConDomande);
+        setDomande(dataDomande.domande);
       })
-      .then((data) => {
-        setQuestionarioCompilato(data);
-        setRisposte(data.risposte);
-      })
-      .catch((err) => console.error('Errore nel recupero del questionario compilato:', err));
-  }, [idCompilazione]);
+      .catch((err) => {
+        console.error('Errore durante il recupero dei dati:', err);
+      });
+  }, [idCompilazione, idQuestionario]);
+  
 
   return (
     <div className="max-w-3xl mx-auto mt-8 p-6 bg-white shadow-lg rounded-lg">
       {questionarioCompilato ? (
         <>
-          <h1 className="text-3xl font-bold text-personal-purple">{questionarioCompilato.nome}</h1>
-          <p className="text-gray-600 mt-2">
-            Creato da: <strong>{questionarioCompilato.emailUtente?.split('@')[0]}</strong>
-          </p>
+          <h1 className="text-3xl font-bold text-personal-purple">{questionarioCompilato.titoloQuestionario}</h1>
           <p className="text-gray-600 mt-2">
             Data di compilazione: <strong>{new Date(questionarioCompilato.dataCompilazione).toLocaleDateString()}</strong>
           </p>
@@ -47,8 +98,20 @@ const VisualizzaQuestionarioCompilato = () => {
             <ul className="mt-4 space-y-4">
               {risposte.map((risposta) => (
                 <li key={risposta.idDomanda} className="border p-4 rounded-lg shadow-md bg-gray-100">
-                  <h3 className="text-md font text-gray-700">Domanda ID: {risposta.idDomanda}</h3>
-                  <p className="text-xl text-gray-900 mt-2">📌 {risposta.testoRisposta}</p>
+                  <h3 className="text-md font text-gray-700"> Argomento: {risposta.argomento}</h3>
+
+                  <p className="text-xl text-gray-900 mt-2 ">Domanda: {risposta.testoDomanda}</p>
+
+                  {risposta.imagePath && (
+                    <div className="mt-4">
+                      <img
+                        src={`http://localhost:8080${risposta.imagePath}`}
+                        alt="Immagine della domanda"
+                        className="max-w-full h-auto rounded-lg"
+                      />
+                    </div>
+                  )}
+                  <p className="text-xl text-gray-900 mt-2">Risposta: {risposta.testoRisposta}</p>
                 </li>
               ))}
             </ul>

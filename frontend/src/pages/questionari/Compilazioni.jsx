@@ -90,8 +90,10 @@ const Compilazioni = ({ user }) => {
     navigate(`/questionari/compilaQuestionario/${idQuestionario}?idCompilazione=${idCompilazione}`);
   };
 
-  const visualizzaQuestionario = (idCompilazione) => {
-    navigate(`/questionari/visualizzaQuestionarioCompilato/${idCompilazione}`);
+  const visualizzaQuestionario = (idCompilazione, idQuestionario) => {
+    console.log('idCompilazione:', idCompilazione);
+    console.log('idQuestionario:', idQuestionario);
+    navigate(`/questionari/visualizzaQuestionarioCompilato/${idCompilazione}/${idQuestionario}`);
   };
 
   const handleIsDefinitivo = async (idCompilazione) => {
@@ -188,7 +190,7 @@ const Compilazioni = ({ user }) => {
                 {c.stato === "DEFINITIVO" && (
                   <button 
                     className="bg-white text-personal-purple border-2 border-personal-purple py-1 px-3 rounded-lg hover:bg-personal-purple hover:text-white transition duration-200 ml-4"
-                    onClick={() => visualizzaQuestionario(c.idCompilazione)}
+                    onClick={() => visualizzaQuestionario(c.idCompilazione, c.idQuestionario)}
                   >
                     Visualizza
                   </button>

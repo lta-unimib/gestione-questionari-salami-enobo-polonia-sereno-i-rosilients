@@ -54,7 +54,7 @@ const App = () => {
             <>
               <Route path="/questionari" element={<Questionari user={user} />} />
               <Route path="/questionari/compilaQuestionario/:id" element={<CompilaQuestionario />} />
-              <Route path="/questionari/visualizzaQuestionarioCompilato/:idCompilazione" element={<VisualizzaQuestionarioCompilato />} />
+              <Route path="/questionari/visualizzaQuestionarioCompilato/:idCompilazione/:idQuestionario" element={<VisualizzaQuestionarioCompilato />} />
               <Route path="/questionari/:id" element={<VisualizzaQuestionario user={user} />} />
               <Route path="/domande" element={<Domande user={user} />} />
               <Route path="/questionari/compilazioni" element={<Compilazioni />} />
