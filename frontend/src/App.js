@@ -46,15 +46,14 @@ const App = () => {
         {user ? <NavBarLogged setUser={setUser} /> : <NavbarHome setUser={setUser} />}
         
         <Routes>
-          {/* Condizioni per mostrare Home o HomeLogged */}
           <Route path="/" element={user ? <HomeLogged /> : <Home />} />
+          <Route path="/questionari/compilaQuestionario/:id" element={<CompilaQuestionario />} />
+          <Route path="/questionari/visualizzaQuestionarioCompilato/:idCompilazione/:idQuestionario" element={<VisualizzaQuestionarioCompilato />} />
 
           {/* Rotte protette per gli utenti autenticati */}
           {user ? (
             <>
               <Route path="/questionari" element={<Questionari user={user} />} />
-              <Route path="/questionari/compilaQuestionario/:id" element={<CompilaQuestionario />} />
-              <Route path="/questionari/visualizzaQuestionarioCompilato/:idCompilazione/:idQuestionario" element={<VisualizzaQuestionarioCompilato />} />
               <Route path="/questionari/:id" element={<VisualizzaQuestionario user={user} />} />
               <Route path="/domande" element={<Domande user={user} />} />
               <Route path="/questionari/compilazioni" element={<Compilazioni />} />
@@ -62,7 +61,6 @@ const App = () => {
             </>
           ) : (
             <>
-              <Route path="/questionari/compilaQuestionario/:id" element={<CompilaQuestionario />} />
               <Route path="/questionari/:id" element={<VisualizzaQuestionario />} />
             </>
           )}

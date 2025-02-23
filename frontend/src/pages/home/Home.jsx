@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 const Home = () => {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
-  const [allQuestionari, setAllQuestionari] = useState([]); // Stato per tutti i questionari
+  const [allQuestionari, setAllQuestionari] = useState([]);
   const navigate = useNavigate();
   const [codiceUnivoco, setCodiceUnivoco] = useState(null);
   const [idQuestionario, setIdQuestionario] = useState(null);
@@ -58,7 +58,7 @@ const Home = () => {
   };
 
   const visualizzaCompilazioneNonRegistrato = (idQuestionario, idCompilazione) => {
-    navigate(`/questionari/visualizzaQuestionarioCompilato/${idCompilazione}`);
+    navigate(`/questionari/visualizzaQuestionarioCompilato/${idCompilazione}/${idQuestionario}`);
   };
 
   const deleteCompilazioneNonRegistrato = async (idCompilazione) => {
@@ -121,9 +121,7 @@ const Home = () => {
 
       const isDefinitivo = await checkDefinitivoResponse.json();
       if(isDefinitivo) {
-
-        //TODO: Visualizza questionario compilato
-
+        visualizzaCompilazioneNonRegistrato(data.idQuestionario, codiceInt);
       } else {
         continuaCompilazioneNonRegistrato(data.idQuestionario, codiceInt);
       }     

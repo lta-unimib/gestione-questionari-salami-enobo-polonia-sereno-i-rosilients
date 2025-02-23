@@ -91,8 +91,6 @@ const Compilazioni = ({ user }) => {
   };
 
   const visualizzaQuestionario = (idCompilazione, idQuestionario) => {
-    console.log('idCompilazione:', idCompilazione);
-    console.log('idQuestionario:', idQuestionario);
     navigate(`/questionari/visualizzaQuestionarioCompilato/${idCompilazione}/${idQuestionario}`);
   };
 
