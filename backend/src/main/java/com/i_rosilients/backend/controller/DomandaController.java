@@ -256,7 +256,7 @@ public class DomandaController {
         }
     }
 
-    private String determineContentType(String filename) {
+    public String determineContentType(String filename) {
         if (filename.toLowerCase().endsWith(".png")) {
             return "image/png";
         } else if (filename.toLowerCase().endsWith(".jpg") || filename.toLowerCase().endsWith(".jpeg")) {
