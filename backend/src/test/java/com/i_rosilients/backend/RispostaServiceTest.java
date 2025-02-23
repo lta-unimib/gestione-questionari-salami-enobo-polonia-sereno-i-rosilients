@@ -67,6 +67,17 @@ import org.springframework.mail.javamail.JavaMailSender;
         domanda.setImmaginePath("/path/to/image");
         domanda.setUtente(utente);
 
+        Opzione opzione1 = new Opzione();
+        opzione1.setIdOpzione(1);
+        opzione1.setTestoOpzione("Opzione 1");
+        opzione1.setDomanda(domanda);
+
+        Opzione opzione2 = new Opzione();
+        opzione2.setIdOpzione(2);
+        opzione2.setTestoOpzione("Opzione 2");
+        opzione2.setDomanda(domanda);
+        domanda.setOpzioni(Arrays.asList(opzione1, opzione2));
+
         questionarioCompilato = new QuestionarioCompilato();
         questionarioCompilato.setIdCompilazione(1);
         questionarioCompilato.setQuestionario(questionario);
@@ -153,13 +164,25 @@ import org.springframework.mail.javamail.JavaMailSender;
     }
 
     @Test
-     void testInviaEmailConPdf() throws Exception {
-        when(questionarioCompilatoRepository.findById(1)).thenReturn(Optional.of(questionarioCompilato));
-        when(rispostaRepository.findByQuestionarioCompilato(questionarioCompilato))
-            .thenReturn(Collections.singletonList(risposta));
-        MimeMessage mimeMessage = mock(MimeMessage.class);
-        when(emailSender.createMimeMessage()).thenReturn(mimeMessage);
-        rispostaService.inviaEmailConPdf("test@example.com", 1);
-        verify(emailSender, times(1)).send(mimeMessage);
+    void testInviaEmailConPdf() {
+
+    int idCompilazione = 1;
+    String userEmail = "test@example.com";
+    when(questionarioCompilatoRepository.findById(idCompilazione))
+        .thenReturn(Optional.of(questionarioCompilato));
+
+    when(rispostaRepository.findByQuestionarioCompilato(questionarioCompilato))
+        .thenReturn(Collections.singletonList(risposta));
+
+    MimeMessage mimeMessage = mock(MimeMessage.class);
+    when(emailSender.createMimeMessage()).thenReturn(mimeMessage);
+    rispostaService.inviaEmailConPdf(userEmail, idCompilazione);
+    verify(questionarioCompilatoRepository, times(1)).findById(idCompilazione);
+    verify(rispostaRepository, times(1)).findByQuestionarioCompilato(questionarioCompilato);
+    verify(emailSender, times(1)).createMimeMessage();
+    verify(emailSender, times(1)).send(mimeMessage);
+
+    assertFalse(domanda.getOpzioni().isEmpty()); 
+    assertEquals(2, domanda.getOpzioni().size()); 
     }
 }
