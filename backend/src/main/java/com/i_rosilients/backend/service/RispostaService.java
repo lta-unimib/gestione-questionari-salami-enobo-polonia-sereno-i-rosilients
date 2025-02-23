@@ -31,6 +31,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -45,6 +47,8 @@ public class RispostaService implements IRispostaService {
     private final QuestionarioRepository questionarioRepository;
     private final UtenteRepository utenteRepository;
     private final JavaMailSender emailSender;
+    @Value("${support.email}") 
+    private String supportEmail;
     private static final String UPLOAD_DIR = "uploads/";
 
     public RispostaService(
@@ -207,6 +211,7 @@ public class RispostaService implements IRispostaService {
             MimeMessage message = emailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
             helper.setTo(userEmail);
+            helper.setFrom(supportEmail);
             helper.setSubject("Questionario completato con successo!");
             helper.setText("Le tue risposte sono state correttamente salvate. In allegato trovi il PDF con le risposte del tuo questionario.");
     
