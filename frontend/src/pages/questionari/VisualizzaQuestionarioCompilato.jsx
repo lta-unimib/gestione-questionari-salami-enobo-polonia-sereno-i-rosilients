@@ -8,6 +8,7 @@ const VisualizzaQuestionarioCompilato = () => {
   const [domande, setDomande] = useState([]);
   const [questionarioCompilato, setQuestionarioCompilato] = useState([]);
   const [risposte, setRisposte] = useState([]);
+  const userEmail = localStorage.getItem("userEmail");
 
   useEffect(() => {
     // Fetch per ottenere le domande
@@ -90,8 +91,14 @@ const VisualizzaQuestionarioCompilato = () => {
         <>
           <h1 className="text-3xl font-bold text-personal-purple">{questionarioCompilato.titoloQuestionario}</h1>
           <p className="text-gray-600 mt-2">
+            {userEmail === questionarioCompilato.emailCreatore
+              ? "Compilato da te"
+              : `Compilato da: ${questionarioCompilato.emailCreatore}`}
+          </p>
+          <p className="text-gray-600 mt-2">
             Data di compilazione: <strong>{new Date(questionarioCompilato.dataCompilazione).toLocaleDateString()}</strong>
           </p>
+          
 
           <h2 className="text-2xl font-semibold mt-6">Risposte</h2>
           {risposte.length > 0 ? (

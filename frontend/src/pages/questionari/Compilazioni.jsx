@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import ReactModal from 'react-modal';
 import { useNavigate } from 'react-router-dom';
+import { EyeIcon } from '@heroicons/react/24/solid';
 import { TrashIcon } from '@heroicons/react/20/solid';
 
 const Compilazioni = ({ user }) => {
@@ -186,12 +187,10 @@ const Compilazioni = ({ user }) => {
               
               <div className="flex items-center">
                 {c.stato === "DEFINITIVO" && (
-                  <button 
-                    className="bg-white text-personal-purple border-2 border-personal-purple py-1 px-3 rounded-lg hover:bg-personal-purple hover:text-white transition duration-200 ml-4"
+                  <EyeIcon
+                    className="w-5 h-5 text-gray-700 cursor-pointer hover:text-gray-800"
                     onClick={() => visualizzaQuestionario(c.idCompilazione, c.idQuestionario)}
-                  >
-                    Visualizza
-                  </button>
+                  />
                 )}
 
                 {c.stato === "IN SOSPESO" && (

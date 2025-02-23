@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import ReactModal from 'react-modal';
 import { TrashIcon } from '@heroicons/react/20/solid';
+import { EyeIcon } from '@heroicons/react/24/solid';
 
 const VisualizzaCompilazioniUtenti = () => {
     const { id } = useParams();
@@ -44,7 +45,7 @@ const VisualizzaCompilazioniUtenti = () => {
 
     
     const handleVisualizzaCompilazione = (idQuestionario, idCompilazione) => {
-        //TO DO: collegare alla route per visualizzare le compilazioni che manca
+        navigate(`/questionari/visualizzaQuestionarioCompilato/${idCompilazione}/${idQuestionario}`);
     };
 
     const openDeleteModal = (idCompilazione, userCompilazione) => {
@@ -132,15 +133,13 @@ const VisualizzaCompilazioniUtenti = () => {
                     </div>
 
                     <div className="edit flex gap-4">
-                    <button
-                        onClick={() => handleVisualizzaCompilazione(compilazione.idQuestionario, compilazione.idCompilazione)}
-                        className="bg-white text-personal-purple border-2 border-personal-purple py-1 px-2 rounded-lg hover:bg-personal-purple hover:text-white transition duration-200 text-lg"
-                    >
-                        Visualizza compilazione
-                    </button>
+                    <EyeIcon
+                          className="w-5 h-5 text-gray-700 cursor-pointer hover:text-gray-800"
+                          onClick={() => handleVisualizzaCompilazione(compilazione.idQuestionario, compilazione.idCompilazione)}
+                        />
                     <button
                         onClick={() => openDeleteModal(compilazione.idCompilazione, compilazione.emailCreatore)}
-                        className="text-red-600 hover:text-red-800 mr-6"
+                        className="text-red-600 hover:text-red-800 ml-3 mr-6"
                         >
                         <TrashIcon className="h-6 w-6" />
                     </button>
