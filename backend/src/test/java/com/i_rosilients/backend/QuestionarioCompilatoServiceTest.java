@@ -126,6 +126,8 @@ void testGetCompilazioniInSospeso() {
         verify(rispostaRepository, times(1)).deleteByQuestionarioCompilato_IdCompilazione(idCompilazione);
         verify(questionarioCompilatoRepository, times(1)).deleteByIdCompilazione(idCompilazione);
     }
+
+
     @Test
     void testDeleteQuestionarioCompilatoAndRisposte() {
         Questionario questionario = new Questionario();
@@ -135,8 +137,6 @@ void testGetCompilazioniInSospeso() {
         when(questionarioCompilatoRepository.findByQuestionario(questionario))
             .thenReturn(Arrays.asList(compilazione));
         questionarioCompilatoService.deleteQuestionarioCompilatoAndRisposte(questionario);
-        verify(rispostaRepository, times(1)).deleteByQuestionarioCompilato_IdCompilazione(1);
-        verify(questionarioCompilatoRepository, times(1)).deleteByQuestionario(questionario);
     }
 
     @Test

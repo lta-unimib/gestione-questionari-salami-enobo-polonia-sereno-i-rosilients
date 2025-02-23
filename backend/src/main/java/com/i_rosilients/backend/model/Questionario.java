@@ -36,6 +36,9 @@ public class Questionario {
     @OneToMany(mappedBy = "questionario", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<DomandaQuestionario> domandeQuestionario = new ArrayList<>();
 
+    @OneToMany(mappedBy = "questionario", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<QuestionarioCompilato> questionariCompilati = new ArrayList<>();
+
     public Questionario(Utente utente, String nome) {
         this.utente = utente;
         this.nome = nome;

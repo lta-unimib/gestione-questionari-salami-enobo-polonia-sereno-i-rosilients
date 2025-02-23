@@ -80,15 +80,17 @@ public class QuestionarioCompilatoService implements IQuestionarioCompilatoServi
         questionarioCompilatoRepository.deleteByIdCompilazione(idCompilazione);
     }
 
+  
     @Transactional
     public void deleteQuestionarioCompilatoAndRisposte(Questionario questionario) {
-        List<QuestionarioCompilato> questionariCompilati =  questionarioCompilatoRepository.findByQuestionario(questionario);
-
-        for (QuestionarioCompilato questionarioCompilato : questionariCompilati) {
-            rispostaRepository.deleteByQuestionarioCompilato_IdCompilazione(questionarioCompilato.getIdCompilazione());
+        Optional<QuestionarioCompilato> questionarioCompilato =  questionarioCompilatoRepository.findByIdCompilazione(questionario.getIdQuestionario());
+        if (questionarioCompilato.isEmpty()) {
+            System.out.println("❌ Nessun questionario compilato trovato per ID: " + questionario.getIdQuestionario());
+            return;
         }
         questionarioCompilatoRepository.deleteByQuestionario(questionario);
     }
+      
 
     public QuestionarioCompilatoDTO getQuestionarioCompilatoById(int idCompilazione) {
         QuestionarioCompilato questionarioCompilato = questionarioCompilatoRepository.findById(idCompilazione)

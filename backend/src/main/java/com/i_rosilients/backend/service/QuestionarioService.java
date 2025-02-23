@@ -66,12 +66,6 @@ public class QuestionarioService implements IQuestionarioService {
         if (questionarioOpt.isPresent()) {
             Questionario questionario = questionarioOpt.get();
 
-            // Elimina i QuestionarioCompilato e le risposte associate
-            questionarioCompilatoService.deleteQuestionarioCompilatoAndRisposte(questionario);
-
-            // Rimuove tutte le associazioni domanda-questionario
-            domandaQuestionarioRepository.deleteByQuestionario(questionario);
-
             // Elimina il questionario
             questionarioRepository.delete(questionario);
         } else {

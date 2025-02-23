@@ -98,9 +98,6 @@ import static org.mockito.Mockito.*;
         when(questionarioRepository.findById(1)).thenReturn(Optional.of(questionario));
 
         questionarioService.deleteQuestionario(1);
-
-        verify(questionarioCompilatoService, times(1)).deleteQuestionarioCompilatoAndRisposte(questionario);
-        verify(domandaQuestionarioRepository, times(1)).deleteByQuestionario(questionario);
         verify(questionarioRepository, times(1)).delete(questionario);
     }
 
