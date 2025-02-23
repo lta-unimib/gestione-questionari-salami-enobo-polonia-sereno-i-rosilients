@@ -6,6 +6,9 @@ import com.i_rosilients.backend.dto.DomandaDTO;
 import com.i_rosilients.backend.model.Domanda;
 import com.i_rosilients.backend.repository.DomandaRepository;
 import com.i_rosilients.backend.service.IDomandaService;
+
+import io.jsonwebtoken.io.IOException;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,6 +29,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
@@ -87,10 +91,56 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     }
 
     @Test
-     void testUpdateDomanda() throws Exception {
-    MockMultipartFile imageFile = new MockMultipartFile("imageFile", "test.png", "image/png", "test image".getBytes());
-    List<String> opzioni = Arrays.asList("Opzione 1", "Opzione 2");
-    String opzioniJson = objectMapper.writeValueAsString(opzioni);
+        void testUpdateDomanda() throws Exception {
+        MockMultipartFile imageFile = new MockMultipartFile("imageFile", "test.png", "image/png", "test image".getBytes());
+        List<String> opzioni = Arrays.asList("Opzione 1", "Opzione 2");
+        String opzioniJson = objectMapper.writeValueAsString(opzioni);
+
+        Domanda domanda = new Domanda();
+        domanda.setIdDomanda(1);
+        when(domandaRepository.findById(1)).thenReturn(Optional.of(domanda));
+
+        doNothing().when(domandaService).updateDomanda(anyInt(), any(DomandaDTO.class));
+
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/domande/updateDomanda/1")
+                .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+                .param("argomento", "Updated Argomento")
+                .param("testoDomanda", "Updated Domanda")
+                .param("emailUtente", "test@example.com")
+                .param("opzioni", opzioniJson)
+                .param("removeImage", "false")
+                .content(imageFile.getBytes()))
+                .andExpect(status().isOk());
+
+        verify(domandaService, times(1)).updateDomanda(anyInt(), any(DomandaDTO.class));
+        }
+
+    @Test
+        void testUpdateDomanda_RemoveImage() throws Exception {
+
+        Domanda domanda = new Domanda();
+        domanda.setIdDomanda(1);
+        domanda.setImmaginePath("uploads/test.png"); // Simula un'immagine esistente
+        when(domandaRepository.findById(1)).thenReturn(Optional.of(domanda));
+
+        doNothing().when(domandaService).updateDomanda(anyInt(), any(DomandaDTO.class));
+
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/domande/updateDomanda/1")
+                .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+                .param("argomento", "Updated Argomento")
+                .param("testoDomanda", "Updated Domanda")
+                .param("emailUtente", "test@example.com")
+                .param("removeImage", "true"))
+                .andExpect(status().isOk());
+
+
+        verify(domandaService, times(1)).updateDomanda(anyInt(), any(DomandaDTO.class));
+}
+
+@Test
+void testUpdateDomanda_UploadNewImage() throws Exception {
 
     Domanda domanda = new Domanda();
     domanda.setIdDomanda(1);
@@ -98,22 +148,23 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
     doNothing().when(domandaService).updateDomanda(anyInt(), any(DomandaDTO.class));
 
-    // Usa MockMvcRequestBuilders.put per inviare una richiesta PUT
+
+    MockMultipartFile imageFile = new MockMultipartFile("imageFile", "test.png", "image/png", "test image".getBytes());
     mockMvc.perform(MockMvcRequestBuilders.put("/api/domande/updateDomanda/1")
             .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
             .param("argomento", "Updated Argomento")
             .param("testoDomanda", "Updated Domanda")
             .param("emailUtente", "test@example.com")
-            .param("opzioni", opzioniJson)
             .param("removeImage", "false")
             .content(imageFile.getBytes()))
             .andExpect(status().isOk());
 
+
     verify(domandaService, times(1)).updateDomanda(anyInt(), any(DomandaDTO.class));
-    }
+        }
 
     @Test
- void testUpdateDomanda_NotFound() throws Exception {
+void testUpdateDomanda_NotFound() throws Exception {
     when(domandaRepository.findById(1)).thenReturn(Optional.empty());
 
     mockMvc.perform(MockMvcRequestBuilders.put("/api/domande/updateDomanda/1")
@@ -127,6 +178,49 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     verify(domandaService, never()).updateDomanda(anyInt(), any(DomandaDTO.class));
 }
 
+@Test
+void testUpdateDomanda_InvalidOpzioniFormat() throws Exception {
+
+    Domanda domanda = new Domanda();
+    domanda.setIdDomanda(1);
+    when(domandaRepository.findById(1)).thenReturn(Optional.of(domanda));
+
+
+    mockMvc.perform(MockMvcRequestBuilders.put("/api/domande/updateDomanda/1")
+            .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+            .param("argomento", "Updated Argomento")
+            .param("testoDomanda", "Updated Domanda")
+            .param("emailUtente", "test@example.com")
+            .param("opzioni", "invalid json"))
+            .andExpect(status().isBadRequest());
+
+
+    verify(domandaService, never()).updateDomanda(anyInt(), any(DomandaDTO.class));
+}
+
+@Test
+void testUpdateDomanda_ImageSaveError() throws Exception {
+
+    Domanda domanda = new Domanda();
+    domanda.setIdDomanda(1);
+    when(domandaRepository.findById(1)).thenReturn(Optional.of(domanda));
+
+
+    MockMultipartFile imageFile = new MockMultipartFile("imageFile", "test.png", "image/png", "test image".getBytes());
+    doThrow(new IOException("Errore durante il salvataggio dell'immagine")).when(domandaService).updateDomanda(anyInt(), any(DomandaDTO.class));
+
+    mockMvc.perform(MockMvcRequestBuilders.put("/api/domande/updateDomanda/1")
+            .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+            .param("argomento", "Updated Argomento")
+            .param("testoDomanda", "Updated Domanda")
+            .param("emailUtente", "test@example.com")
+            .param("removeImage", "false")
+            .content(imageFile.getBytes()))
+            .andExpect(status().isInternalServerError());
+
+
+    verify(domandaService, times(1)).updateDomanda(anyInt(), any(DomandaDTO.class));
+}
     @Test
      void testDeleteDomanda() throws Exception {
         doNothing().when(domandaService).deleteDomanda(1);
@@ -206,4 +300,39 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         mockMvc.perform(get("/api/domande/uploads/nonexistent.png"))
                 .andExpect(status().isNotFound());
     }
+
+    @Test
+void testDetermineContentType_Png() {
+    DomandaController controller = new DomandaController(domandaService, domandaRepository);
+    String contentType = controller.determineContentType("test.png");
+    assertEquals("image/png", contentType);
+}
+
+@Test
+void testDetermineContentType_Jpg() {
+    DomandaController controller = new DomandaController(domandaService, domandaRepository);
+    String contentType = controller.determineContentType("test.jpg");
+    assertEquals("image/jpeg", contentType);
+}
+
+@Test
+void testDetermineContentType_Jpeg() {
+    DomandaController controller = new DomandaController(domandaService, domandaRepository);
+    String contentType = controller.determineContentType("test.jpeg");
+    assertEquals("image/jpeg", contentType);
+}
+
+@Test
+void testDetermineContentType_Gif() {
+    DomandaController controller = new DomandaController(domandaService, domandaRepository);
+    String contentType = controller.determineContentType("test.gif");
+    assertEquals("image/gif", contentType);
+}
+
+@Test
+void testDetermineContentType_Unsupported() {
+    DomandaController controller = new DomandaController(domandaService, domandaRepository);
+    String contentType = controller.determineContentType("test.xyz");
+    assertEquals("application/octet-stream", contentType);
+}
 }
