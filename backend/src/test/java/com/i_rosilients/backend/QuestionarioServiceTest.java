@@ -129,27 +129,12 @@ import static org.mockito.Mockito.*;
     }
 
     @Test
-    void testGetQuestionariByUtente() {
-        when(utenteRepository.findByEmail("test@example.com")).thenReturn(Optional.of(utente));
-        when(questionarioRepository.findByUtente(utente)).thenReturn(Collections.singletonList(questionario));
-        when(domandaQuestionarioRepository.findByQuestionario(questionario)).thenReturn(Collections.emptyList());
-
-        List<QuestionarioDTO> result = questionarioService.getQuestionariByUtente("test@example.com");
-
-        assertEquals(1, result.size());
-        assertEquals("Test Questionario", result.get(0).getNome());
-    }
-
-    @Test
     void testGetDomandeByQuestionario() {
         DomandaQuestionario domandaQuestionario = new DomandaQuestionario();
         domandaQuestionario.setDomanda(domanda);
-
         when(questionarioRepository.findById(1)).thenReturn(Optional.of(questionario));
         when(domandaQuestionarioRepository.findByQuestionario(questionario)).thenReturn(Collections.singletonList(domandaQuestionario));
-
         List<DomandaDTO> result = questionarioService.getDomandeByQuestionario(1);
-
         assertEquals(1, result.size());
         assertEquals("Test Domanda", result.get(0).getTestoDomanda());
     }
@@ -162,5 +147,72 @@ import static org.mockito.Mockito.*;
 
         assertEquals("Test Questionario", result.getNome());
         assertEquals("test@example.com", result.getEmailUtente());
+    }
+
+    @Test
+    void testSearchQuestionariWithQuestions() {
+    String nome = "Test";
+    QuestionarioDTO questionarioDTO = new QuestionarioDTO();
+    questionarioDTO.setIdQuestionario(1);
+    questionarioDTO.setNome("Test Questionario");
+    questionarioDTO.setEmailUtente("test@example.com");
+
+    when(questionarioRepository.searchQuestionariWithQuestions(nome))
+        .thenReturn(Collections.singletonList(questionarioDTO));
+    when(domandaRepository.findDomandeIdsByQuestionarioId(1))
+        .thenReturn(Arrays.asList(1, 2));
+    List<QuestionarioDTO> result = questionarioService.searchQuestionariWithQuestions(nome);
+    assertNotNull(result);
+    assertEquals(1, result.size());
+    assertEquals(1, result.get(0).getIdQuestionario());
+    assertEquals("Test Questionario", result.get(0).getNome());
+    assertEquals("test@example.com", result.get(0).getEmailUtente());
+    assertEquals(Arrays.asList(1, 2), result.get(0).getIdDomande());
+    verify(questionarioRepository, times(1)).searchQuestionariWithQuestions(nome);
+    verify(domandaRepository, times(1)).findDomandeIdsByQuestionarioId(1);
+    }
+
+    @Test
+    void testGetTuttiIQuestionari() {
+    when(questionarioRepository.findAll())
+        .thenReturn(Collections.singletonList(questionario));
+    when(domandaRepository.findDomandeIdsByQuestionarioId(1))
+        .thenReturn(Arrays.asList(1, 2));
+
+    List<QuestionarioDTO> result = questionarioService.getTuttiIQuestionari();
+    assertNotNull(result);
+    assertEquals(1, result.size());
+    assertEquals(1, result.get(0).getIdQuestionario());
+    assertEquals("Test Questionario", result.get(0).getNome());
+    assertEquals("test@example.com", result.get(0).getEmailUtente());
+    assertEquals(Arrays.asList(1, 2), result.get(0).getIdDomande());
+    verify(questionarioRepository, times(1)).findAll();
+    verify(domandaRepository, times(1)).findDomandeIdsByQuestionarioId(1);
+    }
+
+    @Test
+    void testGetQuestionariByUtente() {
+
+    String email = "test@example.com";
+
+    when(utenteRepository.findByEmail(email))
+        .thenReturn(Optional.of(utente));
+    when(questionarioRepository.findByUtente(utente))
+        .thenReturn(Collections.singletonList(questionario));
+
+    DomandaQuestionario domandaQuestionario = new DomandaQuestionario();
+    domandaQuestionario.setDomanda(domanda);
+    when(domandaQuestionarioRepository.findByQuestionario(questionario))
+        .thenReturn(Collections.singletonList(domandaQuestionario));
+    List<QuestionarioDTO> result = questionarioService.getQuestionariByUtente(email);
+    assertNotNull(result);
+    assertEquals(1, result.size());
+    assertEquals(1, result.get(0).getIdQuestionario());
+    assertEquals("Test Questionario", result.get(0).getNome());
+    assertEquals("test@example.com", result.get(0).getEmailUtente());
+    assertEquals(Collections.singletonList(1), result.get(0).getIdDomande());
+    verify(utenteRepository, times(1)).findByEmail(email);
+    verify(questionarioRepository, times(1)).findByUtente(utente);
+    verify(domandaQuestionarioRepository, times(1)).findByQuestionario(questionario);
     }
 }
