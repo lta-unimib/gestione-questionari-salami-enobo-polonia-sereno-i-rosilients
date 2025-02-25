@@ -259,38 +259,44 @@ const Questionari = ({ user }) => {
 </ReactModal>
 
 {/* Modal per modifica */}
-<ReactModal isOpen={isEditModalOpen} onRequestClose={closeEditModal} className='fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50'>
+<ReactModal
+  isOpen={isEditModalOpen}
+  onRequestClose={closeEditModal}
+  className='fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50'
+>
   <div className='bg-white p-8 rounded-lg w-96'>
     <h2 className='text-2xl font-semibold text-gray-800'>Modifica il nome del questionario</h2>
-    <input type='text' className='border rounded-lg p-2 w-full my-2' value={editedNome} onChange={(e) => setEditedNome(e.target.value)} placeholder='Nome' />
+    <input
+      type='text'
+      className='border rounded-lg p-2 w-full my-2'
+      value={editedNome}
+      onChange={(e) => setEditedNome(e.target.value)}
+      placeholder='Nome'
+    />
     <div className="mb-4">
       <h3 className="text-lg font-semibold mb-2">Seleziona le domande:</h3>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="max-h-48 overflow-y-auto border rounded-lg p-2"> {/* Contenitore scorrevole */}
         {tutteLeDomande.length > 0 ? (
           tutteLeDomande.map((d) => (
             <label
               key={d.idDomanda}
-              htmlFor={`domanda-${d.idDomanda}`}
-              className={`flex items-center p-4 border rounded-lg cursor-pointer transition ${
-                domandeAssociate.includes(d.idDomanda.toString())
-                  ? 'bg-blue-100 border-blue-500'
-                  : 'hover:bg-gray-100 border-gray-300'
+              className={`flex items-center p-2 hover:bg-gray-100 rounded-lg cursor-pointer ${
+                domandeAssociate.includes(d.idDomanda.toString()) ? 'bg-blue-50' : ''
               }`}
             >
               <input
                 type="checkbox"
-                id={`domanda-${d.idDomanda}`}
                 value={d.idDomanda}
                 checked={domandeAssociate.includes(d.idDomanda.toString())}
                 onChange={(e) => {
                   const selectedId = e.target.value;
                   setDomandeAssociate((prev) =>
                     prev.includes(selectedId)
-                      ? prev.filter((id) => id !== selectedId)
-                      : [...prev, selectedId]
+                      ? prev.filter((id) => id !== selectedId) // Rimuovi se già selezionata
+                      : [...prev, selectedId] // Aggiungi se non selezionata
                   );
                 }}
-                className="mr-3"
+                className="mr-2"
               />
               <span className="text-gray-700">{d.testoDomanda}</span>
             </label>
@@ -300,8 +306,18 @@ const Questionari = ({ user }) => {
         )}
       </div>
     </div>
-    <button onClick={handleEditQuestionario} className='bg-blue-500 text-white px-6 py-2 rounded-lg mr-4 hover:bg-blue-600'>Salva</button>
-    <button onClick={closeEditModal} className='bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600'>Annulla</button>
+    <button
+      onClick={handleEditQuestionario}
+      className='bg-blue-500 text-white px-6 py-2 rounded-lg mr-4 hover:bg-blue-600'
+    >
+      Salva
+    </button>
+    <button
+      onClick={closeEditModal}
+      className='bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600'
+    >
+      Annulla
+    </button>
   </div>
 </ReactModal>
     </div>
