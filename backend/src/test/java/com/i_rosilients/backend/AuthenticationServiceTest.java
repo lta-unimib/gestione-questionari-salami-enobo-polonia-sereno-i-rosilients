@@ -262,18 +262,4 @@ void testAuthenticate_InvalidCredentials() {
         assertEquals("Utente non trovato con email: " + email, exception.getMessage());
     }
 
-    @Test
-    void testDeleteProfile() {
-
-        Utente utente = new Utente("test@example.com", "encodedPassword");
-
-
-        doNothing().when(userRepository).delete(utente);
-
-
-        authenticationService.deleteProfile(utente);
-
-
-        verify(userRepository, times(1)).delete(utente);
-    }
 }

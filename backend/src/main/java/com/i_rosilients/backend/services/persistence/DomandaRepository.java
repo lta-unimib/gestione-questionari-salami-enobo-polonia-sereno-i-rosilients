@@ -12,9 +12,10 @@ import com.i_rosilients.backend.model.utente.Utente;
 
 @Repository
 public interface DomandaRepository extends JpaRepository<Domanda, Integer> {
+    
     List<Domanda> findByUtente(Utente utente);
 
-    @SuppressWarnings("null")
+    @Override
     List<Domanda> findAll();
     
     void deleteAllByUtente(Utente utente);

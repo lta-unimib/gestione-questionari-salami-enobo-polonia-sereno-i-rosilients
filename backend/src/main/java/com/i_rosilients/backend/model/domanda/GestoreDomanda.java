@@ -36,6 +36,7 @@ public class GestoreDomanda implements IGestoreDomanda {
         this.domandaQuestionarioRepository = domandaQuestionarioRepository;
     }
 
+    @Override
     public void creaDomanda(DomandaDTO domandaDTO) throws IOException {
         Optional<Utente> utenteOpt = utenteRepository.findByEmail(domandaDTO.getEmailUtente());
         if (utenteOpt.isEmpty()) {
@@ -56,6 +57,7 @@ public class GestoreDomanda implements IGestoreDomanda {
         }
     }
 
+    @Override
     public void updateDomanda(int idDomanda, DomandaDTO domandaDTO) {
         Optional<Domanda> domandaOpt = domandaRepository.findById(idDomanda);
         if (domandaOpt.isPresent()) {
@@ -104,6 +106,7 @@ public class GestoreDomanda implements IGestoreDomanda {
     
     
     @Transactional
+    @Override
     public void deleteDomanda(int idDomanda) {
         Optional<Domanda> domandaOpt = domandaRepository.findById(idDomanda);
         if (domandaOpt.isPresent()) {
@@ -151,6 +154,7 @@ public class GestoreDomanda implements IGestoreDomanda {
 
 
 
+    @Override
     public List<DomandaDTO> getDomandeByUtente(String emailUtente) {
         Utente utente = utenteRepository.findByEmail(emailUtente)
                                     .orElseThrow(() -> new IllegalArgumentException("Utente con email " + emailUtente + " non trovato."));

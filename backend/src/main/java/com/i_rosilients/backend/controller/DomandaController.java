@@ -40,6 +40,7 @@ public class DomandaController {
     private static final Path targetPath = Paths.get(UPLOAD_DIR).toAbsolutePath().normalize();
 
     
+    @SuppressWarnings("OverridableMethodCallInConstructor")
     public DomandaController(IGestoreDomanda domandaService, DomandaRepository domandaRepository) {
         this.domandaService = domandaService;
         this.domandaRepository = domandaRepository;

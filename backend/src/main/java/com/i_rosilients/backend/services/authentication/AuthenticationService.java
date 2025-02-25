@@ -1,7 +1,6 @@
 package com.i_rosilients.backend.services.authentication;
 
 import jakarta.mail.MessagingException;
-import jakarta.transaction.Transactional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -140,11 +139,6 @@ public class AuthenticationService {
 
     public Utente findUtenteByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Utente non trovato con email: " + email));  
-    }
-
-    @Transactional
-    public void deleteProfile(Utente utente) {
-        userRepository.delete(utente);
     }
 
 }

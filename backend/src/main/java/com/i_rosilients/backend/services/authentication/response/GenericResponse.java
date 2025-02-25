@@ -1,9 +1,9 @@
 package com.i_rosilients.backend.services.authentication.response;
 
-public class VerificationResponse {
-    private String message;
+public class GenericResponse {
+    private final String message;
 
-    public VerificationResponse(String message) {
+    public GenericResponse(String message) {
         this.message = message;
     }
 

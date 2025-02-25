@@ -5,5 +5,6 @@ import java.util.List;
 public interface IGestoreUtente {
     
     public List<Utente> allUsers();
+    public void deleteProfile(Utente utente);
 
 }

@@ -25,6 +25,8 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import com.i_rosilients.backend.model.utente.GestoreUtente;
+
 @ExtendWith(MockitoExtension.class)
  class AuthenticationControllerTest {
 
@@ -35,6 +37,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
     @Mock
     private AuthenticationService authenticationService;
+
+    @Mock
+    private GestoreUtente gestoreUtente;
 
     @InjectMocks
     private AuthenticationController authenticationController;
@@ -218,7 +223,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     when(jwtService.extractUsername("validToken")).thenReturn("test@example.com"); // Configura per due chiamate
     when(jwtService.isTokenValid("validToken", "test@example.com")).thenReturn(true); // Token valido
     when(authenticationService.findUtenteByEmail("test@example.com")).thenReturn(utente);
-    doNothing().when(authenticationService).deleteProfile(utente);
+    doNothing().when(gestoreUtente).deleteProfile(utente);
 
     // Esegui la richiesta e verifica la risposta
     mockMvc.perform(delete("/auth/deleteProfile")
@@ -231,7 +236,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     verify(jwtService, times(2)).extractUsername("validToken"); // Verifica due chiamate
     verify(jwtService, times(1)).isTokenValid("validToken", "test@example.com");
     verify(authenticationService, times(1)).findUtenteByEmail("test@example.com");
-    verify(authenticationService, times(1)).deleteProfile(utente);
+    verify(gestoreUtente, times(1)).deleteProfile(utente);
 }
 
     @Test

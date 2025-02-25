@@ -24,6 +24,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 import jakarta.mail.internet.MimeMessage;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -32,9 +33,14 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+
+import com.itextpdf.text.DocumentException;
+
+import jakarta.mail.MessagingException;
 
 
 @Service
@@ -64,7 +70,8 @@ public class GestoreRisposta implements IGestoreRisposta {
         this.emailSender = emailSender;
     }
 
-    // Per precompilare i campi
+    
+    @Override
     public Map<Integer, String> getRisposteByIdCompilazione(int idCompilazione) {
         List<Risposta> risposte = rispostaRepository.findByQuestionarioCompilato_IdCompilazione(idCompilazione);
         Map<Integer, String> Mapparisposte = new HashMap<>();
@@ -77,6 +84,7 @@ public class GestoreRisposta implements IGestoreRisposta {
     }
 
     // Crea una nuova compilazione
+    @Override
     public int creaNuovaCompilazione(int idQuestionario, String userEmail) {
         Questionario questionario = questionarioRepository.findById(idQuestionario)
                 .orElseThrow(() -> new RuntimeException("Questionario non trovato"));
@@ -101,6 +109,7 @@ public class GestoreRisposta implements IGestoreRisposta {
     }
 
     // Salva una risposta
+    @Override
     public void salvaRisposta(RispostaDTO rispostaDTO) {
         QuestionarioCompilato questionarioCompilato = questionarioCompilatoRepository.findById(rispostaDTO.getIdCompilazione())
                 .orElseThrow(() -> new RuntimeException("QuestionarioCompilato non trovato"));
@@ -130,6 +139,7 @@ public class GestoreRisposta implements IGestoreRisposta {
         }    
     }
 
+    @Override
     public void finalizzaCompilazione(int idCompilazione) {
         QuestionarioCompilato questionarioCompilato = questionarioCompilatoRepository.findById(idCompilazione)
                 .orElseThrow(() -> new RuntimeException("Compilazione non trovata"));
@@ -138,6 +148,7 @@ public class GestoreRisposta implements IGestoreRisposta {
         questionarioCompilatoRepository.save(questionarioCompilato);
     }
 
+    @Override
     public void inviaEmailConPdf(String userEmail, int idCompilazione) {
         try {
             QuestionarioCompilato compilato = questionarioCompilatoRepository.findById(idCompilazione)
@@ -175,7 +186,7 @@ public class GestoreRisposta implements IGestoreRisposta {
                         Image image = Image.getInstance(absolutePath);
                         image.scaleToFit(400, 200);
                         document.add(image);
-                    } catch (Exception e) {
+                    } catch (DocumentException | IOException e) {
                         System.err.println("Errore nel caricamento dell'immagine: " + e.getMessage());
                     }
                 }
@@ -213,7 +224,7 @@ public class GestoreRisposta implements IGestoreRisposta {
             helper.addAttachment("IlTuoQuestionario.pdf", resource);
     
             emailSender.send(message);
-        } catch (Exception e) {
+        } catch (DocumentException | MessagingException | MailException e) {
             throw new RuntimeException("Errore nell'invio dell'email", e);
         }
     }

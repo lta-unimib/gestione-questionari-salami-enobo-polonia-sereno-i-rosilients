@@ -8,12 +8,14 @@ import java.util.stream.Collectors;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+
 import com.i_rosilients.backend.dto.QuestionarioCompilatoDTO;
 import com.i_rosilients.backend.dto.RispostaDTO;
 import com.i_rosilients.backend.model.risposta.Risposta;
 import com.i_rosilients.backend.services.persistence.QuestionarioCompilatoRepository;
 import com.i_rosilients.backend.services.persistence.RispostaRepository;
 
+import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.transaction.Transactional;
 
@@ -33,6 +35,7 @@ public class GestoreQuestionarioCompilato implements IGestoreQuestionarioCompila
         this.emailSender = emailSender;
     }
 
+    @Override
     public List<QuestionarioCompilatoDTO> getCompilazioniInSospeso(String email) {
         List<QuestionarioCompilato> compilazioni = questionarioCompilatoRepository.findByUtenteEmailAndDefinitivoFalse(email);
     
@@ -58,6 +61,7 @@ public class GestoreQuestionarioCompilato implements IGestoreQuestionarioCompila
         }).collect(Collectors.toList());
     }
 
+    @Override
     public boolean checkEmailUtenteIsNullForQuestionario(int idCompilazione) {
         QuestionarioCompilato questionarioCompilato = questionarioCompilatoRepository.findById(idCompilazione)
             .orElse(null);
@@ -68,6 +72,7 @@ public class GestoreQuestionarioCompilato implements IGestoreQuestionarioCompila
     }
 
     @Transactional
+    @Override
     public void deleteQuestionarioCompilatoAndRisposteByIdCompilazione(int idCompilazione) {
         Optional<QuestionarioCompilato> questionarioCompilato = questionarioCompilatoRepository.findById(idCompilazione);
         if (questionarioCompilato.isEmpty()) {
@@ -79,6 +84,7 @@ public class GestoreQuestionarioCompilato implements IGestoreQuestionarioCompila
     }
       
 
+    @Override
     public QuestionarioCompilatoDTO getQuestionarioCompilatoById(int idCompilazione) {
         QuestionarioCompilato questionarioCompilato = questionarioCompilatoRepository.findById(idCompilazione)
             .orElse(null);
@@ -103,6 +109,7 @@ public class GestoreQuestionarioCompilato implements IGestoreQuestionarioCompila
         );
     }
 
+    @Override
     public List<QuestionarioCompilatoDTO> getQuestionariCompilatiByUtenteAndIdQuestionario(String userEmail, int idQuestionario) {
         List<QuestionarioCompilato> compilazioni = questionarioCompilatoRepository
         .findByUtenteEmailNotOrNullAndQuestionarioIdQuestionarioAndDefinitivo(userEmail, idQuestionario);
@@ -133,6 +140,7 @@ public class GestoreQuestionarioCompilato implements IGestoreQuestionarioCompila
         return "Anonymous";
     }
 
+    @Override
     public boolean checkIsDefinitivo(int idCompilazione) {
         QuestionarioCompilato questionarioCompilato = questionarioCompilatoRepository.findByIdCompilazione(idCompilazione)
             .orElse(null);
@@ -145,6 +153,7 @@ public class GestoreQuestionarioCompilato implements IGestoreQuestionarioCompila
         return questionarioCompilato.isDefinitivo();
     }
 
+    @Override
     public List<RispostaDTO> getRisposteByCompilazione(int idCompilazione) {
         List<Risposta> risposte = rispostaRepository.findByQuestionarioCompilato_IdCompilazione(idCompilazione);
     
@@ -153,6 +162,7 @@ public class GestoreQuestionarioCompilato implements IGestoreQuestionarioCompila
             .collect(Collectors.toList());
     }
 
+    @Override
     public List<QuestionarioCompilatoDTO> getDefinitiviByUtente(String email) {
         
         List<QuestionarioCompilato> compilazioniDefinitive = questionarioCompilatoRepository.findByUtenteEmailAndDefinitivoTrue(email);
@@ -180,6 +190,7 @@ public class GestoreQuestionarioCompilato implements IGestoreQuestionarioCompila
         }).collect(Collectors.toList());
     }
 
+    @Override
     public List<QuestionarioCompilatoDTO> getAllByUtente(String userEmail) {
         
         List<QuestionarioCompilato> compilazioni = questionarioCompilatoRepository.findByUtenteEmail(userEmail);
@@ -207,6 +218,7 @@ public class GestoreQuestionarioCompilato implements IGestoreQuestionarioCompila
         }).collect(Collectors.toList());
     }
 
+    @Override
     public void inviaEmail(int idCompilazione, String userEmail) {
         try {
             QuestionarioCompilato compilato = questionarioCompilatoRepository.findByIdCompilazione(idCompilazione)
@@ -222,7 +234,7 @@ public class GestoreQuestionarioCompilato implements IGestoreQuestionarioCompila
             helper.setText("La tua compilazione con ID: " + idCompilazione + " per il questionario: " + compilato.getQuestionario().getNome() + " è stata cancellata dal suo proprietario.");
     
             emailSender.send(message);
-        } catch (Exception e) {
+        } catch (MessagingException | RuntimeException e) {
             throw new RuntimeException("Errore nell'invio dell'email", e);
         }
     }

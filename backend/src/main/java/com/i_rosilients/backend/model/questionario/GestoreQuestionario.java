@@ -31,6 +31,7 @@ public class GestoreQuestionario implements IGestoreQuestionario {
         this.domandaQuestionarioRepository = domandaQuestionarioRepository;
     }
 
+    @Override
     public void creaQuestionario(QuestionarioDTO questionarioDTO) {
         Optional<Utente> utenteOpt = utenteRepository.findByEmail(questionarioDTO.getEmailUtente());
 
@@ -57,6 +58,7 @@ public class GestoreQuestionario implements IGestoreQuestionario {
     
 
     @Transactional
+    @Override
     public void deleteQuestionario(int idQuestionario) {
         Optional<Questionario> questionarioOpt = questionarioRepository.findById(idQuestionario);
         if (questionarioOpt.isPresent()) {
@@ -70,6 +72,7 @@ public class GestoreQuestionario implements IGestoreQuestionario {
     }
 
     @Transactional
+    @Override
     public void updateQuestionario(int idQuestionario, QuestionarioDTO questionarioDTO) {
         Optional<Questionario> questionarioOpt = questionarioRepository.findById(idQuestionario);
         
@@ -98,6 +101,7 @@ public class GestoreQuestionario implements IGestoreQuestionario {
     }
 
 
+    @Override
     public List<QuestionarioDTO> getQuestionariByUtente(String emailUtente) {
         System.out.println("Ricevuta richiesta per email: " + emailUtente);
 

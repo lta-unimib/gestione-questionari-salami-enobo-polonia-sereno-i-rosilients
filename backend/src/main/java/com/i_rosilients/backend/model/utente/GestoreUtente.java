@@ -3,6 +3,8 @@ package com.i_rosilients.backend.model.utente;
 import com.i_rosilients.backend.services.EmailService;
 import com.i_rosilients.backend.services.persistence.UtenteRepository;
 
+import jakarta.transaction.Transactional;
+
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -17,9 +19,16 @@ public class GestoreUtente implements IGestoreUtente {
         this.userRepository = userRepository;
     }
 
+    @Override
     public List<Utente> allUsers() {
         List<Utente> users = new ArrayList<>();
         userRepository.findAll().forEach(users::add);
         return users;
+    }
+
+    @Transactional
+    @Override
+    public void deleteProfile(Utente utente) {
+        userRepository.delete(utente);
     }
 }

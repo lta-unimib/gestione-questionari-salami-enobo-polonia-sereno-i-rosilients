@@ -16,7 +16,7 @@ public interface QuestionarioRepository extends JpaRepository<Questionario, Inte
 
     List<Questionario> findByUtente(Utente utente);
     
-    @SuppressWarnings("null")
+    @Override
     List<Questionario> findAll();
     
     @Query("SELECT new com.i_rosilients.backend.dto.QuestionarioDTO(q.idQuestionario, q.nome, u.email) " +

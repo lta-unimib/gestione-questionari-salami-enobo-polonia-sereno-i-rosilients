@@ -2,11 +2,13 @@ package com.i_rosilients.backend.controller;
 
 import com.i_rosilients.backend.dto.UtenteDTO;
 import com.i_rosilients.backend.dto.VerificaUtenteDTO;
+import com.i_rosilients.backend.model.utente.GestoreUtente;
 import com.i_rosilients.backend.model.utente.Utente;
 import com.i_rosilients.backend.services.JwtService;
 import com.i_rosilients.backend.services.authentication.AuthenticationService;
+import com.i_rosilients.backend.services.authentication.response.GenericResponse;
 import com.i_rosilients.backend.services.authentication.response.LoginResponse;
-import com.i_rosilients.backend.services.authentication.response.VerificationResponse;
+
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,10 +27,12 @@ public class AuthenticationController {
     private final JwtService jwtService;
 
     private final AuthenticationService authenticationService;
+    private final GestoreUtente gestoreUtente;
 
-    public AuthenticationController(JwtService jwtService, AuthenticationService authenticationService) {
+    public AuthenticationController(JwtService jwtService, AuthenticationService authenticationService, GestoreUtente gestoreUtente) {
         this.jwtService = jwtService;
         this.authenticationService = authenticationService;
+        this.gestoreUtente = gestoreUtente;
     }
 
     @PostMapping("/signup")
@@ -119,10 +123,10 @@ public class AuthenticationController {
     public ResponseEntity<?> verifyUtente(@RequestBody VerificaUtenteDTO verifyUtenteDto) {
         try {
             authenticationService.verifyUtente(verifyUtenteDto);
-            VerificationResponse responseMessage = new VerificationResponse("Account verified successfully");
+            GenericResponse responseMessage = new GenericResponse("Account verified successfully");
             return ResponseEntity.ok(responseMessage);
         } catch (RuntimeException e) {
-            VerificationResponse responseMessage = new VerificationResponse(e.getMessage());
+            GenericResponse responseMessage = new GenericResponse(e.getMessage());
             return ResponseEntity.badRequest().body(responseMessage);
         }
     }
@@ -160,7 +164,7 @@ public class AuthenticationController {
         try {
             
             // Elimina il profilo dell'utente
-            authenticationService.deleteProfile(utente);
+            gestoreUtente.deleteProfile(utente);
             
             // Restituisci una risposta di successo
             return ResponseEntity.ok("Profilo eliminato con successo.");
