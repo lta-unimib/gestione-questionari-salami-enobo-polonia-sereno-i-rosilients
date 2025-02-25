@@ -138,10 +138,6 @@ public class GestoreRisposta implements IGestoreRisposta {
         questionarioCompilatoRepository.save(questionarioCompilato);
     }
 
-    public List<Risposta> getAllRisposteByIdCompilazione(int idCompilazione) {
-        return rispostaRepository.findByQuestionarioCompilato_IdCompilazione(idCompilazione);
-    }
-
     public void inviaEmailConPdf(String userEmail, int idCompilazione) {
         try {
             QuestionarioCompilato compilato = questionarioCompilatoRepository.findById(idCompilazione)

@@ -129,17 +129,6 @@ void testGetCompilazioniInSospeso() {
 
 
     @Test
-    void testDeleteQuestionarioCompilatoAndRisposte() {
-        Questionario questionario = new Questionario();
-        questionario.setIdQuestionario(1);
-        QuestionarioCompilato compilazione = new QuestionarioCompilato();
-        compilazione.setIdCompilazione(1);
-        when(questionarioCompilatoRepository.findByQuestionario(questionario))
-            .thenReturn(Arrays.asList(compilazione));
-        questionarioCompilatoService.deleteQuestionarioCompilatoAndRisposte(questionario);
-    }
-
-    @Test
     void testGetQuestionarioCompilatoById() {
        when(questionarioCompilatoRepository.findById(1)).thenReturn(Optional.of(questionarioCompilato));
        when(rispostaRepository.findByQuestionarioCompilato_IdCompilazione(1))

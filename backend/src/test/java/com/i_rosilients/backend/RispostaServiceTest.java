@@ -159,17 +159,6 @@ import org.springframework.test.util.ReflectionTestUtils;
     }
 
     @Test
-     void testGetAllRisposteByIdCompilazione() {
-        when(rispostaRepository.findByQuestionarioCompilato_IdCompilazione(1))
-            .thenReturn(Collections.singletonList(risposta));
-        List<Risposta> result = rispostaService.getAllRisposteByIdCompilazione(1);
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        assertEquals("Risposta 1", result.get(0).getTestoRisposta());
-        verify(rispostaRepository, times(1)).findByQuestionarioCompilato_IdCompilazione(1);
-    }
-
-    @Test
 void testInviaEmailConPdf() {
     int idCompilazione = 1;
     String userEmail = "test@example.com";

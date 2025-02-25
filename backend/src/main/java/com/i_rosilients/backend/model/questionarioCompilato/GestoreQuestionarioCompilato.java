@@ -10,7 +10,6 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import com.i_rosilients.backend.dto.QuestionarioCompilatoDTO;
 import com.i_rosilients.backend.dto.RispostaDTO;
-import com.i_rosilients.backend.model.questionario.Questionario;
 import com.i_rosilients.backend.model.risposta.Risposta;
 import com.i_rosilients.backend.services.persistence.QuestionarioCompilatoRepository;
 import com.i_rosilients.backend.services.persistence.RispostaRepository;
@@ -77,17 +76,6 @@ public class GestoreQuestionarioCompilato implements IGestoreQuestionarioCompila
         }
         rispostaRepository.deleteByQuestionarioCompilato_IdCompilazione(idCompilazione);
         questionarioCompilatoRepository.deleteByIdCompilazione(idCompilazione);
-    }
-
-  
-    @Transactional
-    public void deleteQuestionarioCompilatoAndRisposte(Questionario questionario) {
-        Optional<QuestionarioCompilato> questionarioCompilato =  questionarioCompilatoRepository.findByIdCompilazione(questionario.getIdQuestionario());
-        if (questionarioCompilato.isEmpty()) {
-            System.out.println("❌ Nessun questionario compilato trovato per ID: " + questionario.getIdQuestionario());
-            return;
-        }
-        questionarioCompilatoRepository.deleteByQuestionario(questionario);
     }
       
 

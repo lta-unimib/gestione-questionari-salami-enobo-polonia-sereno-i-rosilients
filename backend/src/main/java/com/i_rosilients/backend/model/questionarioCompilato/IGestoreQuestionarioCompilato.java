@@ -4,12 +4,8 @@ import java.util.List;
 
 import com.i_rosilients.backend.dto.QuestionarioCompilatoDTO;
 import com.i_rosilients.backend.dto.RispostaDTO;
-import com.i_rosilients.backend.model.questionario.Questionario;
 
 public interface IGestoreQuestionarioCompilato {
-
-   // elimina la compilazione e le risposte in base al questionario
-   public void deleteQuestionarioCompilatoAndRisposte(Questionario questionario);
 
    // preleva la compilazione in base all'IdCompilazione
    public QuestionarioCompilatoDTO getQuestionarioCompilatoById(int idCompilazione);
