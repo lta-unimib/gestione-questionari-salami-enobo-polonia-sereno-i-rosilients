@@ -3,9 +3,9 @@ package com.i_rosilients.backend;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import com.i_rosilients.backend.model.Utente;
-import com.i_rosilients.backend.repository.UtenteRepository;
-import com.i_rosilients.backend.service.UtenteService;
+import com.i_rosilients.backend.model.utente.GestoreUtente;
+import com.i_rosilients.backend.model.utente.Utente;
+import com.i_rosilients.backend.services.persistence.UtenteRepository;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,7 +24,7 @@ class UtenteServiceTest {
     private UtenteRepository userRepository;
 
     @InjectMocks
-    private UtenteService utenteService;
+    private GestoreUtente utenteService;
 
     private List<Utente> utenti;
 

@@ -1,8 +1,8 @@
 package com.i_rosilients.backend.controller;
 
 
-import com.i_rosilients.backend.service.IUtenteService;
-import com.i_rosilients.backend.model.Utente;
+import com.i_rosilients.backend.model.utente.IGestoreUtente;
+import com.i_rosilients.backend.model.utente.Utente;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -17,9 +17,9 @@ import java.util.List;
 @RestController
 public class UtenteController {
 
-    private final IUtenteService userService;
+    private final IGestoreUtente userService;
 
-    public UtenteController(IUtenteService userService) {
+    public UtenteController(IGestoreUtente userService) {
         this.userService = userService;
     }
 

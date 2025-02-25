@@ -8,9 +8,14 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 import com.i_rosilients.backend.dto.RispostaDTO;
-import com.i_rosilients.backend.model.*;
-import com.i_rosilients.backend.repository.*;
-import com.i_rosilients.backend.service.RispostaService;
+import com.i_rosilients.backend.model.domanda.Domanda;
+import com.i_rosilients.backend.model.domanda.Opzione;
+import com.i_rosilients.backend.model.questionario.Questionario;
+import com.i_rosilients.backend.model.questionarioCompilato.QuestionarioCompilato;
+import com.i_rosilients.backend.model.risposta.GestoreRisposta;
+import com.i_rosilients.backend.model.risposta.Risposta;
+import com.i_rosilients.backend.model.utente.Utente;
+import com.i_rosilients.backend.services.persistence.*;
 
 import jakarta.mail.internet.MimeMessage;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,7 +48,7 @@ import org.springframework.mail.javamail.JavaMailSender;
     private JavaMailSender emailSender;
 
     @InjectMocks
-    private RispostaService rispostaService;
+    private GestoreRisposta rispostaService;
 
     private QuestionarioCompilato questionarioCompilato;
     private Questionario questionario;

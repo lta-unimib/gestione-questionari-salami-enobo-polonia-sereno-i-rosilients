@@ -3,9 +3,9 @@ package com.i_rosilients.backend;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.i_rosilients.backend.controller.DomandaController;
 import com.i_rosilients.backend.dto.DomandaDTO;
-import com.i_rosilients.backend.model.Domanda;
-import com.i_rosilients.backend.repository.DomandaRepository;
-import com.i_rosilients.backend.service.IDomandaService;
+import com.i_rosilients.backend.model.domanda.Domanda;
+import com.i_rosilients.backend.model.domanda.IGestoreDomanda;
+import com.i_rosilients.backend.services.persistence.DomandaRepository;
 
 import io.jsonwebtoken.io.IOException;
 
@@ -42,7 +42,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     private MockMvc mockMvc;
 
     @Mock
-    private IDomandaService domandaService;
+    private IGestoreDomanda domandaService;
 
     @Mock
     private DomandaRepository domandaRepository;

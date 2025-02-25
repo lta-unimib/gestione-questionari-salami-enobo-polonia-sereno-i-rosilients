@@ -5,10 +5,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.i_rosilients.backend.model.Domanda;
-import com.i_rosilients.backend.model.DomandaQuestionario;
-import com.i_rosilients.backend.model.Opzione;
-import com.i_rosilients.backend.model.Utente;
+import com.i_rosilients.backend.model.domanda.Domanda;
+import com.i_rosilients.backend.model.domanda.Opzione;
+import com.i_rosilients.backend.model.questionario.DomandaQuestionario;
+import com.i_rosilients.backend.model.utente.Utente;
 
 import java.util.ArrayList;
 import java.util.List;

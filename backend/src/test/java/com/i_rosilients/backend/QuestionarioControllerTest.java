@@ -3,7 +3,8 @@ package com.i_rosilients.backend;
 import com.i_rosilients.backend.controller.QuestionarioController;
 import com.i_rosilients.backend.dto.DomandaDTO;
 import com.i_rosilients.backend.dto.QuestionarioDTO;
-import com.i_rosilients.backend.service.IQuestionarioService;
+import com.i_rosilients.backend.model.questionario.IGestoreQuestionario;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     private MockMvc mockMvc;
 
     @Mock
-    private IQuestionarioService questionarioService;
+    private IGestoreQuestionario questionarioService;
 
     @InjectMocks
     private QuestionarioController questionarioController;

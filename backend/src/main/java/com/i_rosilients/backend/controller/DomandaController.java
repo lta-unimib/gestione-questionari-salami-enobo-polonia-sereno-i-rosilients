@@ -3,9 +3,9 @@ package com.i_rosilients.backend.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.i_rosilients.backend.dto.DomandaDTO;
-import com.i_rosilients.backend.model.Domanda;
-import com.i_rosilients.backend.repository.DomandaRepository;
-import com.i_rosilients.backend.service.IDomandaService;
+import com.i_rosilients.backend.model.domanda.Domanda;
+import com.i_rosilients.backend.model.domanda.IGestoreDomanda;
+import com.i_rosilients.backend.services.persistence.DomandaRepository;
 
 import jakarta.annotation.PostConstruct;
 
@@ -34,13 +34,13 @@ import java.util.UUID;
 @RequestMapping("/api/domande")
 public class DomandaController {
 
-    private final IDomandaService domandaService;
+    private final IGestoreDomanda domandaService;
     private final DomandaRepository domandaRepository;
     private static final String UPLOAD_DIR = "uploads/";
     private static final Path targetPath = Paths.get(UPLOAD_DIR).toAbsolutePath().normalize();
 
     
-    public DomandaController(IDomandaService domandaService, DomandaRepository domandaRepository) {
+    public DomandaController(IGestoreDomanda domandaService, DomandaRepository domandaRepository) {
         this.domandaService = domandaService;
         this.domandaRepository = domandaRepository;
         init();

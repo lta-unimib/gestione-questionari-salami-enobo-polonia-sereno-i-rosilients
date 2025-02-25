@@ -5,9 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.i_rosilients.backend.model.Questionario;
-import com.i_rosilients.backend.model.QuestionarioCompilato;
-import com.i_rosilients.backend.model.Utente;
+import com.i_rosilients.backend.model.questionario.Questionario;
+import com.i_rosilients.backend.model.questionarioCompilato.QuestionarioCompilato;
+import com.i_rosilients.backend.model.utente.Utente;
 
 import java.time.LocalDateTime;
 

@@ -1,9 +1,9 @@
 package com.i_rosilients.backend;
 
-import com.i_rosilients.backend.model.Domanda;
-import com.i_rosilients.backend.model.Utente;
-import com.i_rosilients.backend.repository.DomandaRepository;
-import com.i_rosilients.backend.repository.UtenteRepository;
+import com.i_rosilients.backend.model.domanda.Domanda;
+import com.i_rosilients.backend.model.utente.Utente;
+import com.i_rosilients.backend.services.persistence.DomandaRepository;
+import com.i_rosilients.backend.services.persistence.UtenteRepository;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

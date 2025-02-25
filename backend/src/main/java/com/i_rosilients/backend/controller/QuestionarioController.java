@@ -2,7 +2,7 @@ package com.i_rosilients.backend.controller;
 
 import com.i_rosilients.backend.dto.DomandaDTO;
 import com.i_rosilients.backend.dto.QuestionarioDTO;
-import com.i_rosilients.backend.service.IQuestionarioService;
+import com.i_rosilients.backend.model.questionario.IGestoreQuestionario;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,9 +15,9 @@ import java.util.List;
 @RequestMapping("/api/questionari")
 public class QuestionarioController {
 
-    private final IQuestionarioService questionarioService;
+    private final IGestoreQuestionario questionarioService;
 
-    public QuestionarioController(IQuestionarioService questionarioService) {
+    public QuestionarioController(IGestoreQuestionario questionarioService) {
         this.questionarioService = questionarioService;
     }
 

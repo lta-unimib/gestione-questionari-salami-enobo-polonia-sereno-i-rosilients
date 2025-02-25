@@ -1,14 +1,14 @@
 package com.i_rosilients.backend;
 
 import com.i_rosilients.backend.dto.QuestionarioDTO;
-import com.i_rosilients.backend.model.Domanda;
-import com.i_rosilients.backend.model.DomandaQuestionario;
-import com.i_rosilients.backend.model.Questionario;
-import com.i_rosilients.backend.model.Utente;
-import com.i_rosilients.backend.repository.DomandaQuestionarioRepository;
-import com.i_rosilients.backend.repository.DomandaRepository;
-import com.i_rosilients.backend.repository.QuestionarioRepository;
-import com.i_rosilients.backend.repository.UtenteRepository;
+import com.i_rosilients.backend.model.domanda.Domanda;
+import com.i_rosilients.backend.model.questionario.DomandaQuestionario;
+import com.i_rosilients.backend.model.questionario.Questionario;
+import com.i_rosilients.backend.model.utente.Utente;
+import com.i_rosilients.backend.services.persistence.DomandaQuestionarioRepository;
+import com.i_rosilients.backend.services.persistence.DomandaRepository;
+import com.i_rosilients.backend.services.persistence.QuestionarioRepository;
+import com.i_rosilients.backend.services.persistence.UtenteRepository;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

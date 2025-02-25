@@ -1,9 +1,11 @@
 package com.i_rosilients.backend;
 
 import com.i_rosilients.backend.dto.DomandaDTO;
-import com.i_rosilients.backend.model.*;
-import com.i_rosilients.backend.repository.*;
-import com.i_rosilients.backend.service.DomandaService;
+import com.i_rosilients.backend.model.domanda.Domanda;
+import com.i_rosilients.backend.model.domanda.GestoreDomanda;
+import com.i_rosilients.backend.model.domanda.Opzione;
+import com.i_rosilients.backend.model.utente.Utente;
+import com.i_rosilients.backend.services.persistence.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,7 +40,7 @@ import static org.mockito.Mockito.*;
     private DomandaQuestionarioRepository domandaQuestionarioRepository;
 
     @InjectMocks
-    private DomandaService domandaService;
+    private GestoreDomanda domandaService;
 
     private Utente utente;
     private Domanda domanda;

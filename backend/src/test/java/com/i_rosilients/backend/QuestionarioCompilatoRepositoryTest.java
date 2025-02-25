@@ -1,9 +1,9 @@
 package com.i_rosilients.backend;
 
-import com.i_rosilients.backend.model.Questionario;
-import com.i_rosilients.backend.model.QuestionarioCompilato;
-import com.i_rosilients.backend.model.Utente;
-import com.i_rosilients.backend.repository.QuestionarioCompilatoRepository;
+import com.i_rosilients.backend.model.questionario.Questionario;
+import com.i_rosilients.backend.model.questionarioCompilato.QuestionarioCompilato;
+import com.i_rosilients.backend.model.utente.Utente;
+import com.i_rosilients.backend.services.persistence.QuestionarioCompilatoRepository;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

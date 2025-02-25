@@ -1,7 +1,7 @@
 package com.i_rosilients.backend;
 
-import com.i_rosilients.backend.model.Utente;
-import com.i_rosilients.backend.repository.UtenteRepository;
+import com.i_rosilients.backend.model.utente.Utente;
+import com.i_rosilients.backend.services.persistence.UtenteRepository;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

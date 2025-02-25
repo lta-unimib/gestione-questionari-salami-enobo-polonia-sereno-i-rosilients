@@ -6,7 +6,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.i_rosilients.backend.controller.RispostaController;
 import com.i_rosilients.backend.dto.RispostaDTO;
-import com.i_rosilients.backend.service.IRispostaService;
+import com.i_rosilients.backend.model.risposta.IGestoreRisposta;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,7 +27,7 @@ import java.util.Map;
     private MockMvc mockMvc;
 
     @Mock
-    private IRispostaService rispostaService;
+    private IGestoreRisposta rispostaService;
 
     @InjectMocks
     private RispostaController rispostaController;

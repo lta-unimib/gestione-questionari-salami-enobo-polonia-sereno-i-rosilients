@@ -5,9 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.i_rosilients.backend.model.DomandaQuestionario;
-import com.i_rosilients.backend.model.Questionario;
-import com.i_rosilients.backend.model.Utente;
+import com.i_rosilients.backend.model.questionario.DomandaQuestionario;
+import com.i_rosilients.backend.model.questionario.Questionario;
+import com.i_rosilients.backend.model.utente.Utente;
 
 import java.util.ArrayList;
 import java.util.List;

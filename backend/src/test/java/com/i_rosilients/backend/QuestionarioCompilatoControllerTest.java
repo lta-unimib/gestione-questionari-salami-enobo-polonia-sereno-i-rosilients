@@ -24,7 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.i_rosilients.backend.controller.QuestionarioCompilatoController;
 import com.i_rosilients.backend.dto.QuestionarioCompilatoDTO;
 import com.i_rosilients.backend.dto.RispostaDTO;
-import com.i_rosilients.backend.service.IQuestionarioCompilatoService;
+import com.i_rosilients.backend.model.questionarioCompilato.IGestoreQuestionarioCompilato;
 
 @ExtendWith(MockitoExtension.class)
 class QuestionarioCompilatoControllerTest {
@@ -32,7 +32,7 @@ class QuestionarioCompilatoControllerTest {
     private MockMvc mockMvc;
 
     @Mock
-    private IQuestionarioCompilatoService questionarioCompilatoService;
+    private IGestoreQuestionarioCompilato questionarioCompilatoService;
 
     @InjectMocks
     private QuestionarioCompilatoController questionarioCompilatoController;

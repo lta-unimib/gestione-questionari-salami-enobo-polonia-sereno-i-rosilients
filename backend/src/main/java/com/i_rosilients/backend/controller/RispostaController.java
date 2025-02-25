@@ -1,7 +1,8 @@
 package com.i_rosilients.backend.controller;
 
 import com.i_rosilients.backend.dto.RispostaDTO;
-import com.i_rosilients.backend.service.IRispostaService;
+import com.i_rosilients.backend.model.risposta.IGestoreRisposta;
+
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
@@ -12,9 +13,9 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/risposte")
 public class RispostaController {
 
-    private final IRispostaService rispostaService;
+    private final IGestoreRisposta rispostaService;
 
-    public RispostaController(IRispostaService rispostaService){
+    public RispostaController(IGestoreRisposta rispostaService){
         this.rispostaService = rispostaService;
     }
 

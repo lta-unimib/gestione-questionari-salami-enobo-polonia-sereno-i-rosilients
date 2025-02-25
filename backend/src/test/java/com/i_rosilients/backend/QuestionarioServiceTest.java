@@ -2,10 +2,13 @@ package com.i_rosilients.backend;
 
 import com.i_rosilients.backend.dto.DomandaDTO;
 import com.i_rosilients.backend.dto.QuestionarioDTO;
-import com.i_rosilients.backend.model.*;
-import com.i_rosilients.backend.repository.*;
-import com.i_rosilients.backend.service.IQuestionarioCompilatoService;
-import com.i_rosilients.backend.service.QuestionarioService;
+import com.i_rosilients.backend.model.domanda.Domanda;
+import com.i_rosilients.backend.model.questionario.DomandaQuestionario;
+import com.i_rosilients.backend.model.questionario.GestoreQuestionario;
+import com.i_rosilients.backend.model.questionario.Questionario;
+import com.i_rosilients.backend.model.questionarioCompilato.IGestoreQuestionarioCompilato;
+import com.i_rosilients.backend.model.utente.Utente;
+import com.i_rosilients.backend.services.persistence.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,10 +42,10 @@ import static org.mockito.Mockito.*;
     private DomandaQuestionarioRepository domandaQuestionarioRepository;
 
     @Mock
-    private IQuestionarioCompilatoService questionarioCompilatoService;
+    private IGestoreQuestionarioCompilato questionarioCompilatoService;
 
     @InjectMocks
-    private QuestionarioService questionarioService;
+    private GestoreQuestionario questionarioService;
 
     private Utente utente;
     private Questionario questionario;

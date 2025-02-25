@@ -5,8 +5,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.i_rosilients.backend.controller.UtenteController;
-import com.i_rosilients.backend.model.Utente;
-import com.i_rosilients.backend.service.IUtenteService;
+import com.i_rosilients.backend.model.utente.IGestoreUtente;
+import com.i_rosilients.backend.model.utente.Utente;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,7 +29,7 @@ import java.util.List;
     private MockMvc mockMvc;
 
     @Mock
-    private IUtenteService userService;
+    private IGestoreUtente userService;
 
     @InjectMocks
     private UtenteController utenteController;

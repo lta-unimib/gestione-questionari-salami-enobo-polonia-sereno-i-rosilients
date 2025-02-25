@@ -13,7 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mail.javamail.JavaMailSender;
 
-import com.i_rosilients.backend.service.EmailService;
+import com.i_rosilients.backend.services.EmailService;
 
 @ExtendWith(MockitoExtension.class)
  class EmailServiceTest {

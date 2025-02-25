@@ -14,14 +14,14 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.mail.javamail.JavaMailSender;
 import com.i_rosilients.backend.dto.QuestionarioCompilatoDTO;
 import com.i_rosilients.backend.dto.RispostaDTO;
-import com.i_rosilients.backend.model.Domanda;
-import com.i_rosilients.backend.model.Questionario;
-import com.i_rosilients.backend.model.QuestionarioCompilato;
-import com.i_rosilients.backend.model.Risposta;
-import com.i_rosilients.backend.model.Utente;
-import com.i_rosilients.backend.repository.QuestionarioCompilatoRepository;
-import com.i_rosilients.backend.repository.RispostaRepository;
-import com.i_rosilients.backend.service.QuestionarioCompilatoService;
+import com.i_rosilients.backend.model.domanda.Domanda;
+import com.i_rosilients.backend.model.questionario.Questionario;
+import com.i_rosilients.backend.model.questionarioCompilato.GestoreQuestionarioCompilato;
+import com.i_rosilients.backend.model.questionarioCompilato.QuestionarioCompilato;
+import com.i_rosilients.backend.model.risposta.Risposta;
+import com.i_rosilients.backend.model.utente.Utente;
+import com.i_rosilients.backend.services.persistence.QuestionarioCompilatoRepository;
+import com.i_rosilients.backend.services.persistence.RispostaRepository;
 
 import jakarta.mail.internet.MimeMessage;
 
@@ -37,7 +37,7 @@ import jakarta.mail.internet.MimeMessage;
     private JavaMailSender emailSender;
 
     @InjectMocks
-    private QuestionarioCompilatoService questionarioCompilatoService;
+    private GestoreQuestionarioCompilato questionarioCompilatoService;
 
     private QuestionarioCompilato questionarioCompilato;
     private Questionario questionario;

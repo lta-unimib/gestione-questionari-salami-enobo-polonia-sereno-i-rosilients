@@ -2,10 +2,10 @@ package com.i_rosilients.backend;
 
 import com.i_rosilients.backend.dto.UtenteDTO;
 import com.i_rosilients.backend.dto.VerificaUtenteDTO;
-import com.i_rosilients.backend.model.Utente;
-import com.i_rosilients.backend.repository.UtenteRepository;
-import com.i_rosilients.backend.service.AuthenticationService;
-import com.i_rosilients.backend.service.EmailService;
+import com.i_rosilients.backend.model.utente.Utente;
+import com.i_rosilients.backend.services.EmailService;
+import com.i_rosilients.backend.services.authentication.AuthenticationService;
+import com.i_rosilients.backend.services.persistence.UtenteRepository;
 
 import jakarta.mail.MessagingException;
 import org.junit.jupiter.api.BeforeEach;
