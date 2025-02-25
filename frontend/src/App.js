@@ -6,10 +6,10 @@ import HomeLogged from './pages/home/HomeLogged';
 import NavbarHome from './components/NavbarHome';
 import NavBarLogged from './components/NavbarLogged';
 import Questionari from './pages/questionari/Questionari';
-import CompilaQuestionario from './pages/questionari/CompilaQuestionario';
-import Compilazioni from './pages/questionari/Compilazioni';
+import CompilaQuestionario from './pages/compilazioni/CompilaQuestionario';
+import Compilazioni from './pages/compilazioni/Compilazioni';
 import VisualizzaQuestionario from './pages/questionari/VisualizzaQuestionario';
-import VisualizzaQuestionarioCompilato from './pages/questionari/VisualizzaQuestionarioCompilato';
+import VisualizzaQuestionarioCompilato from './pages/compilazioni/VisualizzaQuestionarioCompilato';
 import Domande from './pages/domande/Domande';
 import VisualizzaCompilazioniUtenti from './pages/questionari/VisualizzaCompilazioniUtenti';
 

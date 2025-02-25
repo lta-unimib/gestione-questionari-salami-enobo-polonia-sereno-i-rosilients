@@ -53,6 +53,25 @@ const VisualizzaQuestionario = () => {
 
   return (
     <div className="max-w-3xl mx-auto mt-8 p-6 bg-white shadow-lg rounded-lg">
+      {/* Sposta il div dei pulsanti qui sopra */}
+      <div className="flex justify-between mb-6">
+        <button
+          onClick={() => navigate(-1)}
+          className="flex justify-around gap-1 bg-gray-300 text-gray-800 py-2 px-4 rounded-lg hover:bg-gray-400 transition-all w-48"
+        >
+          <ArrowLongLeftIcon className="h-5 w-5 my-auto" />
+          <span className="my-auto">Torna Indietro</span>
+        </button>
+        {domande.length > 0 && (
+          <Link
+            to={`/questionari/compilaQuestionario/${id}`}
+            className="flex justify-around gap-2 bg-white border-personal-purple border-2 text-personal-purple py-2 px-4 rounded-lg hover:bg-personal-purple hover:text-white transition-all w-32"
+          >
+            <span className="my-auto">Compila</span>
+          </Link>
+        )}
+      </div>
+
       {questionario ? (
         <>
           <h1 className="text-3xl font-bold text-personal-purple">{questionario.nome}</h1>
@@ -105,23 +124,6 @@ const VisualizzaQuestionario = () => {
       ) : (
         <p className="text-gray-500">Caricamento in corso...</p>
       )}
-      <div className="flex justify-between">
-        <button
-          onClick={() => navigate(-1)}
-          className=" mt-8 flex justify-around gap-2 bg-gray-300 text-gray-800 py-2 px-4 rounded-lg hover:bg-gray-400 transition-all w-48"
-        >
-          <ArrowLongLeftIcon className="h-5 w-5 my-auto" />
-          <span className="my-auto">Torna Indietro</span>
-        </button>
-        {domande.length > 0 && (
-          <Link
-            to={`/questionari/compilaQuestionario/${id}`}
-            className=" mt-8 flex justify-around gap-2 bg-white border-personal-purple border-2 text-personal-purple py-2 px-4 rounded-lg hover:bg-personal-purple hover:text-white transition-all w-32"
-          >
-            <span className="my-auto">Compila</span>
-          </Link>
-        )}
-      </div>
     </div>
   );
   

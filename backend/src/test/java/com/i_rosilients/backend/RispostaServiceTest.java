@@ -25,6 +25,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
  class RispostaServiceTest {
@@ -169,16 +170,14 @@ import org.springframework.mail.javamail.JavaMailSender;
     }
 
     @Test
-    void testInviaEmailConPdf() {
-
+void testInviaEmailConPdf() {
     int idCompilazione = 1;
     String userEmail = "test@example.com";
+    ReflectionTestUtils.setField(rispostaService, "supportEmail", "support@example.com");
     when(questionarioCompilatoRepository.findById(idCompilazione))
         .thenReturn(Optional.of(questionarioCompilato));
-
     when(rispostaRepository.findByQuestionarioCompilato(questionarioCompilato))
         .thenReturn(Collections.singletonList(risposta));
-
     MimeMessage mimeMessage = mock(MimeMessage.class);
     when(emailSender.createMimeMessage()).thenReturn(mimeMessage);
     rispostaService.inviaEmailConPdf(userEmail, idCompilazione);
@@ -189,5 +188,5 @@ import org.springframework.mail.javamail.JavaMailSender;
 
     assertFalse(domanda.getOpzioni().isEmpty()); 
     assertEquals(2, domanda.getOpzioni().size()); 
-    }
+}
 }
