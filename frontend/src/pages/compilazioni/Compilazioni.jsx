@@ -181,8 +181,8 @@ const Compilazioni = ({ user }) => {
             <li key={c.idCompilazione} className="border p-4 my-2 rounded-lg shadow-lg flex justify-between">
               <div>
                 <h3 className="text-xl font-semibold">{c.titoloQuestionario}</h3>
-                <p>Data compilazione: {new Date(c.dataCompilazione).toLocaleDateString()}</p>
-                <p>Stato: {c.stato === "DEFINITIVO" ? "✅ Definitiva" : "⏳ In sospeso"}</p>
+                <p className="text-gray-700 text-sm">Data compilazione: {new Date(c.dataCompilazione).toLocaleDateString()}</p>
+                <p className="text-gray-700 text-sm">Stato: {c.stato === "DEFINITIVO" ? "✅ Definitiva" : "⏳ In sospeso"}</p>
               </div>
               
               <div className="flex items-center">

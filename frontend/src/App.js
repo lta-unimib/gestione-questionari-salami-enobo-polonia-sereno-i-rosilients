@@ -41,7 +41,7 @@ const App = () => {
   }, []); // Solo al primo caricamento
 
   return (
-    <div className="font-jersey tracking-widest">
+    <div className="font-jersey bg-gray-50 min-h-screen tracking-widest">
       <BrowserRouter>
         {user ? <NavBarLogged setUser={setUser} /> : <NavbarHome setUser={setUser} />}
         

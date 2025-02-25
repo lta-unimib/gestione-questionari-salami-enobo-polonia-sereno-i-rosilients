@@ -203,7 +203,7 @@ const Questionari = ({ user }) => {
                     setIdQuestionario(q.idQuestionario);
                   }
                 }
-                className='text-blue-500 hover:underline text-xl font-semibold'>
+                className='text-personal-purple opacity-[0.75] underline text-xl font-semibold'>
                 {q.nome}
               </Link>
               <div className='edit flex gap-4'>
@@ -258,68 +258,110 @@ const Questionari = ({ user }) => {
   </div>
 </ReactModal>
 
-{/* Modal per modifica */}
-<ReactModal
-  isOpen={isEditModalOpen}
-  onRequestClose={closeEditModal}
-  className='fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50'
->
-  <div className='bg-white p-8 rounded-lg w-96'>
-    <h2 className='text-2xl font-semibold text-gray-800'>Modifica il nome del questionario</h2>
-    <input
-      type='text'
-      className='border rounded-lg p-2 w-full my-2'
-      value={editedNome}
-      onChange={(e) => setEditedNome(e.target.value)}
-      placeholder='Nome'
-    />
-    <div className="mb-4">
-      <h3 className="text-lg font-semibold mb-2">Seleziona le domande:</h3>
-      <div className="max-h-48 overflow-y-auto border rounded-lg p-2"> {/* Contenitore scorrevole */}
-        {tutteLeDomande.length > 0 ? (
-          tutteLeDomande.map((d) => (
-            <label
-              key={d.idDomanda}
-              className={`flex items-center p-2 hover:bg-gray-100 rounded-lg cursor-pointer ${
-                domandeAssociate.includes(d.idDomanda.toString()) ? 'bg-blue-50' : ''
-              }`}
-            >
-              <input
-                type="checkbox"
-                value={d.idDomanda}
-                checked={domandeAssociate.includes(d.idDomanda.toString())}
-                onChange={(e) => {
-                  const selectedId = e.target.value;
-                  setDomandeAssociate((prev) =>
-                    prev.includes(selectedId)
-                      ? prev.filter((id) => id !== selectedId) // Rimuovi se già selezionata
-                      : [...prev, selectedId] // Aggiungi se non selezionata
-                  );
-                }}
-                className="mr-2"
-              />
-              <span className="text-gray-700">{d.testoDomanda}</span>
-            </label>
-          ))
-        ) : (
-          <p className="text-gray-500">Nessuna domanda disponibile.</p>
-        )}
+{/* Modal per modifica del questionario */}
+  <ReactModal
+    isOpen={isEditModalOpen}
+    onRequestClose={closeEditModal}
+    className='fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50'
+    overlayClassName="modal-overlay"
+  >
+    <div className='bg-white p-8 rounded-lg w-full max-w-md shadow-xl border-t-4 border-personal-purple'>
+      <h2 className='text-2xl font-semibold text-personal-purple mb-4 flex items-center'>
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+        </svg>
+        Modifica il questionario
+      </h2>
+      
+      <div className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Nome del questionario</label>
+          <input
+            type='text'
+            className='border rounded-lg p-3 w-full focus:ring-2 focus:ring-personal-purple focus:border-transparent transition-all outline-none'
+            value={editedNome}
+            onChange={(e) => setEditedNome(e.target.value)}
+            placeholder='Inserisci il nome del questionario'
+          />
+        </div>
+        
+        <div className="bg-gray-50 p-4 rounded-lg">
+          <h3 className="text-lg font-semibold text-[personal-purple3603CD] mb-2 flex items-center">
+            Seleziona le domande
+          </h3>
+          
+          <div className="max-h-48 overflow-y-auto border border-gray-200 rounded-lg">
+            {tutteLeDomande.length > 0 ? (
+              tutteLeDomande.map((d) => (
+                <label
+                  key={d.idDomanda}
+                  className={`flex items-center p-3 hover:bg-gray-100 cursor-pointer transition-all ${
+                    domandeAssociate.includes(d.idDomanda.toString()) 
+                    ? 'bg-personal-purple bg-opacity-10 border-l-4 border-personal-purple' 
+                    : 'border-l-4 border-transparent'
+                  }`}
+                >
+                  <input
+                    type="checkbox"
+                    value={d.idDomanda}
+                    checked={domandeAssociate.includes(d.idDomanda.toString())}
+                    onChange={(e) => {
+                      const selectedId = e.target.value;
+                      setDomandeAssociate((prev) =>
+                        prev.includes(selectedId)
+                          ? prev.filter((id) => id !== selectedId)
+                          : [...prev, selectedId]
+                      );
+                    }}
+                    className="rounded text-black focus:ring-black mr-3 h-4 w-4"
+                  />
+                  <span className={`${
+                    domandeAssociate.includes(d.idDomanda.toString()) 
+                    ? 'text-black font-medium' 
+                    : 'text-gray-700'
+                  }`}>
+                    {d.testoDomanda}
+                  </span>
+                </label>
+              ))
+            ) : (
+              <div className="flex items-center justify-center p-4 text-gray-500">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+                Nessuna domanda disponibile.
+              </div>
+            )}
+          </div>
+          
+          <div className="mt-2 text-xs text-gray-500 flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Seleziona le domande da includere nel questionario
+          </div>
+        </div>
+      </div>
+      
+      <div className="flex justify-end mt-6 space-x-3">
+        <button
+          onClick={closeEditModal}
+          className='px-5 py-2.5 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition-all'
+        >
+          Annulla
+        </button>
+        <button
+          onClick={handleEditQuestionario}
+          className='bg-personal-purple text-white px-5 py-2.5 rounded-lg hover:bg-[#4a1ed8] transition-all flex items-center'
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          </svg>
+          Salva modifiche
+        </button>
       </div>
     </div>
-    <button
-      onClick={handleEditQuestionario}
-      className='bg-blue-500 text-white px-6 py-2 rounded-lg mr-4 hover:bg-blue-600'
-    >
-      Salva
-    </button>
-    <button
-      onClick={closeEditModal}
-      className='bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600'
-    >
-      Annulla
-    </button>
-  </div>
-</ReactModal>
+  </ReactModal>
     </div>
   );
 };

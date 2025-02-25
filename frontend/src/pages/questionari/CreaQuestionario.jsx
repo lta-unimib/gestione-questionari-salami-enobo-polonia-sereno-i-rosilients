@@ -64,23 +64,34 @@ const CreaQuestionario = ({ user, setUpdateQuestionari }) => {
       {!isCreatingQuestionario ? (
         <button
           onClick={() => setIsCreatingQuestionario(true)}
-          className="bg-green-500 text-white py-2 px-6 rounded-lg hover:bg-green-700 transition"
+          className="bg-personal-purple text-white py-2.5 px-6 rounded-lg hover:bg-[#4a1ed8] transition-all flex items-center shadow-md"
         >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+          </svg>
           Crea Questionario
         </button>
       ) : (
-        <div className="p-6 bg-white rounded-lg shadow-lg">
-          <input
-            type="text"
-            placeholder="Nome del Questionario"
-            value={questionarioNome}
-            onChange={(e) => setQuestionarioNome(e.target.value)}
-            className="w-full p-3 mb-4 border border-gray-300 rounded-lg"
-          />
-
-          {/* Sezione selezione domande migliorata */}
+        <div className="bg-white p-6 rounded-lg shadow-lg border-t-4 border-personal-purple">
+          <h2 className="text-2xl font-semibold text-personal-purple mb-4 flex items-center">
+            Nuovo Questionario
+          </h2>
+  
+          {/* Campo Nome del Questionario */}
+          <div className="relative mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-1">Nome del Questionario</label>
+            <input
+              type="text"
+              placeholder="Es: Quiz di Matematica, Test di Storia..."
+              value={questionarioNome}
+              onChange={(e) => setQuestionarioNome(e.target.value)}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-personal-purple focus:border-transparent transition-all outline-none"
+            />
+          </div>
+  
+          {/* Sezione Selezione Domande */}
           <div className="mb-4">
-            <h3 className="text-lg font-semibold mb-2">Seleziona le domande:</h3>
+            <h3 className="text-lg font-semibold text-personal-purple mb-2">Seleziona le domande:</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {domande.length > 0 ? (
                 domande.map((d) => (
@@ -89,7 +100,7 @@ const CreaQuestionario = ({ user, setUpdateQuestionari }) => {
                     htmlFor={`domanda-${d.idDomanda}`}
                     className={`flex items-center p-4 border rounded-lg cursor-pointer transition ${
                       domandeSelezionate.includes(d.idDomanda.toString())
-                        ? 'bg-blue-100 border-blue-500'
+                        ? 'bg-purple-50 border-personal-purple'
                         : 'hover:bg-gray-100 border-gray-300'
                     }`}
                   >
@@ -106,7 +117,7 @@ const CreaQuestionario = ({ user, setUpdateQuestionari }) => {
                             : [...prev, selectedId]
                         );
                       }}
-                      className="mr-3"
+                      className="mr-3 text-personal-purple focus:ring-personal-purple"
                     />
                     <span className="text-gray-700">{d.testoDomanda}</span>
                   </label>
@@ -116,20 +127,26 @@ const CreaQuestionario = ({ user, setUpdateQuestionari }) => {
               )}
             </div>
           </div>
-
+  
           {/* Bottoni */}
-          <div className="flex justify-end mt-4">
-            <button
-              onClick={handleCreaQuestionario}
-              className="bg-blue-500 text-white py-2 px-6 rounded-lg hover:bg-blue-700 transition mr-2"
-            >
-              Crea
-            </button>
+          <div className="flex justify-end mt-6 space-x-3">
             <button
               onClick={() => setIsCreatingQuestionario(false)}
-              className="bg-red-500 text-white py-2 px-6 rounded-lg hover:bg-red-700 transition"
+              className="px-5 py-2.5 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition-all flex items-center"
             >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
               Annulla
+            </button>
+            <button
+              onClick={handleCreaQuestionario}
+              className="bg-personal-purple text-white px-5 py-2.5 rounded-lg hover:bg-[#4a1ed8] transition-all flex items-center"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+              Crea Questionario
             </button>
           </div>
         </div>
