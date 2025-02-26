@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import Login from '../pages/home/Login';
-import Registration from '../pages/home/Registrazione';
-import Verify from '../pages/home/Verify';
+import Login from './Login';
+import Registration from './Registrazione';
+import Verify from './Verify';
 
 const Modal = ({ toggleModal, formType, setUser }) => {
   const [userEmail, setUserEmail] = useState(""); // Stato per memorizzare l'email

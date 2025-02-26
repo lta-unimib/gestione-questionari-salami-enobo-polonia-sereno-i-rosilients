@@ -4,45 +4,32 @@ import ReactModal from 'react-modal';
 import { TrashIcon } from '@heroicons/react/20/solid';
 import { EyeIcon } from '@heroicons/react/24/solid';
 
+import {getCompilazioniUtenti, inviaEmailNotifica, deleteQuestionarioCompilato} from '../../services/questionarioServices';
+
 const VisualizzaCompilazioniUtenti = () => {
     const { id } = useParams();
     const [compilazioni, setCompilazioni] = useState([]);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [compilazioneToDelete, setCompilazioneToDelete] = useState(null);
     const [userCompilazioneToDelete, setUserCompilazioneToDelete] = useState(null);
-    const token = localStorage.getItem("jwt");
     const userEmail = localStorage.getItem("userEmail");
     const navigate = useNavigate();
+ 
     
     useEffect(() => {
         if (!userEmail) return;
 
-        let url = `http://localhost:8080/api/questionariCompilati/others/${userEmail}/${id}`;
-        
-        fetch(url, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
+        const fetchCompilazioni = async () => {
+            try {
+                const data = await getCompilazioniUtenti(userEmail, id);
+                setCompilazioni(data);
+            } catch (error) {
+                console.error('Errore nel recupero delle compilazioni:', error);
             }
-        })
-        .then(response => {
-            if (response.status === 204) {
-                console.log('Nessuna compilazione trovata.');
-                return [];
-            } else if (!response.ok) {
-                throw new Error('Errore nel recupero delle compilazioni');
-            }
-            return response.json();
-        })
-        .then(data => {
-            setCompilazioni(data);
-        })
-        .catch(error => {
-            console.error('Errore:', error);
-        });
-    }, [userEmail, token]);
+        };
 
+        fetchCompilazioni();
+    }, [userEmail, id]);
     
     const handleVisualizzaCompilazione = (idQuestionario, idCompilazione) => {
         navigate(`/questionari/visualizzaQuestionarioCompilato/${idCompilazione}/${idQuestionario}`);
@@ -62,51 +49,23 @@ const VisualizzaCompilazioniUtenti = () => {
 
     const handleDelete = async () => {
         try {
-            if(userCompilazioneToDelete !== "Anonymous") {
-                if (token) {
-                    const emailResponse = await fetch('http://localhost:8080/api/questionariCompilati/inviaEmail', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            Authorization: `Bearer ${token}`,
-                        },
-                        body: JSON.stringify({
-                            compilazioneToDelete : compilazioneToDelete, 
-                            userCompilazioneToDelete : userCompilazioneToDelete
-                        }),
-                    });
-        
-                    if (!emailResponse.ok) {
-                        throw new Error("Errore durante l'invio dell'email");
-                    }
-        
-                    alert("l'utente sarà notificato via email");
-                }
+            if (userCompilazioneToDelete !== "Anonymous") {
+                await inviaEmailNotifica(
+                    compilazioneToDelete, 
+                    userCompilazioneToDelete
+                );
+                alert("L'utente sarà notificato via email");
             } else {
                 alert("La compilazione da parte di Anonymous è stata eliminata correttamente");
             }
 
-            const deleteResponse = await fetch(
-                `http://localhost:8080/api/questionariCompilati/deleteQuestionarioCompilato/${compilazioneToDelete}`,
-                {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            );
-    
-            if (!deleteResponse.ok) {
-                throw new Error('Errore nella cancellazione del questionario');
-            }
-
+            await deleteQuestionarioCompilato(compilazioneToDelete);
+            
             setCompilazioni(compilazioni.filter((q) => q.idCompilazione !== compilazioneToDelete));
-
             closeDeleteModal();
-
         } catch (error) {
             console.error('Errore:', error);
+            alert("Si è verificato un errore durante l'eliminazione della compilazione");
         }
     };
 

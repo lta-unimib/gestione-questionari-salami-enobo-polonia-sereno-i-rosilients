@@ -1,59 +1,69 @@
 import { ArrowLongLeftIcon } from '@heroicons/react/24/solid';
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import {getQuestionarioDetails, getQuestionarioDomande} from '../../services/questionarioServices';
 
 const VisualizzaQuestionario = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  console.log('ID del questionario:', id);
   const [questionario, setQuestionario] = useState(null);
   const [domande, setDomande] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
 
   useEffect(() => {
-    // Fetch dettagli questionario (titolo e creatore)
-    fetch(`http://localhost:8080/api/questionari/${id}/view`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-      .then((res) => {
-        console.log("Response:", res); // Log della risposta
-        if (!res.ok) {
-          throw new Error(`Errore HTTP: ${res.status}`);
-        }
-        return res.json();
-      })
-      .then((data) => {
-        console.log("Data:", data); // Log dei dati
-        setQuestionario(data);
-      })
-      .catch((err) => console.error('Errore nel recupero del questionario:', err));
-  
-    // Fetch domande del questionario
-    fetch(`http://localhost:8080/api/questionari/${id}/domande`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-      .then((res) => {
-        console.log("Response:", res); // Log della risposta
-        if (!res.ok) {
-          throw new Error(`Errore HTTP: ${res.status}`);
-        }
-        return res.json();
-      })
-      .then((data) => {
-        console.log("Domande:", data); // Log delle domande
-        setDomande(data);
-      })
-      .catch((err) => console.error('Errore nel recupero delle domande:', err));
+    const fetchQuestionarioData = async () => {
+      try {
+        setLoading(true);
+        
+        // Fetch dettagli questionario e domande in parallelo
+        const [questionarioData, domandeData] = await Promise.all([
+          getQuestionarioDetails(id),
+          getQuestionarioDomande(id)
+        ]);
+        
+        setQuestionario(questionarioData);
+        setDomande(domandeData);
+        setError(null);
+      } catch (error) {
+        console.error('Errore nel caricamento dei dati:', error);
+        setError('Si è verificato un errore nel caricamento del questionario');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchQuestionarioData();
   }, [id]);
+
+  if (loading) {
+    return (
+      <div className="max-w-3xl mx-auto mt-8 p-6 bg-white shadow-lg rounded-lg">
+        <p className="text-gray-500">Caricamento in corso...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="max-w-3xl mx-auto mt-8 p-6 bg-white shadow-lg rounded-lg">
+        <div className="flex justify-between mb-6">
+          <button
+            onClick={() => navigate(-1)}
+            className="flex justify-around gap-1 bg-gray-300 text-gray-800 py-2 px-4 rounded-lg hover:bg-gray-400 transition-all w-40"
+          >
+            <ArrowLongLeftIcon className="h-5 w-5 my-auto" />
+            <span className="my-auto text-sm">Torna Indietro</span>
+          </button>
+        </div>
+        <p className="text-red-500">{error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-3xl mx-auto mt-8 p-6 bg-white shadow-lg rounded-lg">
-      {/* Sposta il div dei pulsanti qui sopra */}
       <div className="flex justify-between mb-6">
         <button
           onClick={() => navigate(-1)}
@@ -72,7 +82,7 @@ const VisualizzaQuestionario = () => {
         )}
       </div>
 
-      {questionario ? (
+      {questionario && (
         <>
           <h1 className="text-3xl font-bold text-personal-purple">{questionario.nome}</h1>
           <p className="text-gray-600 mt-2">
@@ -84,13 +94,10 @@ const VisualizzaQuestionario = () => {
             <ul className="mt-4 space-y-4">
               {domande.map((domanda) => (
                 <li key={domanda.idDomanda} className="border p-4 rounded-lg shadow-md bg-gray-100">
-                  {/* Argomento non in grassetto */}
                   <h3 className="text-md font text-gray-700"> Argomento: {domanda.argomento}</h3>
   
-                  {/* Testo della domanda in grassetto */}
                   <p className="text-xl text-gray-900 mt-2 ">📌 {domanda.testoDomanda}</p>
   
-                  {/* Visualizzazione dell'immagine, se presente */}
                   {domanda.imagePath && (
                     <div className="mt-4">
                       <img
@@ -101,7 +108,6 @@ const VisualizzaQuestionario = () => {
                     </div>
                   )}
   
-                  {/* Visualizzazione delle opzioni */}
                   {domanda.opzioni && domanda.opzioni.length > 0 ? (
                     <div className="mt-4">
                       <h4 className="text-lg font text-gray-700">Opzioni:</h4>
@@ -121,12 +127,9 @@ const VisualizzaQuestionario = () => {
             <p className="text-gray-500 mt-4">Nessuna domanda trovata.</p>
           )}
         </>
-      ) : (
-        <p className="text-gray-500">Caricamento in corso...</p>
       )}
     </div>
   );
-  
 };
 
 export default VisualizzaQuestionario;

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
+import {getAllDomande, creaQuestionario} from '../../services/questionarioServices';
+
 const CreaQuestionario = ({ user, setUpdateQuestionari }) => {
   const [isCreatingQuestionario, setIsCreatingQuestionario] = useState(false);
   const [questionarioNome, setQuestionarioNome] = useState('');
@@ -7,16 +9,21 @@ const CreaQuestionario = ({ user, setUpdateQuestionari }) => {
   const [domandeSelezionate, setDomandeSelezionate] = useState([]);
   const [userEmail, setUserEmail] = useState(localStorage.getItem("userEmail"));
 
+
   useEffect(() => {
-    fetch(`http://localhost:8080/api/domande/tutteLeDomande`, {
-      headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
-    })
-      .then((res) => res.json())
-      .then((data) => setDomande(data))
-      .catch((error) => console.error("Errore nel recupero domande:", error));
+    const fetchDomande = async () => {
+      try {
+        const data = await getAllDomande();
+        setDomande(data);
+      } catch (error) {
+        console.error("Errore nel recupero domande:", error);
+      }
+    };
+
+    fetchDomande();
   }, []);
 
-  const handleCreaQuestionario = () => {
+  const handleCreaQuestionario = async () => {
     if (!questionarioNome || domandeSelezionate.length === 0) {
       alert('Compila tutti i campi e seleziona almeno una domanda.');
       return;
@@ -28,35 +35,17 @@ const CreaQuestionario = ({ user, setUpdateQuestionari }) => {
       idDomande: domandeSelezionate.map(Number),
     };
 
-    fetch('http://localhost:8080/api/questionari/creaQuestionario', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem("jwt")}`,
-      },
-      body: JSON.stringify(questionarioData),
-    })
-      .then(async (response) => {
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(`Errore nella creazione del questionario: ${errorText || response.status}`);
-        }
-
-        const text = await response.text();
-        if (!text) return {};
-        return JSON.parse(text);
-      })
-      .then(() => {
-        alert('Questionario creato con successo!');
-        setQuestionarioNome('');
-        setDomandeSelezionate([]);
-        setIsCreatingQuestionario(false);
-        setUpdateQuestionari(true);
-      })
-      .catch(error => {
-        console.error('Errore:', error);
-        alert('Si è verificato un errore durante la creazione del questionario.');
-      });
+    try {
+      await creaQuestionario(questionarioData);
+      
+      alert('Questionario creato con successo!');
+      setQuestionarioNome('');
+      setDomandeSelezionate([]);
+      setIsCreatingQuestionario(false);
+      setUpdateQuestionari(true);
+    } catch (error) {
+      alert('Si è verificato un errore durante la creazione del questionario.');
+    }
   };
 
   return (

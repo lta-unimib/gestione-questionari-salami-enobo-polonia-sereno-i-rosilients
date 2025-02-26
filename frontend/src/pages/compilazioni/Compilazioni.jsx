@@ -4,13 +4,14 @@ import { useNavigate } from 'react-router-dom';
 import { EyeIcon } from '@heroicons/react/24/solid';
 import { TrashIcon } from '@heroicons/react/20/solid';
 
+import {getCompilazioniByFiltro, checkIsDefinitivo, deleteQuestionarioCompilato} from '../../services/compilazioniService';
+
 const Compilazioni = ({ user }) => {
   const [compilazioni, setCompilazioni] = useState([]);
   const [filtro, setFiltro] = useState("Tutti");
   const [searchTerm, setSearchTerm] = useState("");
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [compilazioneToDelete, setCompilazioneToDelete] = useState(null);
-  const token = localStorage.getItem("jwt");
   const userEmail = localStorage.getItem("userEmail");
 
   const navigate = useNavigate();
@@ -18,43 +19,18 @@ const Compilazioni = ({ user }) => {
   ReactModal.setAppElement('#root');
 
   useEffect(() => {
-
     if (!userEmail) {
       console.warn("userEmail non disponibile, il fetch non verrà eseguito.");
       return;
     }
 
-    let url = "";
-    let stato = "";
-
-    if (filtro === "Definitivi") {
-      url = `http://localhost:8080/api/questionariCompilati/definitivi/utente/${userEmail}`;
-    } else if (filtro === "In Sospeso") {
-      url = `http://localhost:8080/api/questionariCompilati/inSospeso/utente/${userEmail}`;
-    } else if (filtro === "Tutti") {
-      url = `http://localhost:8080/api/questionariCompilati/all/utente/${userEmail}`;
-    }
-
-    fetch(url, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        }
-      })
-      .then((response) => {
-        if (response.status === 204) {
-            return [];
-        } else if (!response.ok) {
-            throw new Error('Errore nel recupero delle compilazioni');
-        }
-        return response.json();
-      })
-      .then(async (data) => {
-    
+    const fetchCompilazioni = async () => {
+      try {
+        const data = await getCompilazioniByFiltro(userEmail, filtro);
+        
         const compilazioniConStato = await Promise.all(
           data.map(async (compilazione) => {
-            const isDefinitivo = await handleIsDefinitivo(compilazione.idCompilazione);
+            const isDefinitivo = await checkIsDefinitivo(compilazione.idCompilazione);
             return {
               ...compilazione,
               stato: isDefinitivo ? "DEFINITIVO" : "IN SOSPESO",
@@ -77,10 +53,12 @@ const Compilazioni = ({ user }) => {
         );
     
         setCompilazioni(sortedCompilazioni);
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error("Errore durante il fetch:", error);
-      });
+      }
+    };
+
+    fetchCompilazioni();
   }, [userEmail, filtro]);
 
   const compilazioniFiltrate = compilazioni.filter(c =>
@@ -95,31 +73,6 @@ const Compilazioni = ({ user }) => {
     navigate(`/questionari/visualizzaQuestionarioCompilato/${idCompilazione}/${idQuestionario}`);
   };
 
-  const handleIsDefinitivo = async (idCompilazione) => {
-    try {
-      const response = await fetch(
-        `http://localhost:8080/api/questionariCompilati/checkIsDefinitivo/${idCompilazione}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          }
-        }
-      );
-  
-      if (!response.ok) {
-        throw new Error('Errore nel verificare lo stato della compilazione');
-      }
-  
-      const result = await response.json();
-      return result;
-    } catch (error) {
-      console.error("Errore durante la verifica dello stato:", error);
-      return false;
-    }
-  };
-
   const openDeleteModal = (idCompilazione) => {
     setIsDeleteModalOpen(true);
     setCompilazioneToDelete(idCompilazione);
@@ -132,30 +85,13 @@ const Compilazioni = ({ user }) => {
 
   const handleDelete = async () => {
     try {
-
-      const deleteResponse = await fetch(
-          `http://localhost:8080/api/questionariCompilati/deleteQuestionarioCompilato/${compilazioneToDelete}`,
-          {
-              method: 'DELETE',
-              headers: {
-                  'Content-Type': 'application/json',
-                  Authorization: `Bearer ${token}`,
-              },
-          }
-      );
-
-      if (!deleteResponse.ok) {
-          throw new Error('Errore nella cancellazione del questionario');
-      }
-
+      await deleteQuestionarioCompilato(compilazioneToDelete);
       setCompilazioni(compilazioni.filter((q) => q.idCompilazione !== compilazioneToDelete));
-
       closeDeleteModal();
-
     } catch (error) {
-        console.error('Errore:', error);
+      console.error('Errore:', error);
     }
-};
+  };
 
   return (
     <div className='mx-24'>

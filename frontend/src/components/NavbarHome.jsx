@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import Modal from './Modal'; 
+import Modal from '../pages/home/Modal'; 
 
 const NavbarHome = ({ setUser }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);

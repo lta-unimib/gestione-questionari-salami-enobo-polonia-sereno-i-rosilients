@@ -2,65 +2,33 @@ import { ArrowLongLeftIcon } from '@heroicons/react/24/solid';
 import { QuestionMarkCircleIcon } from '@heroicons/react/24/outline';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { 
+  fetchDomandeQuestionario, 
+  fetchQuestionarioCompilato, 
+  fetchRisposteCompilazione 
+} from '../../services/compilazioniService';
 
 const VisualizzaQuestionarioCompilato = () => {
   const { idCompilazione, idQuestionario } = useParams();
   const navigate = useNavigate();
   const [domande, setDomande] = useState([]);
-  const [questionarioCompilato, setQuestionarioCompilato] = useState([]);
+  const [questionarioCompilato, setQuestionarioCompilato] = useState(null);
   const [risposte, setRisposte] = useState([]);
   const userEmail = localStorage.getItem("userEmail");
 
   useEffect(() => {
-    // Fetch per ottenere le domande
-    const fetchDomande = fetch(`http://localhost:8080/api/questionari/${idQuestionario}/domande`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error('Errore nel recupero delle domande');
-        }
-        return res.json();
-      });
-
-    // Fetch per ottenere la compilazione
-    const fetchCompilazione = fetch(`http://localhost:8080/api/questionariCompilati/${idCompilazione}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error('Errore nel recupero della compilazione');
-        }
-        return res.json();
-      });
-  
-    // Fetch per ottenere le risposte
-    const fetchRisposte = fetch(`http://localhost:8080/api/questionariCompilati/${idCompilazione}/risposte`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error('Errore nel recupero delle risposte');
-        }
-        return res.json();
-      });
-
-    Promise.all([fetchDomande, fetchCompilazione, fetchRisposte])
-      .then(([dataDomande,  dataCompilazione, dataRisposte]) => {
+    const fetchData = async () => {
+      try {
+        // Fetch all data using the service functions
+        const [dataDomande, dataCompilazione, dataRisposte] = await Promise.all([
+          fetchDomandeQuestionario(idQuestionario),
+          fetchQuestionarioCompilato(idCompilazione),
+          fetchRisposteCompilazione(idCompilazione)
+        ]);
 
         setQuestionarioCompilato(dataCompilazione);
 
         const risposteConDomande = dataRisposte.map((risposta) => {
-
           const domandaCorrispondente = dataDomande.find(
             (domanda) => domanda.idDomanda === risposta.idDomanda
           );
@@ -78,13 +46,14 @@ const VisualizzaQuestionarioCompilato = () => {
         });
 
         setRisposte(risposteConDomande);
-        setDomande(dataDomande.domande);
-      })
-      .catch((err) => {
-        console.error('Errore durante il recupero dei dati:', err);
-      });
+        setDomande(dataDomande.domande || dataDomande);
+      } catch (error) {
+        console.error('Errore durante il recupero dei dati:', error);
+      }
+    };
+
+    fetchData();
   }, [idCompilazione, idQuestionario]);
-  
 
   return (
     <div className="max-w-3xl mx-auto mt-8 p-6 bg-white shadow-lg rounded-lg border-t-4 border-personal-purple">
@@ -115,7 +84,6 @@ const VisualizzaQuestionarioCompilato = () => {
                     <p className="text-xl text-gray-900 ml-2">{risposta.testoDomanda}</p>
                   </div>
 
-  
                   {/* Immagine della domanda (se presente) */}
                   {risposta.imagePath && (
                     <div className="mt-4">
