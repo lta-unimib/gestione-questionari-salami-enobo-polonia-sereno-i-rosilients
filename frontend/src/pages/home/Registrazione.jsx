@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { register } from '../../services/authServices';
 
 const Registration = ({ toggleModal, onRegistrationSuccess }) => {
   const [email, setEmail] = useState('');
@@ -6,40 +7,30 @@ const Registration = ({ toggleModal, onRegistrationSuccess }) => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleRegister = () => {
-    if (password !== confirmPassword) {
-      alert('Le password non corrispondono');
-      return;
-    }
+  
+const handleRegister = async () => {
+  if (password !== confirmPassword) {
+    alert('Le password non corrispondono');
+    return;
+  }
 
-    setLoading(true);
-    
-    const newUser = { email, password };
-    
-    fetch('http://localhost:8080/auth/signup', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(newUser),
-    })
-      .then(async (response) => {
-        if (!response.ok) {
-          const errorData = await response.json();
-          if (response.status === 400 && errorData.message === "Email già registrata") {
-            throw new Error("Email già registrata. Prova ad accedere o usa un'altra email.");
-          }
-          throw new Error(errorData.message || 'Errore nella registrazione');
-        }
-        alert('Registrazione riuscita! Controlla la tua email per la verifica.');
-        onRegistrationSuccess(email);
-      })
-      .catch((error) => {
-        console.error('Errore:', error);
-        alert(error.message);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  };
+  setLoading(true);
+
+  const newUser = { email, password };
+
+  try {
+    // Usa il metodo register di AuthServices
+    const response = await register(newUser.email, newUser.password);
+
+    alert('Registrazione riuscita! Controlla la tua email per la verifica.');
+    onRegistrationSuccess(email);
+  } catch (error) {
+    console.error('Errore:', error);
+    alert(error.message);
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="bg-white p-8 rounded-lg shadow-lg w-96 border border-purple-100">

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { verify, resendVerificationCode } from "../../services/authServices";
 
 const Verify = ({ toggleModal, email }) => { 
   const [verificationCode, setVerificationCode] = useState("");
@@ -19,63 +20,36 @@ const Verify = ({ toggleModal, email }) => {
   const handleVerify = async (event) => {
     event.preventDefault();
     setLoading(true);
-
+  
     console.log("Verifica in corso...", { email, verificationCode });
-
-    const user = { email, verificationCode };
-
+  
     try {
-      const response = await fetch("http://localhost:8080/auth/verify", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify(user),
-      });
-
-      const data = await response.json();
-
-      if (response.status === 401) {
-        alert(data.message || "Credenziali errate");
-        return;
-      }
-
-      if (response.ok) {
-        alert(data.message);
-        toggleModal(); // Chiudi il modal dopo la verifica
-      }
+      const response = await verify(email, verificationCode);
+  
+      alert(response.message || "Verifica completata con successo!");
+      toggleModal();
     } catch (error) {
       console.error("Errore:", error);
-      alert("Si è verificato un errore durante la verifica.");
+      alert(error.message || "Si è verificato un errore durante la verifica.");
     } finally {
       setLoading(false);
     }
   };
-
   const handleResendCode = async () => {
     if (!canResend) return;
-
+  
     setResending(true);
     console.log("Invio nuovo codice a:", email);
-    
+  
     try {
-      const response = await fetch(`http://localhost:8080/auth/resend?email=${encodeURIComponent(email)}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-      });
+      const response = await resendVerificationCode(email);
   
-      const data = await response.text(); // L'API risponde con un messaggio di testo
-  
-      if (!response.ok) {
-        alert(`Errore: ${data}`);
-        return;
-      }
-  
-      alert(data); // Mostra "Verification code sent"
+      alert(response || "Codice di verifica inviato!");
       setCountdown(30);
       setCanResend(false);
     } catch (error) {
       console.error("Errore nell'invio del codice:", error);
-      alert("Si è verificato un errore, riprova più tardi.");
+      alert(error.message || "Si è verificato un errore, riprova più tardi.");
     } finally {
       setResending(false);
     }

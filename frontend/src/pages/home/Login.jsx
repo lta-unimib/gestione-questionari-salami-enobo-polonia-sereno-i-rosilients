@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { login } from '../../services/authServices';
 
 const Login = ({ toggleModal, setUser }) => {
   const [email, setEmail] = useState('');
@@ -8,55 +9,19 @@ const Login = ({ toggleModal, setUser }) => {
   const handleLogin = async (event) => {
     event.preventDefault();
     setLoading(true);
-    
+  
     const user = {
       email,
       password,
     };
   
     try {
-      const response = await fetch('http://localhost:8080/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(user),
-      });
+      // Usa il metodo login di AuthServices
+      const response = await login(user.email, user.password);
   
-      let data;
-      if (response.ok) {
-        try {
-          data = await response.json();
-        } catch (error) {
-          data = await response.text();
-        }
-      } else {
-        data = await response.text();
-      }
-
-      if (response.status === 404) {
-        alert("Email non esistente");
-        return;
-      }
-
-      if (response.status === 500) {
-        alert("Email o password errate");
-        return;
-      }
-  
-      if (response.status === 401) {
-        alert(data || 'Credenziali errate');
-        return;
-      }
-
-      if (response.status === 403) {
-        alert("Account non verificato. Controlla la tua email.");
-        return;
-      }
-  
-      if (response.ok) {
-        alert(data.message || 'Login avvenuto con successo');
-        localStorage.setItem('jwt', data.token); 
+      if (response) {
+        alert(response.message || 'Login avvenuto con successo');
+        localStorage.setItem('jwt', response.token); 
         localStorage.setItem("userEmail", user.email);
   
         if (setUser) {
@@ -64,7 +29,7 @@ const Login = ({ toggleModal, setUser }) => {
         } else {
           console.error("Errore: setUser non è definito!");
         }
-        toggleModal(); 
+        toggleModal();
       }
     } catch (error) {
       console.error('Errore:', error);
