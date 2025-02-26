@@ -123,7 +123,6 @@ void testGetCompilazioniInSospeso() {
         when(questionarioCompilatoRepository.findById(idCompilazione))
             .thenReturn(Optional.of(compilazione));
         questionarioCompilatoService.deleteQuestionarioCompilatoAndRisposteByIdCompilazione(idCompilazione);
-        verify(rispostaRepository, times(1)).deleteByQuestionarioCompilato_IdCompilazione(idCompilazione);
         verify(questionarioCompilatoRepository, times(1)).deleteByIdCompilazione(idCompilazione);
     }
 

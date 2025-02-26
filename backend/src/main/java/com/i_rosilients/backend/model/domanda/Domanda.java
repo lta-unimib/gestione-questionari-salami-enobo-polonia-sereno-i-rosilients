@@ -41,9 +41,7 @@ public class Domanda {
 
     @Column(name = "immagine_path")
     private String immaginePath;
-
-
-    
+ 
     @OneToMany(mappedBy = "domanda", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Opzione> opzioni = new ArrayList<>();
     

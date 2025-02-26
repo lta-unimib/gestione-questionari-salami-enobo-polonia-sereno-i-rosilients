@@ -2,7 +2,6 @@ package com.i_rosilients.backend.controller;
 
 import com.i_rosilients.backend.dto.UtenteDTO;
 import com.i_rosilients.backend.dto.VerificaUtenteDTO;
-import com.i_rosilients.backend.model.utente.Utente;
 import com.i_rosilients.backend.services.session.IGestoreSessione;
 import com.i_rosilients.backend.services.session.response.GenericResponse;
 import com.i_rosilients.backend.services.session.response.LoginResponse;
@@ -29,8 +28,8 @@ public class SessioneController {
     @PostMapping("/signup")
     public ResponseEntity<?> register(@RequestBody UtenteDTO registerUtenteDto) {
         try {
-            Utente registeredUtente = gestoreSessione.signup(registerUtenteDto);
-            return ResponseEntity.ok(registeredUtente);
+            
+            return ResponseEntity.ok(gestoreSessione.signup(registerUtenteDto));
         } catch (ResponseStatusException e) {  
             return ResponseEntity.status(e.getStatusCode()).body("{\"message\": \"" + e.getReason() + "\"}");
         } catch (IllegalArgumentException e) {
@@ -73,7 +72,7 @@ public class SessioneController {
     @PostMapping("/verify")
     public ResponseEntity<?> verifyUtente(@RequestBody VerificaUtenteDTO verifyUtenteDto) {
         try {
-         gestoreSessione.verifyUtente(verifyUtenteDto);
+            gestoreSessione.verifyUtente(verifyUtenteDto);
             GenericResponse responseMessage = new GenericResponse("Account verified successfully");
             return ResponseEntity.ok(responseMessage);
         } catch (RuntimeException e) {

@@ -34,7 +34,7 @@ import static org.mockito.Mockito.*;
 
     @BeforeEach
      void setUp() {
-        MockitoAnnotations.openMocks(this); // Inizializza i mock
+        MockitoAnnotations.openMocks(this);
         applicationConfiguration = new ApplicationConfiguration(utenteRepository);
     }
 

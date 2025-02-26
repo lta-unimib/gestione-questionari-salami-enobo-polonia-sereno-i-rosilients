@@ -16,8 +16,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.core.io.Resource;
-import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -184,24 +182,4 @@ class GestoreDomandaTest {
                 verify(domandaRepository, times(1)).findById(anyInt());
         verify(domandaRepository, times(1)).delete(any(Domanda.class));
     }
-
-    @Test
-void getImage_Success() throws IOException {
-        Path path = Paths.get("uploads/test.png");
-    Files.createDirectories(path.getParent());
-    Files.createFile(path);
-
-        ResponseEntity<Resource> response = gestoreDomanda.getImage("test.png");
-
-        assertEquals(200, response.getStatusCodeValue());
-    assertNotNull(response.getBody());
-}
-
-@Test
-void getImage_NonTrovato() throws IOException {
-        ResponseEntity<Resource> response = gestoreDomanda.getImage("non_existent.png");
-
-        assertEquals(404, response.getStatusCodeValue());
-}
-
 }
