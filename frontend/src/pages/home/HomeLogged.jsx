@@ -93,7 +93,7 @@ const HomeLogged = () => {
               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-personal-purple"></div>
             </div>
           ) : results.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-h-96 overflow-y-auto">
               {[...results].reverse().map((questionario) => {
                 const nomeCreatore = questionario.emailUtente ? questionario.emailUtente.split("@")[0] : "Sconosciuto";
                 
