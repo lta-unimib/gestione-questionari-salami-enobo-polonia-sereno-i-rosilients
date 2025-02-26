@@ -2,7 +2,6 @@ package com.i_rosilients.backend.services.session;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import com.i_rosilients.backend.dto.UtenteDTO;
 import com.i_rosilients.backend.dto.VerificaUtenteDTO;
@@ -91,7 +90,7 @@ public class GestoreSessione implements IGestoreSessione{
     }
 
     @Override
-    public void verifyUtente(@RequestBody VerificaUtenteDTO verifyUtenteDto) {authenticationService.verifyUtente(verifyUtenteDto);}
+    public void verifyUtente(VerificaUtenteDTO verifyUtenteDto) {authenticationService.verifyUtente(verifyUtenteDto);}
 
     @Override
     public void resendVerificationCode(String email) {authenticationService.resendVerificationCode(email);}

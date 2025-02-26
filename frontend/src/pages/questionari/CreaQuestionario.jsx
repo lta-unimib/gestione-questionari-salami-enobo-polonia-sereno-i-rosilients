@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-import {getAllDomande, creaQuestionario} from '../../services/questionarioServices';
+import {getAllDomande, creaQuestionario} from '../../services/questionarioService';
 
 const CreaQuestionario = ({ user, setUpdateQuestionari }) => {
   const [isCreatingQuestionario, setIsCreatingQuestionario] = useState(false);

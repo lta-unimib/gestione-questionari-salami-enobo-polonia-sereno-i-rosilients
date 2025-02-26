@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { TrashIcon, PencilSquareIcon } from '@heroicons/react/24/solid';
 import ReactModal from 'react-modal';
 import CreaQuestionario from './CreaQuestionario';
-import{getQuestionariByEmail, getTutteLeDomande, getDomandeByQuestionario, updateQuestionario, deleteQuestionario} from '../../services/questionarioServices';
+import{getQuestionariByEmail, getTutteLeDomande, getDomandeByQuestionario, updateQuestionario, deleteQuestionario} from '../../services/questionarioService';
 
 
 const Questionari = ({ user }) => {

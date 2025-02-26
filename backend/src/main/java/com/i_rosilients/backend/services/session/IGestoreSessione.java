@@ -1,8 +1,5 @@
 package com.i_rosilients.backend.services.session;
 
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-
 import com.i_rosilients.backend.dto.UtenteDTO;
 import com.i_rosilients.backend.dto.VerificaUtenteDTO;
 import com.i_rosilients.backend.model.utente.Utente;
@@ -21,9 +18,9 @@ public interface IGestoreSessione {
 
     public String logout(HttpServletResponse response);
 
-    public void verifyUtente(@RequestBody VerificaUtenteDTO verifyUtenteDto);
+    public void verifyUtente(VerificaUtenteDTO verifyUtenteDto);
 
-    public void resendVerificationCode(@RequestParam String email);
+    public void resendVerificationCode(String email);
 
     public String deleteProfile(HttpServletRequest request);
     

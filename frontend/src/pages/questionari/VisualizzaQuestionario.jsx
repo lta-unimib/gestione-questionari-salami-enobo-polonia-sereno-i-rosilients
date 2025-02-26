@@ -1,7 +1,7 @@
 import { ArrowLongLeftIcon } from '@heroicons/react/24/solid';
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import {getQuestionarioDetails, getQuestionarioDomande} from '../../services/questionarioServices';
+import {getQuestionarioDetails, getQuestionarioDomande} from '../../services/questionarioService';
 
 const VisualizzaQuestionario = () => {
   const { id } = useParams();

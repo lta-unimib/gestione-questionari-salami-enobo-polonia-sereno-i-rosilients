@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { register } from '../../services/authServices';
+import { register } from '../../services/homeService';
 
 const Registration = ({ toggleModal, onRegistrationSuccess }) => {
   const [email, setEmail] = useState('');

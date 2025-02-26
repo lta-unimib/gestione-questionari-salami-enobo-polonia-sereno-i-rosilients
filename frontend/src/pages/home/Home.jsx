@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { EyeIcon, MagnifyingGlassIcon, DocumentTextIcon, TrashIcon } from '@heroicons/react/24/solid';
 import { useNavigate } from 'react-router-dom';
-import { fetchAllQuestionari, checkCodeExists, checkIsDefinitivo, deleteCompilazione } from '../../services/homeServices';
+import { fetchAllQuestionari, checkCodeExists, checkIsDefinitivo, deleteCompilazione } from '../../services/homeService';
 
 const Home = () => {
   const [query, setQuery] = useState("");

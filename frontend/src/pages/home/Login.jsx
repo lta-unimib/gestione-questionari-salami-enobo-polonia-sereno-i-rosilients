@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { login } from '../../services/authServices';
+import { login } from '../../services/homeService';
 
 const Login = ({ toggleModal, setUser }) => {
   const [email, setEmail] = useState('');

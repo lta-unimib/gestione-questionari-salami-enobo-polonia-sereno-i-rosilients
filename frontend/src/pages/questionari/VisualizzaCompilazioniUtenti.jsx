@@ -4,7 +4,7 @@ import ReactModal from 'react-modal';
 import { TrashIcon } from '@heroicons/react/20/solid';
 import { EyeIcon } from '@heroicons/react/24/solid';
 
-import {getCompilazioniUtenti, inviaEmailNotifica, deleteQuestionarioCompilato} from '../../services/questionarioServices';
+import {getCompilazioniUtenti, inviaEmailNotifica, deleteQuestionarioCompilato} from '../../services/questionarioService';
 
 const VisualizzaCompilazioniUtenti = () => {
     const { id } = useParams();

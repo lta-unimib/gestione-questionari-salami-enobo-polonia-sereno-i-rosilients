@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { verify, resendVerificationCode } from "../../services/authServices";
+import { verify, resendVerificationCode } from "../../services/homeService";
 
 const Verify = ({ toggleModal, email }) => { 
   const [verificationCode, setVerificationCode] = useState("");

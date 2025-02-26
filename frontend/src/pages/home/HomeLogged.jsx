@@ -1,6 +1,8 @@
+// HomeLogged.js
 import React, { useState, useEffect } from 'react';
 import { EyeIcon, MagnifyingGlassIcon, DocumentTextIcon } from '@heroicons/react/24/solid';
 import { useNavigate } from 'react-router-dom';
+import { fetchAllQuestionari } from '../../services/homeService'; // Importa le funzioni API
 
 const HomeLogged = () => {
   const [query, setQuery] = useState("");
@@ -9,46 +11,35 @@ const HomeLogged = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
 
+  // Carica tutti i questionari quando il componente si monta
   useEffect(() => {
-    // Carica tutti i questionari quando il componente si monta
-    const fetchAllQuestionari = async () => {
+    const loadQuestionari = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch("http://localhost:8080/api/questionari/tuttiIQuestionari", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json"
-          }
-        });
-
-        if (!response.ok) {
-          throw new Error("Errore nel recupero dei questionari");
-        }
-
-        const data = await response.json();
-        setAllQuestionari(data); // Salva tutti i questionari
-        setResults(data); // Inizializza i risultati con tutti i questionari
+        const data = await fetchAllQuestionari(); // Usa la funzione API
+        setAllQuestionari(data);
+        setResults(data);
       } catch (error) {
-        console.error("Errore nella fetch:", error);
+        console.error("Errore nel caricamento dei questionari:", error);
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchAllQuestionari();
-  }, []); // La fetch viene eseguita solo la prima volta
+    loadQuestionari();
+  }, []);
 
+  // Filtra i questionari in base alla query
   useEffect(() => {
     if (!query.trim()) {
-      setResults(allQuestionari); 
+      setResults(allQuestionari);
     } else {
-      // Filtro i questionari in base al nome
       const filteredResults = allQuestionari.filter(questionario =>
         questionario.nome.toLowerCase().includes(query.toLowerCase())
       );
       setResults(filteredResults);
     }
-  }, [query, allQuestionari]); // Effettua il filtro mentre scrivi nella barra
+  }, [query, allQuestionari]);
 
   const handleKeyDown = (event) => {
     if (event.key === 'Enter') {
