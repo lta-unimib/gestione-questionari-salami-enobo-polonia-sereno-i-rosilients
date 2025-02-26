@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface UtenteRepository extends CrudRepository<Utente, String> {
     Optional<Utente> findByEmail(String email);
     Optional<Utente> findByVerificationCode(String verificationCode);
+    void deleteByEmail(String email);
 }

@@ -79,7 +79,6 @@ public class GestoreQuestionarioCompilato implements IGestoreQuestionarioCompila
             System.out.println("❌ Nessun questionario compilato trovato per ID: " + idCompilazione);
             return;
         }
-        rispostaRepository.deleteByQuestionarioCompilato_IdCompilazione(idCompilazione);
         questionarioCompilatoRepository.deleteByIdCompilazione(idCompilazione);
     }
       

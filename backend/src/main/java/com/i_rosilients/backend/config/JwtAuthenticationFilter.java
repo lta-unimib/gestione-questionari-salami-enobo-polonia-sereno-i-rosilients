@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
-import com.i_rosilients.backend.services.JwtService;
+import com.i_rosilients.backend.services.session.JwtService;
 
 import java.io.IOException;
 

@@ -1,4 +1,4 @@
-package com.i_rosilients.backend.services.authentication;
+package com.i_rosilients.backend.services.session;
 
 import jakarta.mail.MessagingException;
 

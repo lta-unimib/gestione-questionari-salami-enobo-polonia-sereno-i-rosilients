@@ -1,4 +1,4 @@
-package com.i_rosilients.backend.services.authentication.response;
+package com.i_rosilients.backend.services.session.response;
 
 public class GenericResponse {
     private final String message;

@@ -11,7 +11,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.i_rosilients.backend.services.JwtService;
+import com.i_rosilients.backend.services.session.JwtService;
 
 import java.util.Date;
 import java.util.HashMap;

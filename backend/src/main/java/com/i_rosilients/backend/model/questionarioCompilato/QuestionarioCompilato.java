@@ -39,7 +39,7 @@ public class QuestionarioCompilato {
     @Column(nullable = false)
     private LocalDateTime dataCompilazione;
 
-    @Column(nullable = false) // Nuovo campo per lo stato del questionario
+    @Column(nullable = false)
     private boolean definitivo = false;
     
     @OneToMany(mappedBy = "questionarioCompilato", cascade = CascadeType.REMOVE, orphanRemoval = true)

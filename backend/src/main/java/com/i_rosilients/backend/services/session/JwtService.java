@@ -1,4 +1,4 @@
-package com.i_rosilients.backend.services;
+package com.i_rosilients.backend.services.session;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

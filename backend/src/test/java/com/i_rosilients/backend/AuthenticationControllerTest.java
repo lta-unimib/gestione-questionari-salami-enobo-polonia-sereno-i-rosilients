@@ -1,11 +1,11 @@
 package com.i_rosilients.backend;
 
-import com.i_rosilients.backend.controller.AuthenticationController;
+import com.i_rosilients.backend.controller.SessioneController;
 import com.i_rosilients.backend.dto.UtenteDTO;
 import com.i_rosilients.backend.dto.VerificaUtenteDTO;
 import com.i_rosilients.backend.model.utente.Utente;
-import com.i_rosilients.backend.services.JwtService;
-import com.i_rosilients.backend.services.authentication.AuthenticationService;
+import com.i_rosilients.backend.services.session.AuthenticationService;
+import com.i_rosilients.backend.services.session.JwtService;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -42,7 +42,7 @@ import com.i_rosilients.backend.model.utente.GestoreUtente;
     private GestoreUtente gestoreUtente;
 
     @InjectMocks
-    private AuthenticationController authenticationController;
+    private SessioneController authenticationController;
 
     private Utente utente;
     private UtenteDTO utenteDTO;

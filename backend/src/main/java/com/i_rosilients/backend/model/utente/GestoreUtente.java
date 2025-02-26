@@ -29,6 +29,6 @@ public class GestoreUtente implements IGestoreUtente {
     @Transactional
     @Override
     public void deleteProfile(Utente utente) {
-        userRepository.delete(utente);
+        userRepository.deleteByEmail(utente.getEmail());
     }
 }

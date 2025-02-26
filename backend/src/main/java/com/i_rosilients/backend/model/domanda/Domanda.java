@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.i_rosilients.backend.model.questionario.DomandaQuestionario;
+import com.i_rosilients.backend.model.risposta.Risposta;
 import com.i_rosilients.backend.model.utente.Utente;
 
 import jakarta.persistence.CascadeType;
@@ -48,6 +49,9 @@ public class Domanda {
     
     @OneToMany(mappedBy = "domanda", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<DomandaQuestionario> domandeQuestionario = new ArrayList<>();
+
+    @OneToMany(mappedBy = "domanda", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Risposta> risposte = new ArrayList<>();
 
     public Domanda(Utente utente, String argomento, String testoDomanda, String immaginePath) {
         this.utente = utente;
