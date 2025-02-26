@@ -81,9 +81,9 @@ const CreaQuestionario = ({ user, setUpdateQuestionari }) => {
           {/* Sezione Selezione Domande */}
           <div className="mb-4">
             <h3 className="text-lg font-semibold text-personal-purple mb-2">Seleziona le domande:</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-h-40 overflow-y-auto">
               {domande.length > 0 ? (
-                domande.map((d) => (
+                [...domande].reverse().map((d) => (
                   <label
                     key={d.idDomanda}
                     htmlFor={`domanda-${d.idDomanda}`}
