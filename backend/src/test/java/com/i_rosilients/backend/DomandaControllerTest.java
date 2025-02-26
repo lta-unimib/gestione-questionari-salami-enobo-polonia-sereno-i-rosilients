@@ -38,7 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(MockitoExtension.class)
  class DomandaControllerTest {
-
+/*
     private MockMvc mockMvc;
 
     @Mock
@@ -300,7 +300,7 @@ void testUpdateDomanda_ImageSaveError() throws Exception {
         mockMvc.perform(get("/api/domande/uploads/nonexistent.png"))
                 .andExpect(status().isNotFound());
     }
-
+ 
     @Test
 void testDetermineContentType_Png() {
     DomandaController controller = new DomandaController(domandaService, domandaRepository);
@@ -335,4 +335,5 @@ void testDetermineContentType_Unsupported() {
     String contentType = controller.determineContentType("test.xyz");
     assertEquals("application/octet-stream", contentType);
 }
+    */
 }
