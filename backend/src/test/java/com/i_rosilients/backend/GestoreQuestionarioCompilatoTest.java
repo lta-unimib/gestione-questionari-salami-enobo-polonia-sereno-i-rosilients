@@ -25,7 +25,7 @@ import com.i_rosilients.backend.services.persistence.RispostaRepository;
 
 import jakarta.mail.internet.MimeMessage;
 
- class QuestionarioCompilatoServiceTest {
+ class GestoreQuestionarioCompilatoTest {
 
     @Mock
     private QuestionarioCompilatoRepository questionarioCompilatoRepository;

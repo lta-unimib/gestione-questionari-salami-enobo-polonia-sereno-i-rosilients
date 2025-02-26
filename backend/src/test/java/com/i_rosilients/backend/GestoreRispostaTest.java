@@ -28,7 +28,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
- class RispostaServiceTest {
+ class GestoreRispostaTest {
 
     @Mock
     private RispostaRepository rispostaRepository;

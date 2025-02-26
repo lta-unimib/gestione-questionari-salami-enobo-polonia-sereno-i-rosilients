@@ -28,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.i_rosilients.backend.model.utente.GestoreUtente;
 
 @ExtendWith(MockitoExtension.class)
- class AuthenticationControllerTest {
+ class AutenticazioneControllerTest {
 
     private MockMvc mockMvc;
 
