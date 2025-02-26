@@ -3,7 +3,6 @@ import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { ArrowLongLeftIcon } from '@heroicons/react/24/solid';
 
 const CompilaQuestionario = () => {
-  console.log("questionario renderizzato");
   const { id } = useParams();
   const query = new URLSearchParams(useLocation().search);
   let idCompilazione = query.get("idCompilazione");
@@ -49,6 +48,16 @@ const CompilaQuestionario = () => {
     }
   }, [idCompilazione, id]);
 
+  
+
+  // useEffect(() => {
+  //   Object.keys(risposte).forEach((domandaId) => {
+  //     if (risposte[domandaId] === "") {
+  //       handleChange(domandaId, "");  // Forza l'aggiornamento se diventa vuoto
+  //     }
+  //   });
+  // }, [risposte]);
+
 
   const fetchQuestionario = async (idQuestionario) => {
     try {
@@ -87,9 +96,17 @@ const CompilaQuestionario = () => {
 
 
   const handleChange = (domandaId, valore) => {
-    console.log(`Risposta per domanda ${domandaId}: ${valore}`); 
+
+    // console.log(`Risposta per domanda ${domandaId}: ${valore}`); 
+
     setRisposte((prev) => {
       const updatedRisposte = { ...prev, [domandaId]: valore };
+  
+      // Se il valore è vuoto e c'era una risposta prima, aggiorna comunque lo stato
+      // if (valore === "" && prev[domandaId] !== undefined) {
+      //   return updatedRisposte;
+      // }
+  
       return updatedRisposte;
     });
   };
@@ -118,24 +135,19 @@ const CompilaQuestionario = () => {
   const handleSalvaParziale = async () => {
     const confermaInvio = window.confirm("Sei sicuro di voler fermare la compilazione? La potrai riprendere più tardi");
     if (!confermaInvio) return;
-
+  
     try {
-      const domandeRisposte = questionario.filter(
-        (domanda) => risposte.hasOwnProperty(domanda.idDomanda) && risposte[domanda.idDomanda] !== "" && risposte[domanda.idDomanda] !== null
-      );
-      if (domandeRisposte.length < 1) {
-        throw new Error('Per favore, rispondi almeno ad una domanda.');
-      }
-      
       if (!idCompilazione) {
         idCompilazione = await creaNuovaCompilazione(id);
       }
-      
-      const risposteArray = domandeRisposte.map((domanda) => ({
+  
+      const risposteArray = questionario.map((domanda) => ({
         idCompilazione: idCompilazione,
         idDomanda: domanda.idDomanda,
-        testoRisposta: risposte[domanda.idDomanda],
+        testoRisposta: risposte[domanda.idDomanda] ?? "", // Ora include risposte vuote
       }));
+  
+      console.log(risposteArray);
   
       for (const risposta of risposteArray) {
         await fetch('http://localhost:8080/api/risposte/salvaRisposta', {
@@ -144,17 +156,20 @@ const CompilaQuestionario = () => {
           body: JSON.stringify(risposta),
         });
       }
-      if(localStorage.getItem('jwt')) {
+  
+      if (localStorage.getItem('jwt')) {
         alert('Risposte salvate! Puoi riprendere in un secondo momento.');
         navigate('/');
       }
+  
       handleUtenteNonRegistrato();
-
+  
     } catch (error) {
       console.error('Errore nel salvataggio parziale:', error);
       alert('Errore nel salvataggio. Riprova più tardi.');
     }
   };
+  
 
   const handleSubmit = async () => {
     const confermaInvio = 
@@ -248,9 +263,10 @@ const CompilaQuestionario = () => {
 
 
   if (questionario.length === 0) {
-    console.log("Questionario non trovato o in fase di caricamento..."); 
+    // console.log("Questionario non trovato o in fase di caricamento..."); 
     return <p className="text-center mt-10">Caricamento...</p>;
   }
+  
 
   return (
     <div className="p-8">
@@ -311,7 +327,7 @@ const CompilaQuestionario = () => {
                   maxLength={300}
                   className="w-full p-2 border rounded-lg"
                   onChange={(e) => handleChange(domanda.idDomanda, e.target.value)}
-                  value={risposte[domanda.idDomanda] || ''}
+                  value={risposte[domanda.idDomanda] ?? ""}
                   required
                 />
               )}
@@ -337,7 +353,7 @@ const CompilaQuestionario = () => {
   
           <button
             type="submit"
-            className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600"
+            className="bg-personal-purple text-white py-2 px-4 rounded-lg hover:bg-personal-purple-dark1"
             disabled={isSubmitting}
           >
             {isSubmitting ? (

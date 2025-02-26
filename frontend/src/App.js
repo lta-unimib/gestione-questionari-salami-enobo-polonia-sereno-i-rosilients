@@ -6,7 +6,7 @@ import HomeLogged from './pages/home/HomeLogged';
 import NavbarHome from './components/NavbarHome';
 import NavBarLogged from './components/NavbarLogged';
 import Questionari from './pages/questionari/Questionari';
-import CompilaQuestionario from './pages/compilazioni/CompilaQuestionario';
+import CompilaQuestionario from './components/CompilaQuestionario';
 import Compilazioni from './pages/compilazioni/Compilazioni';
 import VisualizzaQuestionario from './pages/questionari/VisualizzaQuestionario';
 import VisualizzaQuestionarioCompilato from './pages/compilazioni/VisualizzaQuestionarioCompilato';

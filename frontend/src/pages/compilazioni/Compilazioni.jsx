@@ -198,7 +198,7 @@ const Compilazioni = ({ user }) => {
                     className="bg-white text-personal-purple border-2 border-personal-purple py-1 px-3 rounded-lg hover:bg-personal-purple hover:text-white transition duration-200 ml-4"
                     onClick={() => continuaCompilazione(c.idQuestionario, c.idCompilazione)}
                   >
-                    Termina
+                    Continua Compilazione
                   </button>
                 )}
                 <button

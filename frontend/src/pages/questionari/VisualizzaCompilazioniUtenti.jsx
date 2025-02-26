@@ -62,7 +62,7 @@ const VisualizzaCompilazioniUtenti = () => {
 
     const handleDelete = async () => {
         try {
-            if(userCompilazioneToDelete != "Anonymous") {
+            if(userCompilazioneToDelete !== "Anonymous") {
                 if (token) {
                     const emailResponse = await fetch('http://localhost:8080/api/questionariCompilati/inviaEmail', {
                         method: 'POST',
