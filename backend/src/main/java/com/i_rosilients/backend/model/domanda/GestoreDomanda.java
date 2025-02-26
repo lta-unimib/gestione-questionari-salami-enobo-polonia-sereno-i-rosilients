@@ -65,45 +65,47 @@ public class GestoreDomanda implements IGestoreDomanda {
     }
 
     @Override
-    public void updateDomanda(int idDomanda, DomandaDTO domandaDTO) {
-        Optional<Domanda> domandaOpt = domandaRepository.findById(idDomanda);
-        if (domandaOpt.isPresent()) {
-            Domanda domanda = domandaOpt.get();
-            domanda.setArgomento(domandaDTO.getArgomento());
-            domanda.setTestoDomanda(domandaDTO.getTestoDomanda());
+public void updateDomanda(int idDomanda, DomandaDTO domandaDTO) {
+    Optional<Domanda> domandaOpt = domandaRepository.findById(idDomanda);
+    if (domandaOpt.isPresent()) {
+        Domanda domanda = domandaOpt.get();
+        domanda.setArgomento(domandaDTO.getArgomento());
+        domanda.setTestoDomanda(domandaDTO.getTestoDomanda());
 
-            if (domandaDTO.isRemoveImage()) {
-                try {
-                    eliminaImmagine(domanda.getImmaginePath());
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-                domanda.setImmaginePath(null);
-            } else {
-                domanda.setImmaginePath(domandaDTO.getImagePath());
+                String vecchiaImmaginePath = domanda.getImmaginePath(); 
+        if (domandaDTO.isRemoveImage()) {
+                        try {
+                eliminaImmagine(vecchiaImmaginePath);
+            } catch (IOException e) {
+                                e.printStackTrace();
             }
+            domanda.setImmaginePath(null);         } else if (domandaDTO.getImagePath() != null) {
+                        try {
+                eliminaImmagine(vecchiaImmaginePath);
+            } catch (IOException e) {
+                                e.printStackTrace();
+            }
+            domanda.setImmaginePath(domandaDTO.getImagePath());         }
 
-            domandaRepository.save(domanda);
-            aggiornaOpzioni(domanda, domandaDTO.getOpzioni());
-        } else {
-            throw new RuntimeException("Domanda non trovata con ID: " + idDomanda);
-        }
+        domandaRepository.save(domanda);
+
+                aggiornaOpzioni(domanda, domandaDTO.getOpzioni());
+    } else {
+        throw new RuntimeException("Domanda non trovata con ID: " + idDomanda);
     }
+}
 
     private void aggiornaOpzioni(Domanda domanda, List<String> nuoveOpzioni) {
         if (nuoveOpzioni != null) {
             List<Opzione> opzioniEsistenti = opzioneRepository.findByDomanda(domanda);
 
-            // Rimuovi opzioni che non sono più presenti
-            for (Opzione opzione : opzioniEsistenti) {
+                        for (Opzione opzione : opzioniEsistenti) {
                 if (!nuoveOpzioni.contains(opzione.getTestoOpzione())) {
                     opzioneRepository.delete(opzione);
                 }
             }
 
-            // Aggiungi le nuove opzioni che non esistono già
-            for (String testoOpzione : nuoveOpzioni) {
+                        for (String testoOpzione : nuoveOpzioni) {
                 boolean opzioneEsistente = opzioniEsistenti.stream()
                         .anyMatch(opzione -> opzione.getTestoOpzione().equals(testoOpzione));
 
