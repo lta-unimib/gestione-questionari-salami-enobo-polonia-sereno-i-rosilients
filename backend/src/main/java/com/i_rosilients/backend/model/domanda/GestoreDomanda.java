@@ -77,13 +77,11 @@ public void updateDomanda(int idDomanda, DomandaDTO domandaDTO) {
                         try {
                 eliminaImmagine(vecchiaImmaginePath);
             } catch (IOException e) {
-                                e.printStackTrace();
             }
             domanda.setImmaginePath(null);         } else if (domandaDTO.getImagePath() != null) {
                         try {
                 eliminaImmagine(vecchiaImmaginePath);
             } catch (IOException e) {
-                                e.printStackTrace();
             }
             domanda.setImmaginePath(domandaDTO.getImagePath());         }
 
