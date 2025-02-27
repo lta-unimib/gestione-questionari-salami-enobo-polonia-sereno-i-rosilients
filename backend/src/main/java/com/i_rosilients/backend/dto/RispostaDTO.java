@@ -8,9 +8,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class RispostaDTO {
-    private int idCompilazione; // ID del QuestionarioCompilato
-    private int idDomanda; // ID della Domanda
-    private String testoRisposta; // Testo della risposta
+    private int idCompilazione; 
+    private int idDomanda; 
+    private String testoRisposta; 
 
+    public RispostaDTO(int idDomanda, String testoRisposta) {
+        this.idDomanda = idDomanda;
+        this.testoRisposta = testoRisposta;
+    }
    
 }

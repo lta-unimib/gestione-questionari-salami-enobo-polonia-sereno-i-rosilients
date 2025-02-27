@@ -35,8 +35,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/auth/**").permitAll() // Permetti endpoint di autenticazione
                         .requestMatchers("/api/questionari/search").permitAll() 
+                        .requestMatchers("/api/questionari/tuttiIQuestionari").permitAll() 
                         .requestMatchers("/api/questionari/{id}/**").permitAll()
-                        .requestMatchers("/api/questionariCompilati/**").permitAll() 
+                        .requestMatchers("/api/questionariCompilati/**").permitAll()
+                        .requestMatchers("/api/questionariCompilati/utente/**").permitAll()
                         .requestMatchers("/api/domande/uploads/**").permitAll()  
                         .requestMatchers("/api/risposte/**").permitAll()  
                         .requestMatchers("/api/**").authenticated() // Permetti endpoint di api

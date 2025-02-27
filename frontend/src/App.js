@@ -6,9 +6,12 @@ import HomeLogged from './pages/home/HomeLogged';
 import NavbarHome from './components/NavbarHome';
 import NavBarLogged from './components/NavbarLogged';
 import Questionari from './pages/questionari/Questionari';
-import CompilaQuestionario from './pages/questionari/CompilaQuestionario';
+import CompilaQuestionario from './components/CompilaQuestionario';
+import Compilazioni from './pages/compilazioni/Compilazioni';
 import VisualizzaQuestionario from './pages/questionari/VisualizzaQuestionario';
+import VisualizzaQuestionarioCompilato from './pages/compilazioni/VisualizzaQuestionarioCompilato';
 import Domande from './pages/domande/Domande';
+import VisualizzaCompilazioniUtenti from './pages/questionari/VisualizzaCompilazioniUtenti';
 
 
 // Funzione per decodificare il token e verificarne la scadenza
@@ -38,27 +41,27 @@ const App = () => {
   }, []); // Solo al primo caricamento
 
   return (
-    <div className="font-jersey tracking-widest">
+    <div className="font-jersey bg-gray-50 min-h-screen tracking-widest">
       <BrowserRouter>
         {user ? <NavBarLogged setUser={setUser} /> : <NavbarHome setUser={setUser} />}
         
         <Routes>
-          {/* Condizioni per mostrare Home o HomeLogged */}
           <Route path="/" element={user ? <HomeLogged /> : <Home />} />
+          <Route path="/questionari/compilaQuestionario/:id" element={<CompilaQuestionario />} />
+          <Route path="/questionari/visualizzaQuestionarioCompilato/:idCompilazione/:idQuestionario" element={<VisualizzaQuestionarioCompilato />} />
 
           {/* Rotte protette per gli utenti autenticati */}
-          {user && (
+          {user ? (
             <>
               <Route path="/questionari" element={<Questionari user={user} />} />
-              <Route path="/questionari/compilaQuestionario/:id" element={<CompilaQuestionario /*user={user}*/ />} />
               <Route path="/questionari/:id" element={<VisualizzaQuestionario user={user} />} />
               <Route path="/domande" element={<Domande user={user} />} />
+              <Route path="/questionari/compilazioni" element={<Compilazioni />} />
+              <Route path="/visualizzaCompilazioniDiTutti/:id" element={<VisualizzaCompilazioniUtenti />} />
             </>
-          )}
-          {!user &&(
+          ) : (
             <>
-            <Route path="/questionari/compilaQuestionario/:id" element={<CompilaQuestionario />} />
-            <Route path="/questionari/:id" element={<VisualizzaQuestionario />} />
+              <Route path="/questionari/:id" element={<VisualizzaQuestionario />} />
             </>
           )}
         </Routes>

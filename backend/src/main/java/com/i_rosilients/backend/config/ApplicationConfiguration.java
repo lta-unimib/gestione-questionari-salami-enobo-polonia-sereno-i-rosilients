@@ -1,7 +1,6 @@
 package com.i_rosilients.backend.config;
 
 
-import com.i_rosilients.backend.repository.UtenteRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,6 +11,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import com.i_rosilients.backend.services.persistence.UtenteRepository;
+
 @Configuration
 public class ApplicationConfiguration {
     private final UtenteRepository utenteRepository;
@@ -20,12 +21,14 @@ public class ApplicationConfiguration {
     }
 
     @Bean
+    public
     UserDetailsService userDetailsService() {
         return username -> utenteRepository.findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 
     @Bean
+    public
     BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
@@ -36,6 +39,7 @@ public class ApplicationConfiguration {
     }
 
     @Bean
+    public
     AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
 

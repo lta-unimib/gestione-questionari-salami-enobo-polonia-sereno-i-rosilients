@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import Modal from './Modal'; 
+import Modal from '../pages/home/Modal'; 
 
 const NavbarHome = ({ setUser }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -17,7 +17,7 @@ const NavbarHome = ({ setUser }) => {
 
   return (
     <nav>
-      <div className="flex justify-between my-5">
+      <div className="flex justify-between py-5">
         <div className="ml-16">
           <Link className='text-3xl text-personal-purple font-semibold' to='/'>WebSurveys</Link>
         </div>

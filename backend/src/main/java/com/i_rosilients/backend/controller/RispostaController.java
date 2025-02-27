@@ -1,12 +1,10 @@
 package com.i_rosilients.backend.controller;
 
 import com.i_rosilients.backend.dto.RispostaDTO;
-import com.i_rosilients.backend.service.RispostaService;
-
+import com.i_rosilients.backend.model.risposta.IGestoreRisposta;
 
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,14 +13,17 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/risposte")
 public class RispostaController {
 
-    @Autowired
-    private RispostaService rispostaService;
+    private final IGestoreRisposta rispostaService;
 
-    // Endpoint per creare una nuova compilazione
+    public RispostaController(IGestoreRisposta rispostaService){
+        this.rispostaService = rispostaService;
+    }
+
+
     @PostMapping("/creaCompilazione")
-    public ResponseEntity<?> creaCompilazione(@RequestParam int idQuestionario) {
+    public ResponseEntity<?> creaCompilazione(@RequestParam int idQuestionario, @RequestParam String userEmail) {
         try {
-            int idCompilazione = rispostaService.creaNuovaCompilazione(idQuestionario);
+            int idCompilazione = rispostaService.creaNuovaCompilazione(idQuestionario, userEmail);
             return ResponseEntity.ok().body(Map.of(
                     "idCompilazione", idCompilazione,
                     "message", "Compilazione creata con successo"
@@ -30,6 +31,11 @@ public class RispostaController {
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
+    }
+
+    @GetMapping("{idCompilazione}")
+    public Map<Integer, String> getRisposteByIdCompilazione(@PathVariable int idCompilazione) {
+        return rispostaService.getRisposteByIdCompilazione(idCompilazione);
     }
 
     // Endpoint per salvare una risposta
@@ -41,6 +47,17 @@ public class RispostaController {
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
+    }
+
+    @PostMapping("/finalizzaCompilazione")
+    public ResponseEntity<?> finalizzaCompilazione(@RequestParam int idCompilazione) {
+        try {
+            rispostaService.finalizzaCompilazione(idCompilazione);
+
+            return ResponseEntity.ok().body(Map.of("message", "Compilazione finalizzata con successo"));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }    
     }
 
     @PostMapping("/inviaEmail")
