@@ -56,10 +56,16 @@ const handleRegister = async () => {
             id="password"
             type="password"
             placeholder="Crea una password"
+            minLength={8}
+            maxLength={20}
+            pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,20}$"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all"
             required
+            onInvalid={(e) => e.target.setCustomValidity("La password deve contenere almeno 8 caratteri, una maiuscola, una minuscola e un numero.")}
+            onInput={(e) => e.target.setCustomValidity("")} // Rimuove il messaggio quando l'utente corregge
+            title="La password deve contenere almeno 8 caratteri, una lettera maiuscola, una minuscola e un numero."
           />
         </div>
         

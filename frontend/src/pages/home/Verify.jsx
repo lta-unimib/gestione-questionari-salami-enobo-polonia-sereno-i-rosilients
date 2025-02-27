@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { verify, resendVerificationCode } from "../../services/homeService";
 
 const Verify = ({ toggleModal, email }) => { 
@@ -7,6 +7,7 @@ const Verify = ({ toggleModal, email }) => {
   const [canResend, setCanResend] = useState(false);
   const [loading, setLoading] = useState(false);
   const [resending, setResending] = useState(false);
+  const modalRef = useRef(null);
 
   useEffect(() => {
     if (countdown > 0) {
@@ -16,6 +17,19 @@ const Verify = ({ toggleModal, email }) => {
       setCanResend(true);
     }
   }, [countdown]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
+          alert("Devi inserire il codice di verifica prima di chiudere il modal.");
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [verificationCode, toggleModal]);
 
   const handleVerify = async (event) => {
     event.preventDefault();
@@ -35,6 +49,7 @@ const Verify = ({ toggleModal, email }) => {
       setLoading(false);
     }
   };
+
   const handleResendCode = async () => {
     if (!canResend) return;
   
@@ -56,7 +71,7 @@ const Verify = ({ toggleModal, email }) => {
   };
 
   return (
-    <div className="bg-white p-8 rounded-lg shadow-lg w-96 border border-purple-100">
+    <div ref={modalRef} className="bg-white p-8 rounded-lg shadow-lg w-96 border border-purple-100">
       <h2 className="text-2xl mb-6 font-bold text-center text-purple-900">Verifica il tuo account</h2>
       
       <p className="mb-4 text-center text-gray-600">
