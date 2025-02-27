@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { creaDomanda } from '../../services/domandaService';
 
 const CreaDomanda = ({ user, setUpdateDomande }) => {
   const [isCreatingDomanda, setIsCreatingDomanda] = useState(false);
@@ -33,7 +34,7 @@ const CreaDomanda = ({ user, setUpdateDomande }) => {
     }
   };
 
-  const handleCreaDomanda = () => {
+  const handleCreaDomanda = async () => {
     if (!argomentoDomanda || !testoDomanda) {
       alert('Compila tutti i campi.');
       return;
@@ -55,35 +56,24 @@ const CreaDomanda = ({ user, setUpdateDomande }) => {
 
     const token = localStorage.getItem("jwt");
 
-    fetch('http://localhost:8080/api/domande/creaDomanda', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-      body: formData,
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Errore nella creazione della domanda');
-        }
-        return response.text();
-      })
-      .then((data) => {
-        if (data) {
-          console.log("Risposta dal server:", data);
-        }
-        alert('Domanda creata con successo!');
-        setArgomentoDomanda('');
-        setTestoDomanda('');
-        setImmagineFile(null);
-        setOpzioni([]);
-        setIsCreatingDomanda(false);
-        setUpdateDomande(true)
-      })
-      .catch((error) => {
-        console.error('Errore:', error);
-        alert('Si è verificato un errore durante la creazione della domanda.');
-      });
+    try {
+      const data = await creaDomanda(formData, token);
+      
+      if (data) {
+        console.log("Risposta dal server:", data);
+      }
+      
+      alert('Domanda creata con successo!');
+      setArgomentoDomanda('');
+      setTestoDomanda('');
+      setImmagineFile(null);
+      setOpzioni([]);
+      setIsCreatingDomanda(false);
+      setUpdateDomande(true);
+    } catch (error) {
+      console.error('Errore:', error);
+      alert('Si è verificato un errore durante la creazione della domanda.');
+    }
   };
 
   return (

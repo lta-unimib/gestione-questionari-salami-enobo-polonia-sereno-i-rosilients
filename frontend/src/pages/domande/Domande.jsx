@@ -28,7 +28,6 @@ const Domande = ({ user }) => {
       try {
         const data = await fetchDomande(filtro, userEmail, token);
         setDomande(data);
-        
         // Load images for each question
         const imageEntries = await Promise.all(
           data.map(async (d) => {

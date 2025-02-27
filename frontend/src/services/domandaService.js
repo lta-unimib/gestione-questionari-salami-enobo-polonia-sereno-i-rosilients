@@ -1,4 +1,3 @@
-// src/services/domandeService.js
 const API_BASE_URL = 'http://localhost:8080';
 
 export const fetchDomande = async (filtro, userEmail, token) => {
@@ -78,4 +77,20 @@ export const updateDomanda = async (domandaId, formData, token) => {
   }
 
   return true;
+};
+
+export const creaDomanda = async (formData, token) => {
+  const response = await fetch(`${API_BASE_URL}/api/domande/creaDomanda`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+    body: formData
+  });
+
+  if (!response.ok) {
+    throw new Error('Errore nella creazione della domanda');
+  }
+
+  return response.text();
 };
