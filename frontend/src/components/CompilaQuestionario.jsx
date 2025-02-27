@@ -1,135 +1,74 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { ArrowLongLeftIcon } from '@heroicons/react/24/solid';
+import * as questionarioService from '../services/compilazioniService'
 
 const CompilaQuestionario = () => {
   const { id } = useParams();
   const query = new URLSearchParams(useLocation().search);
-  let idCompilazione = query.get("idCompilazione");
-  const navigate = useNavigate(); 
+  const [idCompilazione, setIdCompilazione] = useState(query.get("idCompilazione"));
+  const navigate = useNavigate();
+  
   const [questionario, setQuestionario] = useState([]);
   const [idQuestionario, setIdQuestionario] = useState(null);
   const [risposte, setRisposte] = useState({});
   const [risposteMappa, setRisposteMappa] = useState({});
 
-  const [isSubmitting, setIsSubmitting] = useState(false); 
-  const [showModal, setShowModal] = useState(false); 
-  const [codiceUnivoco, setCodiceUnivoco] = useState(null); 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [codiceUnivoco, setCodiceUnivoco] = useState(null);
   const [userEmail, setUserEmail] = useState(
     localStorage.getItem('jwt') ? localStorage.getItem('userEmail') : ""
   );
   const [selectedImageId, setSelectedImageId] = useState(null);
 
   useEffect(() => {
-
     if (idCompilazione) {
-      const fetchIdQuestionario = async () => {
-        try {
-          const response = await fetch(`http://localhost:8080/api/questionariCompilati/${idCompilazione}`);
-          if (!response.ok) {
-            throw new Error('Errore nel recupero dei dati della compilazione');
-          }
-
-          const data = await response.json();
-          setIdQuestionario(data.idQuestionario);
-
-          fetchRisposte(idCompilazione);
-
-          fetchQuestionario(data.idQuestionario);
-        } catch (error) {
-          console.error('Errore nel recupero della compilazione:', error);
-          alert('Errore nel recupero della compilazione. Riprova più tardi.');
-        }
-      };
-
-      fetchIdQuestionario();
+      fetchCompilazioneData();
     } else if (id) {
-      fetchQuestionario(id);
+      fetchQuestionarioData(id);
     }
   }, [idCompilazione, id]);
 
-  
-
-  // useEffect(() => {
-  //   Object.keys(risposte).forEach((domandaId) => {
-  //     if (risposte[domandaId] === "") {
-  //       handleChange(domandaId, "");  // Forza l'aggiornamento se diventa vuoto
-  //     }
-  //   });
-  // }, [risposte]);
-
-
-  const fetchQuestionario = async (idQuestionario) => {
+  const fetchCompilazioneData = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/questionari/${idQuestionario}/domande`);
-      if (!response.ok) {
-        throw new Error(`Errore nella fetch: ${response.status}`);
-      }
+      const data = await questionarioService.fetchCompilazioneById(idCompilazione);
+      setIdQuestionario(data.idQuestionario);
+      
+      await fetchRisposte(idCompilazione);
+      await fetchQuestionarioData(data.idQuestionario);
+    } catch (error) {
+      alert('Errore nel recupero della compilazione. Riprova più tardi.');
+    }
+  };
 
-      const data = await response.json();
+  const fetchQuestionarioData = async (idQuestionario) => {
+    try {
+      const data = await questionarioService.fetchQuestionarioById(idQuestionario);
       setQuestionario(data);
     } catch (error) {
-      console.error("Errore nel recupero del questionario:", error);
       alert("Errore nel caricamento del questionario. Riprova più tardi.");
     }
   };
 
-
   const fetchRisposte = async (idCompilazione) => {
     try {
-      const response = await fetch(`http://localhost:8080/api/risposte/${idCompilazione}`);
-      if (!response.ok) {
-        throw new Error('Errore nel recupero delle risposte');
-      }
-      const risposteMappa = await response.json();
+      const risposteMappa = await questionarioService.fetchRisposteByCompilazione(idCompilazione);
       setRisposteMappa(risposteMappa);
 
       Object.entries(risposteMappa).forEach(([domandaId, valore]) => {
-        handleChange(domandaId, valore);  // Aggiorna lo stato 'risposte' tramite 'handleChange'
+        handleChange(domandaId, valore);
       });
-
     } catch (error) {
-      console.error('Errore nel recupero delle risposte:', error);
       alert('Errore nel recupero delle risposte. Riprova più tardi.');
     }
   };
 
-
   const handleChange = (domandaId, valore) => {
-
-    // console.log(`Risposta per domanda ${domandaId}: ${valore}`); 
-
-    setRisposte((prev) => {
-      const updatedRisposte = { ...prev, [domandaId]: valore };
-  
-      // Se il valore è vuoto e c'era una risposta prima, aggiorna comunque lo stato
-      // if (valore === "" && prev[domandaId] !== undefined) {
-      //   return updatedRisposte;
-      // }
-  
-      return updatedRisposte;
-    });
-  };
-
-  const creaNuovaCompilazione = async (idQuestionario) => {
-    try {
-
-      const response = await fetch(`http://localhost:8080/api/risposte/creaCompilazione?idQuestionario=${idQuestionario}&userEmail=${userEmail}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.error || 'Errore nella creazione della compilazione');
-      }
-
-      return data.idCompilazione; 
-    } catch (error) {
-      console.error('Errore nella creazione della compilazione:', error);
-      throw error;
-    }
+    setRisposte((prev) => ({
+      ...prev,
+      [domandaId]: valore
+    }));
   };
 
   const handleSalvaParziale = async () => {
@@ -137,110 +76,92 @@ const CompilaQuestionario = () => {
     if (!confermaInvio) return;
   
     try {
-      if (!idCompilazione) {
-        idCompilazione = await creaNuovaCompilazione(id);
+      let currentIdCompilazione = idCompilazione;
+      
+      if (!currentIdCompilazione) {
+        currentIdCompilazione = await questionarioService.creaNuovaCompilazione(id, userEmail);
+        setIdCompilazione(currentIdCompilazione);
       }
   
       const risposteArray = questionario.map((domanda) => ({
-        idCompilazione: idCompilazione,
+        idCompilazione: currentIdCompilazione,
         idDomanda: domanda.idDomanda,
-        testoRisposta: risposte[domanda.idDomanda] ?? "", // Ora include risposte vuote
+        testoRisposta: risposte[domanda.idDomanda] ?? "",
       }));
   
       for (const risposta of risposteArray) {
-        await fetch('http://localhost:8080/api/risposte/salvaRisposta', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(risposta),
-        });
+        await questionarioService.salvaRisposta(risposta);
       }
   
       if (localStorage.getItem('jwt')) {
         alert('Risposte salvate! Puoi riprendere in un secondo momento.');
         navigate('/');
+      } else {
+        handleUtenteNonRegistrato(currentIdCompilazione);
       }
-  
-      handleUtenteNonRegistrato();
-  
     } catch (error) {
-      console.error('Errore nel salvataggio parziale:', error);
       alert('Errore nel salvataggio. Riprova più tardi.');
     }
   };
-  
 
   const handleSubmit = async () => {
-    const confermaInvio = 
-    window.confirm("Sei sicuro di voler salvare le risposte? il questionario non sarà più modificabile.");
+    const confermaInvio = window.confirm("Sei sicuro di voler salvare le risposte? il questionario non sarà più modificabile.");
     if (!confermaInvio) return;
   
     try {
       setIsSubmitting(true);
   
-      // Controlla che tutte le risposte abbiano almeno 10 caratteri
+      // Validazione risposte
       const domandeNonValide = questionario.filter((domanda) => {
         const risposta = risposte[domanda.idDomanda] || "";
         if (!domanda.opzioni) {
           return risposta.trim().length < 10; // Almeno 10 caratteri
         }
+        return false;
       });
 
       if (domandeNonValide.length > 0) {
         throw new Error('Per favore, rispondi a tutte le domande con almeno 10 caratteri prima di inviare.');
       }
-
       
-
-      if (!idCompilazione) {
-        idCompilazione = await creaNuovaCompilazione(id);
+      let currentIdCompilazione = idCompilazione;
+      
+      if (!currentIdCompilazione) {
+        currentIdCompilazione = await questionarioService.creaNuovaCompilazione(id, userEmail);
+        setIdCompilazione(currentIdCompilazione);
       }
   
       const risposteArray = Object.keys(risposte).map((idDomanda) => ({
-        idCompilazione: idCompilazione,
+        idCompilazione: currentIdCompilazione,
         idDomanda: parseInt(idDomanda),
         testoRisposta: risposte[idDomanda],
       }));
   
+      // Salva tutte le risposte
       for (const risposta of risposteArray) {
-        await fetch('http://localhost:8080/api/risposte/salvaRisposta', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(risposta),
-        });
+        await questionarioService.salvaRisposta(risposta);
       }
   
-      await fetch(`http://localhost:8080/api/risposte/finalizzaCompilazione?idCompilazione=${idCompilazione}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-      });
+      // Finalizza la compilazione
+      await questionarioService.finalizzaCompilazione(currentIdCompilazione);
   
       if (localStorage.getItem('jwt')) {
-        await fetch('http://localhost:8080/api/risposte/inviaEmail', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
-          },
-          body: JSON.stringify({ idCompilazione, userEmail }),
-        });
-  
+        await questionarioService.inviaEmail(currentIdCompilazione, userEmail);
         alert('Risposte inviate e email con PDF spedita!');
         navigate('/');
+      } else {
+        handleUtenteNonRegistrato(currentIdCompilazione);
       }
-
-      handleUtenteNonRegistrato();
-      
     } catch (error) {
-      console.error('Errore nell\'invio delle risposte:', error);
       alert('Errore nell\'invio delle risposte: ' + error.message);
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleUtenteNonRegistrato = () => {
+  const handleUtenteNonRegistrato = (currentIdCompilazione) => {
     if (!localStorage.getItem('jwt')) {
-      setCodiceUnivoco(idCompilazione);
+      setCodiceUnivoco(currentIdCompilazione);
       setShowModal(true);
     }
   };
@@ -264,17 +185,6 @@ const CompilaQuestionario = () => {
     navigate('/');
   };
 
-
-
-  if (questionario.length === 0) {
-    // console.log("Questionario non trovato o in fase di caricamento..."); 
-    return (
-      <div className="flex justify-center py-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-personal-purple" />
-      </div>
-    );
-  }
-  
   const openModalImage = (idDomanda) => {
     setSelectedImageId(idDomanda);
   };
@@ -282,6 +192,14 @@ const CompilaQuestionario = () => {
   const closeModalImage = () => {
     setSelectedImageId(null);
   };
+
+  if (questionario.length === 0) {
+    return (
+      <div className="flex justify-center py-12">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-personal-purple" />
+      </div>
+    );
+  }
 
   return (
     <div className="p-8">
@@ -294,30 +212,29 @@ const CompilaQuestionario = () => {
   
             {domanda.imagePath && (
               <div className="mt-4">
-                  <img
-                    src={`http://localhost:8080${domanda.imagePath}`}
-                    alt="Immagine della domanda"
-                    className="w-72 h-72 rounded-lg cursor-pointer"
-                    onClick={() => openModalImage(domanda.idDomanda)}
-                  />
-            
-                  {/* Popup immagine ingrandita */}
-                  {selectedImageId === domanda.idDomanda && (
-                    <div 
-                      className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
-                      onClick={closeModalImage}
-                    >
-                      <div className="relative bg-white p-[2px] rounded-lg max-w-3xl w-full">
-                        {/* Immagine ingrandita */}
-                        <img
-                          src={`http://localhost:8080${domanda.imagePath}`}
-                          alt="Immagine ingrandita"
-                          className="w-full h-auto rounded-lg"
-                        />
-                      </div>
+                <img
+                  src={`http://localhost:8080${domanda.imagePath}`}
+                  alt="Immagine della domanda"
+                  className="w-72 h-72 rounded-lg cursor-pointer"
+                  onClick={() => openModalImage(domanda.idDomanda)}
+                />
+          
+                {/* Popup immagine ingrandita */}
+                {selectedImageId === domanda.idDomanda && (
+                  <div 
+                    className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+                    onClick={closeModalImage}
+                  >
+                    <div className="relative bg-white p-[2px] rounded-lg max-w-3xl w-full">
+                      <img
+                        src={`http://localhost:8080${domanda.imagePath}`}
+                        alt="Immagine ingrandita"
+                        className="w-full h-auto rounded-lg"
+                      />
                     </div>
-                  )}
-                </div>
+                  </div>
+                )}
+              </div>
             )}
   
             <div className="mt-16 space-y-2">
@@ -361,7 +278,7 @@ const CompilaQuestionario = () => {
           <button
             type="button"
             className="bg-gray-500 text-white py-2 px-4 rounded-lg hover:bg-gray-600"
-            onClick={() => handleSalvaParziale()}
+            onClick={handleSalvaParziale}
           >
             Continua più tardi
           </button>
@@ -385,9 +302,7 @@ const CompilaQuestionario = () => {
       {showModal && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
-            <h2 
-              className="text-xl font-semibold"
-            >
+            <h2 className="text-xl font-semibold">
               Non dimenticare il tuo codice univoco! NON avrai un altro modo di recuperarlo.
             </h2>
             <div className="mt-4">

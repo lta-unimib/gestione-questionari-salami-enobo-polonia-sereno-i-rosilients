@@ -401,3 +401,120 @@ export const eliminaCompilazione = async (idCompilazione) => {
   
   return response.json();
 };
+export const fetchQuestionarioById = async (idQuestionario) => {
+  try {
+    const response = await fetch(`${BASE_URL}/questionari/${idQuestionario}/domande`);
+    if (!response.ok) {
+      throw new Error(`Errore nella fetch: ${response.status}`);
+    }
+    return await response.json();
+  } catch (error) {
+    console.error("Errore nel recupero del questionario:", error);
+    throw error;
+  }
+};
+
+export const fetchCompilazioneById = async (idCompilazione) => {
+  try {
+    const response = await fetch(`${BASE_URL}/questionariCompilati/${idCompilazione}`);
+    if (!response.ok) {
+      throw new Error('Errore nel recupero dei dati della compilazione');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Errore nel recupero della compilazione:', error);
+    throw error;
+  }
+};
+
+export const fetchRisposteByCompilazione = async (idCompilazione) => {
+  try {
+    const response = await fetch(`${BASE_URL}/risposte/${idCompilazione}`);
+    if (!response.ok) {
+      throw new Error('Errore nel recupero delle risposte');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Errore nel recupero delle risposte:', error);
+    throw error;
+  }
+};
+
+export const creaNuovaCompilazione = async (idQuestionario, userEmail) => {
+  try {
+    const response = await fetch(
+      `${BASE_URL}/risposte/creaCompilazione?idQuestionario=${idQuestionario}&userEmail=${userEmail}`, 
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.error || 'Errore nella creazione della compilazione');
+    }
+    return data.idCompilazione;
+  } catch (error) {
+    console.error('Errore nella creazione della compilazione:', error);
+    throw error;
+  }
+};
+
+export const salvaRisposta = async (risposta) => {
+  try {
+    const response = await fetch(`${BASE_URL}/risposte/salvaRisposta`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(risposta),
+    });
+    if (!response.ok) {
+      throw new Error('Errore nel salvataggio della risposta');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Errore nel salvataggio della risposta:', error);
+    throw error;
+  }
+};
+
+export const finalizzaCompilazione = async (idCompilazione) => {
+  try {
+    const response = await fetch(
+      `${BASE_URL}/risposte/finalizzaCompilazione?idCompilazione=${idCompilazione}`, 
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
+    if (!response.ok) {
+      throw new Error('Errore nella finalizzazione della compilazione');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Errore nella finalizzazione della compilazione:', error);
+    throw error;
+  }
+};
+
+export const inviaEmail = async (idCompilazione, userEmail) => {
+  try {
+    const jwt = localStorage.getItem('jwt');
+    const response = await fetch(`${BASE_URL}/risposte/inviaEmail`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${jwt}`,
+      },
+      body: JSON.stringify({ idCompilazione, userEmail }),
+    });
+    if (!response.ok) {
+      throw new Error('Errore nell\'invio dell\'email');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Errore nell\'invio dell\'email:', error);
+    throw error;
+  }
+};
