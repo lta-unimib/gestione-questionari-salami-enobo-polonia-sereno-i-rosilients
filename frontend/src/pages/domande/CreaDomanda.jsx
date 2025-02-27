@@ -20,6 +20,20 @@ const CreaDomanda = ({ user, setUpdateDomande }) => {
     nuoveOpzioni[index] = value;
     setOpzioni(nuoveOpzioni);
   };
+  
+  const confermaOpzione = (index) => {
+    const valoreAttuale = opzioni[index].trim();
+  
+    // Controlla se il valore esiste già in un'altra posizione
+    if (opzioni.some((opzione, i) => opzione === valoreAttuale && i !== index)) {
+      alert("Opzione già presente!");
+      
+      // Ripristina il valore originale se è un duplicato
+      const nuoveOpzioni = [...opzioni];
+      nuoveOpzioni[index] = "";
+      setOpzioni(nuoveOpzioni);
+    }
+  };
 
   // Funzione per rimuovere un'opzione
   const rimuoviOpzione = (index) => {
@@ -51,7 +65,7 @@ const CreaDomanda = ({ user, setUpdateDomande }) => {
 
     // Aggiungiamo "opzioni" solo se ci sono opzioni valide
     if (opzioni.length > 0) {
-      formData.append('opzioni', JSON.stringify(opzioni));
+      formData.append('opzioni', JSON.stringify(opzioni.filter(opzione => opzione.trim() !== "")));
     }
 
     const token = localStorage.getItem("jwt");
@@ -148,7 +162,8 @@ const CreaDomanda = ({ user, setUpdateDomande }) => {
                         type="text"
                         placeholder={`Opzione ${index + 1}`}
                         value={opzione}
-                        onChange={(e) => modificaOpzione(index, e.target.value)}
+                        onChange={(e) => modificaOpzione(index, e.target.value)} 
+                        onBlur={() => confermaOpzione(index)}
                         className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-personal-purple focus:border-transparent transition-all outline-none"
                       />
                       <button

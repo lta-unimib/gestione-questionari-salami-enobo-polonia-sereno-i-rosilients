@@ -147,8 +147,6 @@ const CompilaQuestionario = () => {
         testoRisposta: risposte[domanda.idDomanda] ?? "", // Ora include risposte vuote
       }));
   
-      console.log(risposteArray);
-  
       for (const risposta of risposteArray) {
         await fetch('http://localhost:8080/api/risposte/salvaRisposta', {
           method: 'POST',
@@ -182,14 +180,17 @@ const CompilaQuestionario = () => {
       // Controlla che tutte le risposte abbiano almeno 10 caratteri
       const domandeNonValide = questionario.filter((domanda) => {
         const risposta = risposte[domanda.idDomanda] || "";
-        return risposta.trim().length < 10; // Almeno 10 caratteri
+        if (!domanda.opzioni) {
+          return risposta.trim().length < 10; // Almeno 10 caratteri
+        }
       });
 
       if (domandeNonValide.length > 0) {
         throw new Error('Per favore, rispondi a tutte le domande con almeno 10 caratteri prima di inviare.');
       }
 
-  
+      
+
       if (!idCompilazione) {
         idCompilazione = await creaNuovaCompilazione(id);
       }
@@ -296,7 +297,7 @@ const CompilaQuestionario = () => {
                   <img
                     src={`http://localhost:8080${domanda.imagePath}`}
                     alt="Immagine della domanda"
-                    className="w-72 h-auto rounded-lg cursor-pointer"
+                    className="w-72 h-72 rounded-lg cursor-pointer"
                     onClick={() => openModalImage(domanda.idDomanda)}
                   />
             
@@ -319,7 +320,7 @@ const CompilaQuestionario = () => {
                 </div>
             )}
   
-            <div className="mt-2 space-y-2">
+            <div className="mt-16 space-y-2">
               {domanda.opzioni?.length > 0 ? (
                 domanda.opzioni.map((opzione, index) => (
                   <label key={index} className="flex items-center gap-2">

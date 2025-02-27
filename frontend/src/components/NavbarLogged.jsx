@@ -105,7 +105,13 @@ const NavbarLogged = ({ setUser }) => {
                         <UserIcon className="h-6 w-6" />
                     </button>
                     {isDropdownOpen && (
-                        <div className="absolute right-0 mt-2 w-52 bg-white border rounded shadow-xl py-1 transition-all duration-200 ease-in-out">
+                        <div className="absolute right-0 mt-2 w-60 bg-white border rounded shadow-xl py-1 transition-all duration-200 ease-in-out">
+                            <button className='text-gray-500 ml-4 pointer-events-none'> 
+                                <span>{localStorage.getItem('userEmail')}</span>
+                            </button>
+
+                            <div className="border-t border-gray-300 my-1" />
+
                             <button 
                                 onClick={handleDeleteProfile} 
                                 className="flex justify-between gap-4 w-full px-4 py-2 text-red-600 hover:bg-gray-200"

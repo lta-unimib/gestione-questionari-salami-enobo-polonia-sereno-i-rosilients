@@ -29,6 +29,28 @@ const ModificaDomanda = ({ isOpen, onClose, domanda, onSave, userEmail }) => {
     setEditedOpzioni(newOpzioni);
   };
 
+
+  // Funzione per aggiornare il valore di un'opzione
+  const modificaOpzione = (index, value) => {
+    const nuoveOpzioni = [...editedOpzioni];
+    nuoveOpzioni[index] = value;
+    setEditedOpzioni(nuoveOpzioni);
+  };
+  
+  const confermaOpzione = (index) => {
+    const valoreAttuale = editedOpzioni[index];
+  
+    // Controlla se il valore esiste già in un'altra posizione
+    if (editedOpzioni.some((opzione, i) => opzione === valoreAttuale && i !== index)) {
+      alert("Opzione già presente!");
+      
+      // Ripristina il valore originale se è un duplicato
+      const nuoveOpzioni = [...editedOpzioni];
+      nuoveOpzioni[index] = "";
+      setEditedOpzioni(nuoveOpzioni);
+    }
+  };
+
   const handleSubmit = () => {
     const formData = new FormData();
     formData.append('argomento', editedArgomento);
@@ -40,7 +62,7 @@ const ModificaDomanda = ({ isOpen, onClose, domanda, onSave, userEmail }) => {
     }
     
     if (editedOpzioni && editedOpzioni.length > 0) {
-      formData.append('opzioni', JSON.stringify(editedOpzioni));
+      formData.append('opzioni', JSON.stringify(editedOpzioni.filter(opzione => opzione.trim() !== "")));
     }
     
     if (removeImage) {
@@ -126,11 +148,8 @@ const ModificaDomanda = ({ isOpen, onClose, domanda, onSave, userEmail }) => {
                   type="text"
                   className="border rounded-lg p-2 w-full focus:ring-2 focus:ring-[#3603CD] focus:border-transparent transition-all outline-none"
                   value={opzione}
-                  onChange={(e) => {
-                    const newOpzioni = [...editedOpzioni];
-                    newOpzioni[index] = e.target.value;
-                    setEditedOpzioni(newOpzioni);
-                  }}
+                  onChange={(e) => modificaOpzione(index, e.target.value)}
+                  onBlur={() => confermaOpzione(index)}
                   placeholder={`Opzione ${index + 1}`}
                 />
                 <button 

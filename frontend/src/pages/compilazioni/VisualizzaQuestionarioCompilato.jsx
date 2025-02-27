@@ -40,6 +40,12 @@ const VisualizzaQuestionarioCompilato = () => {
               testoDomanda: domandaCorrispondente.testoDomanda,
               imagePath: domandaCorrispondente.imagePath,
             };
+          } else {
+            return {
+              ...risposta,
+              argomento: "Non trovato",
+              testoDomanda: "Testo non trovato",
+            };
           }
 
           return risposta;
