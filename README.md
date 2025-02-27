@@ -18,7 +18,7 @@
 
 ### 9.2.1 Clonare il repository
 ```bash
-git clone
+git clone <repository-url>
 ```
 
 ### 9.2.2 Creazione del database in MySQL
