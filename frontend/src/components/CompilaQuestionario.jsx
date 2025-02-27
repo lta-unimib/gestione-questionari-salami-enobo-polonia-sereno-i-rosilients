@@ -18,7 +18,7 @@ const CompilaQuestionario = () => {
   const [userEmail, setUserEmail] = useState(
     localStorage.getItem('jwt') ? localStorage.getItem('userEmail') : ""
   );
-  const [isModalImageOpen, setIsModalImageOpen] = useState(false)
+  const [selectedImageId, setSelectedImageId] = useState(null);
 
   useEffect(() => {
 
@@ -179,13 +179,16 @@ const CompilaQuestionario = () => {
     try {
       setIsSubmitting(true);
   
-      const domandeNonRisposte = questionario.filter(
-        (domanda) => !risposte.hasOwnProperty(domanda.idDomanda)
-      );
-  
-      if (domandeNonRisposte.length > 0) {
-        throw new Error('Per favore, rispondi a tutte le domande prima di inviare.');
+      // Controlla che tutte le risposte abbiano almeno 10 caratteri
+      const domandeNonValide = questionario.filter((domanda) => {
+        const risposta = risposte[domanda.idDomanda] || "";
+        return risposta.trim().length < 10; // Almeno 10 caratteri
+      });
+
+      if (domandeNonValide.length > 0) {
+        throw new Error('Per favore, rispondi a tutte le domande con almeno 10 caratteri prima di inviare.');
       }
+
   
       if (!idCompilazione) {
         idCompilazione = await creaNuovaCompilazione(id);
@@ -264,9 +267,20 @@ const CompilaQuestionario = () => {
 
   if (questionario.length === 0) {
     // console.log("Questionario non trovato o in fase di caricamento..."); 
-    return <p className="text-center mt-10">Caricamento...</p>;
+    return (
+      <div className="flex justify-center py-12">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-personal-purple" />
+      </div>
+    );
   }
   
+  const openModalImage = (idDomanda) => {
+    setSelectedImageId(idDomanda);
+  };
+
+  const closeModalImage = () => {
+    setSelectedImageId(null);
+  };
 
   return (
     <div className="p-8">
@@ -283,16 +297,16 @@ const CompilaQuestionario = () => {
                     src={`http://localhost:8080${domanda.imagePath}`}
                     alt="Immagine della domanda"
                     className="w-72 h-auto rounded-lg cursor-pointer"
-                    onClick={() => setIsModalImageOpen(true)}
+                    onClick={() => openModalImage(domanda.idDomanda)}
                   />
             
                   {/* Popup immagine ingrandita */}
-                  {isModalImageOpen && (
+                  {selectedImageId === domanda.idDomanda && (
                     <div 
                       className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
-                      onClick={() => setIsModalImageOpen(false)}
+                      onClick={closeModalImage}
                     >
-                      <div className="relative bg-white p-1 rounded-lg max-w-3xl w-full">
+                      <div className="relative bg-white p-[2px] rounded-lg max-w-3xl w-full">
                         {/* Immagine ingrandita */}
                         <img
                           src={`http://localhost:8080${domanda.imagePath}`}

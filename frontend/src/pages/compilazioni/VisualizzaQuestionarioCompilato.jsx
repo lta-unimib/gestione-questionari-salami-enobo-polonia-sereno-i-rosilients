@@ -83,14 +83,14 @@ const VisualizzaQuestionarioCompilato = () => {
                     <QuestionMarkCircleIcon className="w-4 text-personal-purple"/> 
                     <p className="text-xl text-gray-900 ml-2">{risposta.testoDomanda}</p>
                   </div>
-
+                  
                   {/* Immagine della domanda (se presente) */}
                   {risposta.imagePath && (
                     <div className="mt-4">
                       <img
                         src={`http://localhost:8080${risposta.imagePath}`}
                         alt="Immagine della domanda"
-                        className="max-w-full h-auto rounded-lg shadow-sm"
+                        className="w-52 h-auto rounded-lg shadow-sm"
                       />
                     </div>
                   )}
@@ -106,7 +106,9 @@ const VisualizzaQuestionarioCompilato = () => {
           )}
         </>
       ) : (
-        <p className="text-gray-500">Caricamento in corso...</p>
+        <div className="flex justify-center py-12">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-personal-purple" />
+        </div>
       )}
   
       {/* Pulsante "Torna Indietro" */}

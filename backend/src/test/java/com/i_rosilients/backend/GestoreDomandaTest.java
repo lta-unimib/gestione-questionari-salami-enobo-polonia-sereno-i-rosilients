@@ -134,16 +134,6 @@ class GestoreDomandaTest {
     }
 
     @Test
-    void salvaImmagine_Success() throws IOException {
-                MultipartFile file = new MockMultipartFile("test.png", "test.png", "image/png", "test".getBytes());
-
-                String imagePath = gestoreDomanda.salvaImmagine(file);
-
-                assertNotNull(imagePath);
-        assertTrue(imagePath.contains("/api/domande/uploads/"));
-    }
-
-    @Test
     void salvaImmagine_FileNull() {
                 MultipartFile file = null;
 

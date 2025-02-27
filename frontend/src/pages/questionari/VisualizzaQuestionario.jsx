@@ -39,8 +39,8 @@ const VisualizzaQuestionario = () => {
 
   if (loading) {
     return (
-      <div className="max-w-3xl mx-auto mt-8 p-6 bg-white shadow-lg rounded-lg">
-        <p className="text-gray-500">Caricamento in corso...</p>
+      <div className="flex justify-center py-12">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-personal-purple" />
       </div>
     );
   }
@@ -103,7 +103,7 @@ const VisualizzaQuestionario = () => {
                       <img
                         src={`http://localhost:8080${domanda.imagePath}`}
                         alt="Immagine della domanda"
-                        className="max-w-full h-auto rounded-lg"
+                        className="h-auto rounded-lg w-52"
                       />
                     </div>
                   )}
